@@ -30,6 +30,7 @@ SQLBase = declarative_base()
 class PlayerStatus(enum.Enum):
     STANDARD = "standard"
     BLOCKED = "blocked"
+    INTRO = "in_intro"
     TUTORIAL = "in_tutorial"
     ADMIN = "admin"
 

@@ -47,8 +47,9 @@ Characters:
 # Generally, we should only develop the full description for contents that are of the self-contained category
 LOCATION_TO_CATEGORY = """Given a location, determine which of the following labels are most appropriate:
 self-contained: A singular setting that is small enough to be considered a set for a single shot in a movie. One example is "Blacksmith's counter".
-generic: A generic grouping of locations or large generic location that one can provide a single instance for. One example is "Castle towers"
-composite: A large location that would require multiple sub-sections for individual scenes. One example is "Town Center"
+generic: A generic grouping of locations or large generic location that one can provide a single instance for. One example is "Castle towers".
+composite: A large location that would require multiple sub-sections for individual scenes. One example is "Town Center".
+not a location: For entry that isn't a valid room or setting. One example is "Spoon".
 
 Location: graveyard
 Category: self-contained
@@ -58,6 +59,9 @@ Category: generic
 
 Location: Nearby Town
 Category: composite
+
+Location: Old Sunglasses
+Category: not a location
 
 Location: town gates:
 Category: self-contained
@@ -78,6 +82,8 @@ Setting: Nearby Town
 4. School
 5. Graveyard
 6. Marketplace
+
+Note the overall context for this story when coming up with contained elements: {}
 
 Setting: {}
 1."""
@@ -100,7 +106,7 @@ Location: {}
 1."""
 
 # This query should produce a Description and Backstory for the given location name.
-LOCATION_NAME_TO_DESCRIPTIONS = """Given a location name and the setting of a medieval fantasy story it is supposed to appear in, provide a text-adventure-style description and backstory in third-person perspective. The description should include characters and objects that may be found inside, narrated as if the person is reporting what it looks like when present there. The backstory should be flavor text about how the location came to be. One example is below.
+LOCATION_NAME_TO_DESCRIPTIONS = """Given a location name and the setting of a medieval fantasy story it is supposed to appear in, provide both a text-adventure-style description and backstory in third-person perspective. The description should include characters and objects that may be found inside, narrated as if the person is reporting what it looks like when present there. The backstory should be flavor text about how the location came to be. One example is below.
 
 Setting: The dwarven stronghold, set inside a dormant volcano with wolf-infested forests.
 Location: The clearing where the sentries stand watch
@@ -132,31 +138,40 @@ Description: {}
 Characters:"""
 
 # This query can take the prompt and a character and produce a relevant persona, description, and motivation
-PROMPTED_CHARACTER_ANNOTATION = """Given a medieval fantasy story setting and a character name, provide the following details for the character. Follow the provided template:
+PROMPTED_CHARACTER_ANNOTATION = """Given a medieval fantasy story setting and a character name, provide the following details for the singular form of the character. Follow the provided template:
 Setting: The setting to use as context
 Character Name: The name of the character to provide
-Persona: A first-person set of defining goal, characteristics, or backstory for this character
-Physical Description: An appropriate physical description for the character in third person, such that it could be used in narration to someone not present.
-Motivation: A single goal relevant to what this character wants to achieve
+Singular Form: the singular form of the provided character
+Plural Form: a plural form for the provided character
+Singular Persona: A first-person set of defining goal, characteristics, or backstory for this singular character
+Singular Physical Description: An appropriate physical description for the character in third person, such that it could be used in narration to someone not present.
+Singular Motivation: A single goal relevant to what this character wants to achieve
+Emoji: the most relevant emoji representing this character or their persona
 
 For example:
 Setting: The dwarven stronghold, set inside a dormant volcano with wolf-infested forests.
-Character Name: The chief of the dwarves
-Persona: I lead over all of the dwarves in the stronghold. Keeping them safe is my priority, though I fear that the wolves are becoming a threat. I try to be kind and gracious.
-Physical Description: This dwarf may be small in stature, but they carry themselves as a true leader.
-Motivation: Gather information about possible threats to the stronghold.
+Character Name: chief of the dwarves
+Singular Form: cheif of the dwarves
+Plural Form: cheifs of the dwarves
+Singular Persona: I lead over all of the dwarves in the stronghold. Keeping them safe is my priority, though I fear that the wolves are becoming a threat. I try to be kind and gracious.
+Singular Physical Description: This dwarf may be small in stature, but they carry themselves as a true leader.
+Singular Motivation: Gather information about possible threats to the stronghold.
+Emoji: ⛏
 
 Setting: {}
 Character Name: {}
-Persona:"""
+Singular Form:"""
 
 # This query can take a character and their relevant location and produce a relevant persona, description, and motivation, with wearing/wielding/carrying
-ROOM_CHARACTER_ANNOTATION = """Given a medieval fantasy story setting description and a character name, provide the following details for the character. Follow the provided template:
+ROOM_CHARACTER_ANNOTATION = """Given a medieval fantasy story setting description and a character name, provide the following details for the singular form of the character. Follow the provided template:
 Setting: The setting to use as context
 Character Name: The name of the character to provide
-Persona: A first-person set of defining goal, characteristics, or backstory for this character
-Physical Description: An appropriate physical description for the character in third person, such that it could be used in narration to someone not present.
-Motivation: A single goal relevant to what this character wants to achieve
+Singular Form: the singular form of the provided character
+Plural Form: a plural form for the provided character
+Singular Persona: A first-person set of defining goal, characteristics, or backstory for this character
+Singular Physical Description: An appropriate physical description for the character in third person, such that it could be used in narration to someone not present.
+Singular Motivation: A single goal relevant to what this character wants to achieve
+Emoji: the most relevant emoji representing this character or their persona
 Carrying: List of objects carried
 Wielding: List of objects wielded
 Wearing: List of objects worn
@@ -165,9 +180,12 @@ For example:
 Setting: A small clearing near the entrance to the dwarven stronghold. Two sentries stand watch here, armed with axes and shields. There's a small campsite set up near the entrance, with a few barrels and crates stacked nearby. A few crows are perched on the barrels, cawing softly. Nearby is a small dark tunnel leading into the heart of the mountain. It looks like it would be a tight squeeze for anyone larger than a dwarf.
 Backstory: The clearing in the forest existed long before the dwarves, but they've turned it into an outpost of sorts, watching for any potential threats to the stronghold. It would be a useful hunting ground as well, but the dwarves are more interested in smithing than hunting.
 Character Name: Sentry
-Persona: I keep watch over the stronghold. I try to be kind and gracious. If a threat presents itself though, I'll have no mercy.
-Physical Description: This dwarf seems strong and nimble. They probably know their way around a weapon.
-Motivation: Keep the stronghold safe.
+Singular Form: Sentry
+Plural Form: Sentries
+Singular Persona: I keep watch over the stronghold. I try to be kind and gracious. If a threat presents itself though, I'll have no mercy.
+Singular Physical Description: This dwarf seems strong and nimble. They probably know their way around a weapon.
+Singular Motivation: Keep the stronghold safe.
+Emoji: ⚔
 Carrying:
 - None
 Wielding:
@@ -179,10 +197,10 @@ Wearing:
 
 Setting: {}
 Character Name: {}
-Persona:"""
+Singular Form:"""
 
 # This query can take an object and their relevant character and provide a description and attributes
-OBJECT_ANNOTATION = """Given a an object name from a medieval fantasy text adventure, provide a physical description for the singular form, as well as values for the specific attributes below. For example:
+OBJECT_ANNOTATION = """Given a an object name from a medieval fantasy text adventure, provide a physical description for the singular form, as well as values for the specific attributes below. Include an appropriate paranthetical article for names. For example:
 Name: swords
 Singular form: sword
 Plural form: swords
@@ -199,10 +217,12 @@ Name:{}
 Singular form:"""
 
 # This query can take a list of rooms and provide the 5 most likely neighbors for each room
-ROOM_NEIGHBORS = """Given a list of locations in a fantasy text adventure story, for each location in the list provide up to 5 of the most likely other locations in the list that location would be near. Format the response as "Location : comma separated nearby locations"
+ROOM_NEIGHBORS = """You are given a list of locations in a fantasy text adventure story. Imagine you were arranging them into a map. For each location in the list provide the at most 5 other locations in the list likely to appear nearby in a map. Format the response as "Location : comma separated nearby locations"
 
-Locations: {}
-Neighbor Lists:"""
+Locations:
+{}
+Neighbor Lists:
+1."""
 
 # This query can take the original state of the room and try to adapt to a new setting
 ROOM_TO_ROOM = """You will be given a setting description and the list of characters and objects expected to be present for that description. You will also be given a list of new characters and objects that are present. Adapt the description to fit the changes provided. One example below:
@@ -239,7 +259,6 @@ New Description:"""
 
 @dataclass
 class LLMPromptBuilderConfig(GraphBuilderConfig):
-    # TODO create builder config parent
     prompt: str = field(
         default="",
         metadata={"help": ("Description string to prompt the pipeline with")},
@@ -267,6 +286,10 @@ class GPT3LLMBuilderConfig(LLMPromptBuilderConfig):
     )
 
 
+last_query_time = time.time()
+last_query = None
+
+
 def query_openai(
     prompt: str,
     temperature: float = 0.7,
@@ -275,6 +298,7 @@ def query_openai(
     presence_penalty: float = 0,
 ):
     """Wrapper around openai queries, with some parameters"""
+    global last_query
     completion = openai.Completion.create(
         engine="text-davinci-002",
         temperature=temperature,
@@ -284,7 +308,8 @@ def query_openai(
         presence_penalty=presence_penalty,
         max_tokens=700,
     )
-    print(f"Prompt: {prompt}\nGeneration: {completion.choices[0].text.strip()}")
+    last_query = f"Prompt: {prompt}\nGeneration: {completion.choices[0].text.strip()}"
+    print(".", end="", flush=True)
     return completion.choices[0].text.strip()
 
 
@@ -292,13 +317,14 @@ def retry(count=5, exc_type=Exception):
     def decorator(func):
         @wraps(func)
         def result(*args, **kwargs):
-            ret_exec = None
+            ret_exec = "No Query"
             for _i in range(count):
                 try:
                     return func(*args, **kwargs)
                 except exc_type as e:
                     ret_exec = e
-                    print(f"Exception {_i}, retrying")
+                    print("e", end="", flush=True)
+            print("Exception Query:\n" + last_query)
             raise ret_exec
 
         return result
@@ -306,7 +332,7 @@ def retry(count=5, exc_type=Exception):
     return decorator
 
 
-@retry(count=5)
+@retry(count=8)
 def get_story_locations(
     story_prompt: str, builder_config: "DictConfig", num_locs: int = 10
 ) -> List[str]:
@@ -323,11 +349,11 @@ def get_story_locations(
 
     result = "1. " + result
     lines = result.split("\n")
-    locations = [l.split(". ", 1)[1] for l in lines]
+    locations = [l.split(". ", 1)[1].strip() for l in lines]
     return locations
 
 
-@retry(count=5)
+@retry(count=8)
 def get_story_characters(
     story_prompt: str, builder_config: "DictConfig", num_chars: int = 10
 ) -> List[str]:
@@ -344,33 +370,34 @@ def get_story_characters(
 
     result = "1. " + result
     lines = result.split("\n")
-    characters = [l.split(". ", 1)[1] for l in lines]
+    characters = [l.split(". ", 1)[1].strip() for l in lines]
     return characters
 
 
-@retry(count=5)
+@retry(count=8)
 def get_location_category(location_name: str, builder_config: "DictConfig") -> str:
-    """Provide the category of a location, from the set "self-contained", "generic", "composite" """
+    """Provide the category of a location, from the set "self-contained", "generic", "composite", 'not a location' """
     final_prompt = LOCATION_TO_CATEGORY.format(location_name)
     if builder_config._backend == "openai":
         result = query_openai(final_prompt)
     else:
         raise AssertionError(f"Unsupported backend {builder_config._backend}")
-    result = result.lower()
+    result = result.lower().split("\n", 1)[0].strip()
     assert result in [
         "self-contained",
         "generic",
         "composite",
+        "not a location",
     ], f"location category didn't exist, {result}"
     return result
 
 
-@retry(count=5)
+@retry(count=8)
 def split_composite_location(
-    location_name: str, builder_config: "DictConfig"
+    story_prompt: str, location_name: str, builder_config: "DictConfig"
 ) -> List[str]:
     """Given a composite location, provide a list of locations that would comprise it"""
-    final_prompt = COMPOSITE_TO_COMPONENTS.format(location_name)
+    final_prompt = COMPOSITE_TO_COMPONENTS.format(story_prompt, location_name)
     if builder_config._backend == "openai":
         result = query_openai(final_prompt, frequency_penalty=0.2)
     else:
@@ -378,11 +405,11 @@ def split_composite_location(
 
     result = "1. " + result
     lines = result.split("\n")
-    locations = [l.split(". ", 1)[1] for l in lines]
+    locations = [l.split(". ", 1)[1].strip() for l in lines]
     return locations
 
 
-@retry(count=5)
+@retry(count=8)
 def get_group_location_instances(
     story_prompt: str, location_name: str, builder_config: "DictConfig"
 ) -> List[str]:
@@ -395,11 +422,11 @@ def get_group_location_instances(
 
     result = "1. " + result
     lines = result.split("\n")
-    locations = [l.split(". ", 1)[1] for l in lines]
+    locations = [l.split(". ", 1)[1].strip() for l in lines]
     return locations
 
 
-@retry(count=5)
+@retry(count=8)
 def describe_location(
     story_prompt: str, location_name: str, builder_config: "DictConfig"
 ) -> Dict[str, str]:
@@ -417,7 +444,7 @@ def describe_location(
     }
 
 
-@retry(count=5)
+@retry(count=8)
 def annotate_location(
     story_prompt: str,
     location_name: str,
@@ -433,30 +460,32 @@ def annotate_location(
     else:
         raise AssertionError(f"Unsupported backend {builder_config._backend}")
 
-    characters, other = result.split("\nObjects:\n")
+    characters, other = result.split("\nObjects:")
     if "Nearby Locations" in other:
-        objects, locations = other.split("\nNearby Locations:\n")
+        objects, locations = other.split("\nNearby Locations:")
     else:
         objects = other
         locations = "- None"
     return {
         "characters": [
             elem.strip("- ").strip()
-            for elem in characters.split("\n")
+            for elem in characters.strip().split("\n")
             if elem != "- None"
         ],
         "locations": [
             elem.strip("- ").strip()
-            for elem in locations.split("\n")
+            for elem in locations.strip().split("\n")
             if elem != "- None"
         ],
         "objects": [
-            elem.strip("- ").strip() for elem in objects.split("\n") if elem != "- None"
+            elem.strip("- ").strip()
+            for elem in objects.strip().split("\n")
+            if elem != "- None"
         ],
     }
 
 
-@retry(count=5)
+@retry(count=8)
 def annotate_prompted_character(
     story_prompt: str, character_name: str, builder_config: "DictConfig"
 ) -> Dict[str, List[str]]:
@@ -467,19 +496,25 @@ def annotate_prompted_character(
     else:
         raise AssertionError(f"Unsupported backend {builder_config._backend}")
 
-    persona, other = result.split("\nPhysical Description:")
-    description, motivation = other.split("\nMotivation:")
+    singular, other = result.split("\nPlural Form:")
+    plural, other = other.split("\nSingular Persona:")
+    persona, other = other.split("\nSingular Physical Description:")
+    description, other = other.split("\nSingular Motivation:")
+    motivation, emoji = other.split("\nEmoji:")
     return {
+        "singular": singular.strip(),
+        "plural": plural.strip(),
         "persona": persona.strip(),
         "description": description.strip(),
         "motivation": motivation.strip(),
+        "emoji": emoji.strip(),
         "carrying": [],
         "wielding": [],
         "wearing": [],
     }
 
 
-@retry(count=5)
+@retry(count=8)
 def annotate_set_character(
     location_description: str, character_name: str, builder_config: "DictConfig"
 ) -> Dict[str, List[str]]:
@@ -492,34 +527,40 @@ def annotate_set_character(
     else:
         raise AssertionError(f"Unsupported backend {builder_config._backend}")
 
-    persona, other = result.split("\nPhysical Description:")
-    description, other = other.split("\nMotivation:")
-    motivation, other = other.split("\nCarrying:\n")
-    carryings, other = other.split("\nWielding:\n")
-    wieldings, wearings = other.split("\nWearing:\n")
+    singular, other = result.split("\nPlural Form:")
+    plural, other = other.split("\nSingular Persona:")
+    persona, other = other.split("\nSingular Physical Description:")
+    description, other = other.split("\nSingular Motivation:")
+    motivation, other = other.split("\nEmoji:")
+    emoji, other = other.split("\nCarrying:")
+    carryings, other = other.split("\nWielding:")
+    wieldings, wearings = other.split("\nWearing:")
     return {
+        "singular": singular.strip(),
+        "plural": plural.strip(),
         "persona": persona.strip(),
         "description": description.strip(),
         "motivation": motivation.strip(),
+        "emoji": emoji.strip(),
         "carrying": [
             elem.strip("- ").strip()
-            for elem in carryings.split("\n")
+            for elem in carryings.strip().split("\n")
             if elem != "- None"
         ],
         "wielding": [
             elem.strip("- ").strip()
-            for elem in wieldings.split("\n")
+            for elem in wieldings.strip().split("\n")
             if elem != "- None"
         ],
         "wearing": [
             elem.strip("- ").strip()
-            for elem in wearings.split("\n")
+            for elem in wearings.strip().split("\n")
             if elem != "- None"
         ],
     }
 
 
-@retry(count=5)
+@retry(count=8)
 def annotate_object(
     object_name: str, builder_config: "DictConfig"
 ) -> Dict[str, List[str]]:
@@ -553,25 +594,28 @@ def annotate_object(
     }
 
 
-@retry(count=5)
+@retry(count=8)
 def get_neighbor_map(
     location_list: List[str], builder_config: "DictConfig"
 ) -> Dict[str, List[str]]:
     """Given an object name, annotate it fully"""
-    final_prompt = ROOM_NEIGHBORS.format(", ".join(location_list))
+    noted_locations = [f"{idx + 1}. {loc}" for (idx, loc) in enumerate(location_list)]
+    final_prompt = ROOM_NEIGHBORS.format("\n".join(noted_locations))
     if builder_config._backend == "openai":
         result = query_openai(final_prompt)
     else:
         raise AssertionError(f"Unsupported backend {builder_config._backend}")
 
-    result = result.strip()
+    result = "1. " + result.strip()
     lines = result.split("\n")
-    items = [l.split(": ") for l in lines]
+    lines = [l for l in lines if len(l.strip()) > 0]
+    items = [l.split(". ", 1)[1].split(": ") for l in lines]
     mapping = {l[0].lower().strip(): l[1].split(", ") for l in items}
+    lower_list = [l.lower() for l in location_list]
     for loc in location_list:
         assert loc.lower() in mapping, f"{loc.lower()} not in mapping {mapping}"
-        for target in mapping[loc]:
-            assert target.lower() in [l.lower() for l in location_list]
+        mapping[loc] = [t for t in mapping[loc] if t.lower() in lower_list]
+    print(mapping)
     return mapping
 
 
@@ -607,9 +651,9 @@ class LLMPromptGraphBuilder(GraphBuilder):
         """Return an agent that once existed in this graph, but no longer does"""
         # Only spawn agents if they don't already exist
         agents_to_use = [
-            agent_name
-            for agent_name in self.possible_agents.keys()
-            if len(world.oo_graph.find_nodes_by_name(agent_name)) == 0
+            a["singular"]
+            for a in self.possible_agents.values()
+            if len(world.oo_graph.find_nodes_by_name(a["singular"])) == 0
         ]
         if len(agents_to_use) == 0:
             return None
@@ -637,7 +681,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
             target_room = character["location"]["node"]
 
         agent_node = g.add_agent(
-            character["name"],
+            character["singular"],
             {
                 "agent": True,
                 "size": 20,
@@ -649,14 +693,14 @@ class LLMPromptGraphBuilder(GraphBuilder):
                 "char_type": "person",
                 "name_prefix": character.get("name_prefix", "the"),
                 "desc": character["description"],
-                "persona": f"{character['persona']}\n{character['motivation']}",
+                "persona": f"{character['persona']}",
                 "mission": character["motivation"],
             },
         )
         character["node"] = agent_node
         object_names = character["carrying"]
         for object_name in object_names:
-            obj = objects[object_name]
+            obj = objects[object_name.lower()]
             object_node = g.add_object(
                 obj["singular"],
                 self._props_from_obj(obj),
@@ -664,7 +708,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
             object_node.move_to(agent_node)
         object_names = character["wearing"]
         for object_name in object_names:
-            obj = objects[object_name]
+            obj = objects[object_name.lower()]
             object_node = g.add_object(
                 obj["singular"],
                 self._props_from_obj(obj),
@@ -673,7 +717,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
             object_node.equipped = "wear"
         object_names = character["wielding"]
         for object_name in object_names:
-            obj = objects[object_name]
+            obj = objects[object_name.lower()]
             object_node = g.add_object(
                 obj["singular"],
                 self._props_from_obj(obj),
@@ -693,6 +737,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
     def _drop_articles(self, name_list: List[str]) -> List[str]:
         res = []
         for elem in name_list:
+            elem = elem.strip()
             for article in ["a ", "an ", "the "]:
                 if elem.lower().startswith(article):
                     elem = elem[len(article) :]
@@ -702,10 +747,17 @@ class LLMPromptGraphBuilder(GraphBuilder):
 
     def _cleanup_names(self, name_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         for elem in name_list:
+            elem["name"] = elem["name"].strip()
             for article in ["a ", "an ", "the "]:
                 if elem["name"].lower().startswith(article):
                     elem["name_prefix"] = article
                     elem["name"] = elem["name"][len(article) :]
+            if "singular" in elem:
+                elem["singular"] = elem["singular"].strip()
+                for article in ["a ", "an ", "the "]:
+                    if elem["singular"].lower().startswith(article):
+                        elem["name_prefix"] = article
+                        elem["singular"] = elem["singular"][len(article) :]
         return name_list
 
     def build_possible_locations(
@@ -720,7 +772,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
         completed_locations = []
         location_names = set()
         # iterate through the process of building locations until we hit the cap
-        while len(completed_locations) < size and len(base_location_list) > 0:
+        while len(location_names) < size and len(base_location_list) > 0:
             for location in base_location_list:
                 location["category"] = get_location_category(
                     location["name"], self.builder_config
@@ -752,9 +804,9 @@ class LLMPromptGraphBuilder(GraphBuilder):
                 )
                 completed_locations.append(i_room)
                 location_names.add(i_room["name"])
-                print("ADDED ROOM TO LIST:", i_room["name"], len(completed_locations))
-                if len(completed_locations) >= size:
-                    break  # todo remove
+                print("r", end="", flush=True)
+                if len(location_names) >= size + 10:
+                    break
 
             if len(completed_locations) >= size:
                 break
@@ -763,8 +815,9 @@ class LLMPromptGraphBuilder(GraphBuilder):
             broken_composites = []
             for composite in composites:
                 c_name = composite["name"]
-                composite_names = split_composite_location(c_name, self.builder_config)
-                print("composite names", composite_names)
+                composite_names = split_composite_location(
+                    story_prompt, c_name, self.builder_config
+                )
                 # Pick random elements of the composite to be the neighbor suggestion
                 clean_names = self._drop_articles(composite_names)
                 for loc in completed_locations:
@@ -856,22 +909,41 @@ class LLMPromptGraphBuilder(GraphBuilder):
             if len(room_queue) != 0:
                 room = room_queue.pop(0)
                 loc = room["loc"]
+                print("P", end="", flush=True)
             else:
-                print("Had to make random choice for room arranging...")
-                room = random.choice(
-                    [l for l in possible_locations if l.get("loc") is None]
-                )
-                linkable_neighbors = [
-                    n for n in room["neighbors"] if n.get("loc") is not None
+                print("R", end="", flush=True)
+                print("Random deets")
+                unplaced_rooms = [
+                    l for l in possible_locations.values() if l.get("loc") is None
                 ]
-                if len(linkable_neighbors) == 0:
-                    print("Had to make EXTREMELY random choice for room arranging...")
-                    linkable_neighbors = list(grid.values())
+                print("Unplaced rooms: ", unplaced_rooms)
+                room = random.choice(unplaced_rooms)
+                print(room, "Has linkable neighbor?")
+                linkable_neighbors = [
+                    possible_locations[n.lower()]
+                    for n in room["neighbors"]
+                    if possible_locations[n.lower()].get("loc") is not None
+                ]
+                print(linkable_neighbors)
+                print(
+                    [
+                        self.get_open_neighbors(grid, l["loc"])
+                        for l in linkable_neighbors
+                    ]
+                )
                 usable_neighbors = [
                     l
                     for l in linkable_neighbors
-                    if len(self.get_open_neighbors(grid, l["loc"]))
+                    if len(self.get_open_neighbors(grid, l["loc"])) > 0
                 ]
+                if len(usable_neighbors) == 0:
+                    print("ER", end="", flush=True)
+                    usable_neighbors = [
+                        l
+                        for l in list(grid.values())
+                        if len(self.get_open_neighbors(grid, l["loc"])) > 0
+                    ]
+                print("Usable:", usable_neighbors)
                 neighbor_room = random.choice(usable_neighbors)
                 loc = random.choice(self.get_open_neighbors(grid, neighbor_room["loc"]))
                 room["loc"] = loc
@@ -893,6 +965,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
                 neighbor_room["loc"] = n_loc
                 room_queue.append(neighbor_room)
                 grid[n_loc] = neighbor_room
+                print("n", end="", flush=True)
 
         # possibly connect neighbors that aren't
         for loc, room in grid.items():
@@ -909,6 +982,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
                 ):
                     n_room["linked_neighbors"].append(loc)
                     room["linked_neighbors"].append(n_room["loc"])
+                    print("u", end="", flush=True)
 
         return grid
 
@@ -972,11 +1046,12 @@ class LLMPromptGraphBuilder(GraphBuilder):
             local_objs = (
                 character["carrying"] + character["wearing"] + character["wielding"]
             )
-            char_objs += [{"name": obj, "holder": character} for obj in local_objs]
+            char_objs += [{"name": obj, "location": character} for obj in local_objs]
 
         all_objs = self._cleanup_names(room_objects + char_objs)
         for obj in all_objs:
             obj.update(annotate_object(obj["name"], self.builder_config))
+        all_objs = self._cleanup_names(all_objs)
         return {obj["name"].lower(): obj for obj in all_objs}
 
     def _props_from_obj(self, obj):
@@ -1093,7 +1168,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
                     [
                         c
                         for c in characters.values()
-                        if c["name"] not in added_char_names
+                        if c["singular"] not in added_char_names
                     ]
                 )
             if target_char["location"] is None:
@@ -1102,7 +1177,7 @@ class LLMPromptGraphBuilder(GraphBuilder):
                 target_room = target_char["location"]["node"]
 
             agent_node = g.add_agent(
-                target_char["name"],
+                target_char["singular"],
                 {
                     "agent": True,
                     "size": 20,
@@ -1114,11 +1189,11 @@ class LLMPromptGraphBuilder(GraphBuilder):
                     "char_type": "person",
                     "name_prefix": target_char.get("name_prefix", "the"),
                     "desc": target_char["description"],
-                    "persona": f"{target_char['persona']}\n{target_char['motivation']}",
+                    "persona": f"{target_char['persona']}",
                     "mission": target_char["motivation"],
                 },
             )
-            added_char_names.add(target_char["name"])
+            added_char_names.add(target_char["singular"])
             target_char["node"] = agent_node
             added_chars.append(target_char)
             agent_node.move_to(target_room)
@@ -1127,40 +1202,40 @@ class LLMPromptGraphBuilder(GraphBuilder):
         for room in room_map.values():
             object_names = room["objects"]
             for object_name in object_names:
-                obj = objects[object_name]
+                obj = objects[object_name.lower()]
                 object_node = g.add_object(
                     obj["singular"],
                     self._props_from_obj(obj),
                 )
-                object_node.move_to(obj["location"]["node"])
+                object_node.move_to(room["node"])
 
         # add character objects
         for char in added_chars:
             object_names = char["carrying"]
             for object_name in object_names:
-                obj = objects[object_name]
+                obj = objects[object_name.lower()]
                 object_node = g.add_object(
                     obj["singular"],
                     self._props_from_obj(obj),
                 )
-                object_node.move_to(obj["location"]["node"])
+                object_node.move_to(char["node"])
             object_names = char["wearing"]
             for object_name in object_names:
-                obj = objects[object_name]
+                obj = objects[object_name.lower()]
                 object_node = g.add_object(
                     obj["singular"],
                     self._props_from_obj(obj),
                 )
-                object_node.move_to(obj["location"]["node"])
+                object_node.move_to(char["node"])
                 object_node.equipped = "wear"
             object_names = char["wielding"]
             for object_name in object_names:
-                obj = objects[object_name]
+                obj = objects[object_name.lower()]
                 object_node = g.add_object(
                     obj["singular"],
                     self._props_from_obj(obj),
                 )
-                object_node.move_to(obj["location"]["node"])
+                object_node.move_to(char["node"])
                 object_node.equipped = "wield"
 
         return g
@@ -1170,22 +1245,27 @@ class LLMPromptGraphBuilder(GraphBuilder):
         self.reset_graph()
 
         # Get possible locations
+        print("Generating rooms:")
         possible_locations = self.build_possible_locations(
             prompt, self.builder_config.num_rooms
         )
 
         # Create layout
+        print("\nCreating Grid layout:")
         grid = self.layout_locations(possible_locations, self.builder_config.num_rooms)
         used_locations = list(grid.values())
 
         # Get possible characters, based only on used rooms
+        print("\nGenerating Characters:")
         possible_characters = self.build_possible_characters(prompt, used_locations)
 
         # Get possible objects
+        print("\nGenerating Objects:")
         possible_objects = self.build_possible_objects(
             possible_characters, used_locations
         )
 
+        print("\nBuilding Graph:")
         graph = self.assemble_graph(
             prompt,
             grid,
@@ -1229,3 +1309,41 @@ class LLMPromptGraphBuilder(GraphBuilder):
         world_config = world_config.copy()
         world_config.graph_builder = self
         return world_config
+
+
+if __name__ == "__main__":
+    import os
+    from light import LIGHT_DIR
+
+    print("Welcome to the LLM world generator")
+
+    print("Assuming openai backend, as only available")
+    backend = "openai"
+
+    if backend == "openai":
+        org_id = input("Provide openai Org ID: ")
+        openai_sk = input("Provide openai Secret Key: ")
+        config = GPT3LLMBuilderConfig(openai_org_id=org_id, openai_secret_key=openai_sk)
+    else:
+        raise AssertionError(f"Backend {backend} not available")
+
+    map_dir = os.path.join(LIGHT_DIR, "scripts", "examples", "maps")
+    while True:
+        prompt = input("Provide world prompt! Leave blank to quit.\n> ").strip()
+        if len(prompt) == 0:
+            break
+
+        config.prompt = prompt
+        config.num_rooms = int(input("Num Rooms:\n> "))
+        config.num_characters = int(input("Num Chars:\n> "))
+
+        builder = LLMPromptGraphBuilder(config)
+        graph = builder.build_graph(prompt)
+
+        output_name = input("\nProvide output name:\n>") + ".json"
+        output_dir = os.path.join(map_dir, output_name)
+        with open(output_dir, "w+") as json_file:
+            json_file.write(graph.to_json())
+        print(f"Written to {output_dir}")
+        break
+    print("Bye!")
