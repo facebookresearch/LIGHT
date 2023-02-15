@@ -30,12 +30,14 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
   /* ----LOCAL STATE---- */
   const [formatttedMessage, setFormattedMessage] = useState("");
   const [tellTarget, setTellTarget] = useState(null)
+  const [messageXp, setMessageXp] = useState(0)
 
   const [action, setAction] = useState("");
   /*---------------LIFECYCLE----------------*/
   useEffect(() => {
-    let formattedText = text
-    let formattedTellTarget = tellTarget
+    let formattedText = text;
+    let updatedMessageXp = xp;
+    let formattedTellTarget = tellTarget;
     let textEndIndex = text.length - 1;
     let firstTextCharacter = text[0];
     let lastTextCharacter = text[textEndIndex];
@@ -44,6 +46,11 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
     if (firstTextCharacter === '"' && lastTextCharacter === '"') {
       setAction("say");
       formattedText = text.slice(1,text.length-1)
+      if(updatedMessageXp){
+        updatedMessageXp = updatedMessageXp-1;
+      }else {
+        updatedMessageXp =1;
+      }
     } else if (firstFourTextCharacters === "tell") {
       setAction("tell");
       let quoteIndex = text.indexOf('"')
@@ -53,6 +60,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
       setAction("do");
     }
     setFormattedMessage(formattedText);
+    setMessageXp(updatedMessageXp)
     setTellTarget(formattedTellTarget);
   }, [text]);
 
@@ -75,14 +83,14 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
         >
           <div className="w-full h-full flex flex-row justify-end items-center">
           <div className="w-full h-full flex flex-row justify-end items-center">
-            {xp ? (
+            {messageXp > 1 ? (
                     <Tooltip
                       title={
-                        xp > 0 ? `${xp} Experience Points Earned For Roleplaying` : null
+                        messageXp > 1 ? `${messageXp} Experience Points Earned For Roleplaying` : null
                       }
                     >
                       <AwardStar 
-                        xp={xp}
+                        xp={messageXp}
                       />
                     </Tooltip>
                 ) : null
@@ -105,7 +113,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                  <div className="flex flex-col w-[100%]">
                   <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${action!=="default" ? "text-white" : "text-black"}`}>{formatttedMessage}</p>
                   {tellTarget?
-                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >This was sent to {" " + tellTarget}</p>
+                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to {" " + tellTarget}</p>
                   :null
                   }
                 </div>

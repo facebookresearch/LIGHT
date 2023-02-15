@@ -224,13 +224,18 @@ const Chat = ({
     messages.map((message) => {
       if (message.is_self && message.xp > 0) {
         sessionXpUpdate += message.xp;
+      }else if (message.is_self) {
+        sessionXpUpdate += 1;
       }
     });
+    console.log("SESSION XP UPDATES:  ", sessionXpUpdate)
     let newSessionXp = sessionXpUpdate - sessionXp;
+    console.log("newSessionXp:  ", sessionXpUpdate)
     let newGiftXp = newSessionXp / 4;
     if (newSessionXp > 0) {
-      let updatedXp = sessionXpUpdate;
-      dispatch(updateSessionXp(updatedXp));
+      let updatedSessionXp = sessionXpUpdate;
+      console.log("updatedSessionXp:  ", updatedSessionXp)
+      dispatch(updateSessionXp(updatedSessionXp));
     }
     if (newGiftXp >= 1) {
       let updatedSessionGiftXpEarned = sessionEarnedGiftXp + newGiftXp;
@@ -240,10 +245,10 @@ const Chat = ({
 
   /* UPDATE PLAYER XP */
   useEffect(() => {
-    if (sessionXp > 0) {
-      let updatedXP = xp + sessionXp;
+
+      let updatedXP = sessionXp;
+      console.log("TOTAL XP:  ", updatedXP)
       dispatch(updateXp(updatedXP));
-    }
   }, [sessionXp]);
 
   //* GIFT XP UPDATES TO REDUX STORE */
