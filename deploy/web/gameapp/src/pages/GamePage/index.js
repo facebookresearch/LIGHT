@@ -222,9 +222,9 @@ const Chat = ({
     /* SESSION XP */
     let sessionXpUpdate = 0;
     messages.map((message) => {
-      if (message.is_self && message.xp > 0) {
+      if (message.is_self && message.xp > 0 || message.questComplete)  {
         sessionXpUpdate += message.xp;
-      }else if (message.is_self) {
+      }else if (message.is_self && message.caller=== "SayEvent") {
         sessionXpUpdate += 1;
       }
     });
