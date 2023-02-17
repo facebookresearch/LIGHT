@@ -60,6 +60,9 @@ export const DefaultEmojiMapper = (name) => {
     town_doctor: "syringe",
     you: "smiley",
   };
-
-  return EmojiMap[characterName];
+  if (EmojiMap[characterName] !== undefined) {
+      return EmojiMap[characterName];
+  } else {
+      return "question";
+  }
 };
