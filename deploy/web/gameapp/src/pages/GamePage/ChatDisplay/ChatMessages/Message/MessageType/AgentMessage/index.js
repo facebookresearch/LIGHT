@@ -220,14 +220,14 @@ const AgentMessage = ({
                 </span>
               ) : null}
               <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
+                {messageAction === "theyTell" ?
+                  <p className="text-left text-gray-600 font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
+                  :null
+                  }
                 <RiReplyFill
                   className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
                   onClick={() => onReply(actor)}
                 />
-                  {messageAction === "theyTell" ?
-                  <p className="text-left text-gray-600 font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
-                  :null
-                  }
                 <div className="_agent-message-rating-icons_ flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip

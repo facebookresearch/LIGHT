@@ -202,9 +202,9 @@ const Chat = ({
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
+      console.log("PERSONA XP:  ", updatedXp)
       /* ----PLAYER INFO---- */
       dispatch(updatePersona(persona));
-      dispatch(updateXp(updatedXp));
       dispatch(updateGiftXp(updatedGiftXp));
       let defaultEmoji = "\u2753"
       if (persona === null || persona.name === null) return;
@@ -222,7 +222,14 @@ const Chat = ({
     /* SESSION XP */
     let sessionXpUpdate = 0;
     messages.map((message) => {
-      if (message.is_self && message.xp > 0 || message.questComplete)  {
+      if(message.caller === "SoulSpawnEvent"){
+        let {actor}= message;
+        let initialXp = actor.xp;
+        if(initialXp >0){
+          sessionXpUpdate += initialXp;
+        }
+      }
+      else if (message.is_self && message.xp > 0 || message.questComplete)  {
         sessionXpUpdate += message.xp;
       }else if (message.is_self && message.caller=== "SayEvent") {
         sessionXpUpdate += 1;
