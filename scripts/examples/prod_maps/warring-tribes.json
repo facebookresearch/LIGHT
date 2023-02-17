@@ -791,14 +791,14 @@
       "names": ["Armory"],
       "neighbors": {
         "main gate_15": {
-          "examine_desc": "The doorway is made of thick oak and is adorned with a large brass knocker. It opens into a long hallway that leads to the Training Grounds. Along the walls of the hallway, suits of armor and shields hang proudly. The air is filled with the smell of smoke and sweat from the Training Grounds beyond.",
-          "label": "a doorway leading to the Training Grounds",
+          "examine_desc": "A narrow, winding path leads out of the Armory, snaking between the racks of weapons and the piles of armor before finally reaching the Main Gate.",
+          "label": "a narrow path leading to the Main Gate",
           "locked_edge": null,
           "target_id": "main gate_15"
         },
         "training grounds_17": {
-          "examine_desc": "A narrow, winding path leads out of the Armory, snaking between the racks of weapons and the piles of armor before finally reaching the Main Gate.",
-          "label": "a narrow path leading to the Main Gate",
+          "examine_desc": "The doorway is made of thick oak and is adorned with a large brass knocker. It opens into a long hallway that leads to the Training Grounds. Along the walls of the hallway, suits of armor and shields hang proudly. The air is filled with the smell of smoke and sweat from the Training Grounds beyond.",
+          "label": "a doorway leading to the Training Grounds",
           "locked_edge": null,
           "target_id": "training grounds_17"
         }
@@ -1116,26 +1116,26 @@
       "names": ["Babbling Brook"],
       "neighbors": {
         "berry bush field_1": {
-          "examine_desc": "A winding path of soft grass and dirt leads away from the brook and into the distance, where the trees of Fruit Tree Grove can be seen in the distance.",
-          "label": "a winding path leading to Fruit Tree Grove",
+          "examine_desc": "The winding path is lined by tall trees and thick foliage, leading away from the peaceful babbling brook. The path is carpeted with soft grass, and the occasional berry bush can be seen sprouting up from the ground. The sun casts dappled shadows across the path, and a light breeze rustles the leaves of the nearby trees.",
+          "label": "a winding path leading to Berry Bush Field",
           "locked_edge": null,
           "target_id": "berry bush field_1"
         },
         "forest_3": {
-          "examine_desc": "A winding path begins just beyond the edge of the Babbling Brook, leading up a gentle incline and disappearing into the horizon. A few trees dot the landscape, providing some shade from the warm sun. The path is covered in a carpet of soft grass and is lined with wildflowers, giving off a pleasant scent.",
-          "label": "a winding path leading to the Plains",
+          "examine_desc": "A winding path leads away from the babbling brook and into the depths of the nearby forest. Dappled sunlight filters through the trees, providing a peaceful atmosphere. The path is lined with ferns and wildflowers, and there is a faint smell of earth and moss in the air.",
+          "label": "a winding path leading into the forest",
           "locked_edge": null,
           "target_id": "forest_3"
         },
         "fruit tree grove_0": {
-          "examine_desc": "The winding path is lined by tall trees and thick foliage, leading away from the peaceful babbling brook. The path is carpeted with soft grass, and the occasional berry bush can be seen sprouting up from the ground. The sun casts dappled shadows across the path, and a light breeze rustles the leaves of the nearby trees.",
-          "label": "a winding path leading to Berry Bush Field",
+          "examine_desc": "A winding path of soft grass and dirt leads away from the brook and into the distance, where the trees of Fruit Tree Grove can be seen in the distance.",
+          "label": "a winding path leading to Fruit Tree Grove",
           "locked_edge": null,
           "target_id": "fruit tree grove_0"
         },
         "plains_4": {
-          "examine_desc": "A winding path leads away from the babbling brook and into the depths of the nearby forest. Dappled sunlight filters through the trees, providing a peaceful atmosphere. The path is lined with ferns and wildflowers, and there is a faint smell of earth and moss in the air.",
-          "label": "a winding path leading into the forest",
+          "examine_desc": "A winding path begins just beyond the edge of the Babbling Brook, leading up a gentle incline and disappearing into the horizon. A few trees dot the landscape, providing some shade from the warm sun. The path is covered in a carpet of soft grass and is lined with wildflowers, giving off a pleasant scent.",
+          "label": "a winding path leading to the Plains",
           "locked_edge": null,
           "target_id": "plains_4"
         }
@@ -1219,8 +1219,8 @@
       "names": ["Barracks"],
       "neighbors": {
         "observation deck_21": {
-          "examine_desc": "A weathered wooden doorway with a large iron handle leads out of the barracks and into the open air of the Watchtower.",
-          "label": "an ancient doorway leading outwards",
+          "examine_desc": "A narrow staircase winds its way up the walls of the barracks, leading to the Observation Deck above. The stairs are well-worn, showing signs of frequent use.",
+          "label": "a winding staircase leading up",
           "locked_edge": null,
           "target_id": "observation deck_21"
         },
@@ -1231,8 +1231,8 @@
           "target_id": "storage room_23"
         },
         "watchtower_18": {
-          "examine_desc": "A narrow staircase winds its way up the walls of the barracks, leading to the Observation Deck above. The stairs are well-worn, showing signs of frequent use.",
-          "label": "a winding staircase leading up",
+          "examine_desc": "A weathered wooden doorway with a large iron handle leads out of the barracks and into the open air of the Watchtower.",
+          "label": "an ancient doorway leading outwards",
           "locked_edge": null,
           "target_id": "watchtower_18"
         }
@@ -1491,14 +1491,14 @@
       "names": ["Berry Bush Field"],
       "neighbors": {
         "babbling brook_2": {
-          "examine_desc": "A wide, winding path winds its way through the berry bushes, leading deeper into the lush forest. The path is overgrown with foliage, but well-trodden enough that it's easy to follow.",
-          "label": "a winding path leading into the forest",
+          "examine_desc": "A crystal clear babbling brook winds its way through the field, flanked by lush berry bushes and tall trees, providing a calming atmosphere and a source of fresh water.",
+          "label": "a babbling brook winding through the field",
           "locked_edge": null,
           "target_id": "babbling brook_2"
         },
         "forest_3": {
-          "examine_desc": "A crystal clear babbling brook winds its way through the field, flanked by lush berry bushes and tall trees, providing a calming atmosphere and a source of fresh water.",
-          "label": "a babbling brook winding through the field",
+          "examine_desc": "A wide, winding path winds its way through the berry bushes, leading deeper into the lush forest. The path is overgrown with foliage, but well-trodden enough that it's easy to follow.",
+          "label": "a winding path leading into the forest",
           "locked_edge": null,
           "target_id": "forest_3"
         },
@@ -2490,14 +2490,14 @@
       "names": ["Cave"],
       "neighbors": {
         "cliffs of doom_8": {
-          "examine_desc": "A narrow and winding path leads out of the Cave, snaking its way through the Rugged Jungle. The foliage is thick and lush, and there is a sense of awe and wonder in the air, as if something incredible awaits further along the path.",
-          "label": "a winding path leading out of the Cave",
+          "examine_desc": "A winding passageway stretches out before you, leading further into the depths of the Cave. The walls are damp with moisture and the air is stale, but a faint glimmer of light can be seen in the distance, beckoning you onward.",
+          "label": "a narrow passageway leading into the distance",
           "locked_edge": null,
           "target_id": "cliffs of doom_8"
         },
         "valley of giants_7": {
-          "examine_desc": "A winding passageway stretches out before you, leading further into the depths of the Cave. The walls are damp with moisture and the air is stale, but a faint glimmer of light can be seen in the distance, beckoning you onward.",
-          "label": "a narrow passageway leading into the distance",
+          "examine_desc": "A narrow and winding path leads out of the Cave, snaking its way through the Rugged Jungle. The foliage is thick and lush, and there is a sense of awe and wonder in the air, as if something incredible awaits further along the path.",
+          "label": "a winding path leading out of the Cave",
           "locked_edge": null,
           "target_id": "valley of giants_7"
         }
@@ -2684,14 +2684,14 @@
       "names": ["Chief Kedir's House"],
       "neighbors": {
         "market square_11": {
-          "examine_desc": "A winding path lined with lush foliage leads out of the courtyard, gradually descending towards the roaring Waterfall in the distance.",
-          "label": "a winding path leading to the Waterfall",
+          "examine_desc": "A narrow path winds through the gardens, leading away from Chief Kedir's House and towards the bustling Market Square in the distance. The path is lined with vibrant flowers, and is illuminated by the bright sunlight streaming through the trees.",
+          "label": "a winding path leading to Market Square",
           "locked_edge": null,
           "target_id": "market square_11"
         },
         "waterfall_13": {
-          "examine_desc": "A narrow path winds through the gardens, leading away from Chief Kedir's House and towards the bustling Market Square in the distance. The path is lined with vibrant flowers, and is illuminated by the bright sunlight streaming through the trees.",
-          "label": "a winding path leading to Market Square",
+          "examine_desc": "A winding path lined with lush foliage leads out of the courtyard, gradually descending towards the roaring Waterfall in the distance.",
+          "label": "a winding path leading to the Waterfall",
           "locked_edge": null,
           "target_id": "waterfall_13"
         }
@@ -2832,8 +2832,8 @@
       "names": ["Cliffs of Doom"],
       "neighbors": {
         "cave_6": {
-          "examine_desc": "A narrow and winding path leads off from the cliffs, leading down into the depths of the jungle. The pathway is treacherous, with sharp rocks and craggy terrain, but it is the only way to reach the mysterious Valley of Giants.",
-          "label": "a winding path leading to the Valley of Giants",
+          "examine_desc": "An old and winding path leads down from the Cliffs of Doom, cutting through the jagged rocks and treacherous terrain. It is dotted with strange symbols and runes, and the air is filled with a mysterious energy. The path leads into the darkness of the nearby Cave.",
+          "label": "an ancient path winding down the Cliffs of Doom",
           "locked_edge": null,
           "target_id": "cave_6"
         },
@@ -2844,8 +2844,8 @@
           "target_id": "river_9"
         },
         "valley of giants_7": {
-          "examine_desc": "An old and winding path leads down from the Cliffs of Doom, cutting through the jagged rocks and treacherous terrain. It is dotted with strange symbols and runes, and the air is filled with a mysterious energy. The path leads into the darkness of the nearby Cave.",
-          "label": "an ancient path winding down the Cliffs of Doom",
+          "examine_desc": "A narrow and winding path leads off from the cliffs, leading down into the depths of the jungle. The pathway is treacherous, with sharp rocks and craggy terrain, but it is the only way to reach the mysterious Valley of Giants.",
+          "label": "a winding path leading to the Valley of Giants",
           "locked_edge": null,
           "target_id": "valley of giants_7"
         }
@@ -4512,26 +4512,26 @@
       "names": ["Forest"],
       "neighbors": {
         "babbling brook_2": {
-          "examine_desc": "The winding path is flanked by tall trees, their leaves rustling in the wind. The path descends gradually until it reaches a small river, bubbling and gurgling as it winds through the forest.",
-          "label": "a winding path leading to the River",
+          "examine_desc": "A well-worn path winds through the trees, leading towards a distant babbling brook. The path is overgrown with shrubs and wildflowers, making it difficult to follow in some places. The sound of the brook can be heard in the distance, and the trees part to reveal a glimpse of sparkling water.",
+          "label": "a winding path leading to the Babbling Brook",
           "locked_edge": null,
           "target_id": "babbling brook_2"
         },
         "berry bush field_1": {
-          "examine_desc": "A narrow, winding path stretches through the dense foliage of the forest, leading towards an area filled with the sweet scent of ripe fruit.",
-          "label": "a winding path leading to the Fruit Tree Grove",
+          "examine_desc": "A winding path leads away from the Forest, snaking through the trees until it opens up into a clearing with a field of berry bushes.",
+          "label": "a winding path leading to Berry Bush Field",
           "locked_edge": null,
           "target_id": "berry bush field_1"
         },
         "fruit tree grove_0": {
-          "examine_desc": "A winding path leads away from the Forest, snaking through the trees until it opens up into a clearing with a field of berry bushes.",
-          "label": "a winding path leading to Berry Bush Field",
+          "examine_desc": "A narrow, winding path stretches through the dense foliage of the forest, leading towards an area filled with the sweet scent of ripe fruit.",
+          "label": "a winding path leading to the Fruit Tree Grove",
           "locked_edge": null,
           "target_id": "fruit tree grove_0"
         },
         "mountains_5": {
-          "examine_desc": "A winding path can be seen in the distance, leading through the trees and shrubs of the Forest and eventually opening up into the Valley of Giants.",
-          "label": "a winding path leading to the Valley of Giants",
+          "examine_desc": "The winding path is made of loose stones and soil, and rises up the side of the mountain, disappearing into the distance. The trees of the forest provide a canopy of shade, but the sun is still visible at the peak of the mountain.",
+          "label": "a winding path leading up the mountain",
           "locked_edge": null,
           "target_id": "mountains_5"
         },
@@ -4542,14 +4542,14 @@
           "target_id": "plains_4"
         },
         "river_9": {
-          "examine_desc": "A well-worn path winds through the trees, leading towards a distant babbling brook. The path is overgrown with shrubs and wildflowers, making it difficult to follow in some places. The sound of the brook can be heard in the distance, and the trees part to reveal a glimpse of sparkling water.",
-          "label": "a winding path leading to the Babbling Brook",
+          "examine_desc": "The winding path is flanked by tall trees, their leaves rustling in the wind. The path descends gradually until it reaches a small river, bubbling and gurgling as it winds through the forest.",
+          "label": "a winding path leading to the River",
           "locked_edge": null,
           "target_id": "river_9"
         },
         "valley of giants_7": {
-          "examine_desc": "The winding path is made of loose stones and soil, and rises up the side of the mountain, disappearing into the distance. The trees of the forest provide a canopy of shade, but the sun is still visible at the peak of the mountain.",
-          "label": "a winding path leading up the mountain",
+          "examine_desc": "A winding path can be seen in the distance, leading through the trees and shrubs of the Forest and eventually opening up into the Valley of Giants.",
+          "label": "a winding path leading to the Valley of Giants",
           "locked_edge": null,
           "target_id": "valley of giants_7"
         }
@@ -4631,8 +4631,8 @@
       "names": ["Fruit Tree Grove"],
       "neighbors": {
         "babbling brook_2": {
-          "examine_desc": "A narrow path winds its way through the trees and undergrowth, leading deeper into the nearby forest. The path is surrounded by tall trees and thick vegetation, creating a feeling of mystery and adventure.",
-          "label": "a narrow path winding into the forest",
+          "examine_desc": "A path winds its way through the lush greenery of the grove, leading to a peaceful babbling brook. The path is covered in soft grass and fragrant wildflowers, making it an inviting and serene journey.",
+          "label": "a winding path leading to Babbling Brook",
           "locked_edge": null,
           "target_id": "babbling brook_2"
         },
@@ -4643,8 +4643,8 @@
           "target_id": "berry bush field_1"
         },
         "forest_3": {
-          "examine_desc": "A path winds its way through the lush greenery of the grove, leading to a peaceful babbling brook. The path is covered in soft grass and fragrant wildflowers, making it an inviting and serene journey.",
-          "label": "a winding path leading to Babbling Brook",
+          "examine_desc": "A narrow path winds its way through the trees and undergrowth, leading deeper into the nearby forest. The path is surrounded by tall trees and thick vegetation, creating a feeling of mystery and adventure.",
+          "label": "a narrow path winding into the forest",
           "locked_edge": null,
           "target_id": "forest_3"
         }
@@ -9525,14 +9525,14 @@
       "names": ["Lower Falls"],
       "neighbors": {
         "cave behind the falls_27": {
-          "examine_desc": "The path winds up the hill, leading to the higher elevation of Upper Falls. The grass is lush and green, and wildflowers can be seen in the surrounding bushes.",
-          "label": "a winding path leading uphill",
+          "examine_desc": "A small, winding path can be seen snaking its way up the rocky cliff face, leading towards a large cave entrance in the distance.",
+          "label": "a narrow path leading towards the Cave Behind the Falls",
           "locked_edge": null,
           "target_id": "cave behind the falls_27"
         },
         "upper falls_19": {
-          "examine_desc": "A small, winding path can be seen snaking its way up the rocky cliff face, leading towards a large cave entrance in the distance.",
-          "label": "a narrow path leading towards the Cave Behind the Falls",
+          "examine_desc": "The path winds up the hill, leading to the higher elevation of Upper Falls. The grass is lush and green, and wildflowers can be seen in the surrounding bushes.",
+          "label": "a winding path leading uphill",
           "locked_edge": null,
           "target_id": "upper falls_19"
         }
@@ -9730,8 +9730,8 @@
       "names": ["Main Gate"],
       "neighbors": {
         "armory_16": {
-          "examine_desc": "Beyond the Main Gate lies a winding path that winds its way down into the valley. The path is lined with trees, and you can see the sun glinting off the river far below. The air is crisp and fresh, and the distant sound of birdsong can be heard in the breeze.",
-          "label": "a winding path leading into the valley",
+          "examine_desc": "A heavy iron gate stands between the two towers of the Main Gate, its solid metal frame barring the way to the Armory beyond. The gate is guarded by two Kha warriors, their spears and shields ready to protect the stronghold from any outside threats.",
+          "label": "a Heavy Iron Gate Leading to the Armory",
           "locked_edge": null,
           "target_id": "armory_16"
         },
@@ -9742,8 +9742,8 @@
           "target_id": "training grounds_17"
         },
         "valley_10": {
-          "examine_desc": "A heavy iron gate stands between the two towers of the Main Gate, its solid metal frame barring the way to the Armory beyond. The gate is guarded by two Kha warriors, their spears and shields ready to protect the stronghold from any outside threats.",
-          "label": "a Heavy Iron Gate Leading to the Armory",
+          "examine_desc": "Beyond the Main Gate lies a winding path that winds its way down into the valley. The path is lined with trees, and you can see the sun glinting off the river far below. The air is crisp and fresh, and the distant sound of birdsong can be heard in the breeze.",
+          "label": "a winding path leading into the valley",
           "locked_edge": null,
           "target_id": "valley_10"
         }
@@ -9784,14 +9784,14 @@
       "names": ["Main Hall"],
       "neighbors": {
         "prayer chamber_26": {
-          "examine_desc": "A grand archway towers before you, leading to the Temple. It is framed by two carved pillars and a stone frieze of ancient symbols, lit by the fire at the entrance of the Main Hall. The path is lined with tall trees and winding shrubs, the light of the sun filtering through their leaves.",
-          "label": "a grand archway leading to the Temple",
+          "examine_desc": "An ancient, stone doorway stands between the two columns, leading into a dark hallway. A faint light can be seen at the end of the hallway, indicating the presence of the Prayer Chamber.",
+          "label": "an old, stone doorway leading to the Prayer Chamber",
           "locked_edge": null,
           "target_id": "prayer chamber_26"
         },
         "temple_14": {
-          "examine_desc": "An ancient, stone doorway stands between the two columns, leading into a dark hallway. A faint light can be seen at the end of the hallway, indicating the presence of the Prayer Chamber.",
-          "label": "an old, stone doorway leading to the Prayer Chamber",
+          "examine_desc": "A grand archway towers before you, leading to the Temple. It is framed by two carved pillars and a stone frieze of ancient symbols, lit by the fire at the entrance of the Main Hall. The path is lined with tall trees and winding shrubs, the light of the sun filtering through their leaves.",
+          "label": "a grand archway leading to the Temple",
           "locked_edge": null,
           "target_id": "temple_14"
         }
@@ -10009,14 +10009,14 @@
           "target_id": "chief kedir's house_12"
         },
         "temple_14": {
-          "examine_desc": "A winding path made of cobblestones leads away from the square, eventually leading to a beautiful waterfall cascading down from the nearby hills.",
-          "label": "a path leading to the Waterfall (outside)",
+          "examine_desc": "A wide, well-trodden path leads out of the Market Square, heading towards the Temple in the distance. Tall stone walls line the path, a testament to the Temple's ancient history. The path's worn cobblestones are a reminder of the many pilgrims who have traveled this way over the years.",
+          "label": "a worn path leading to the Temple",
           "locked_edge": null,
           "target_id": "temple_14"
         },
         "waterfall_13": {
-          "examine_desc": "A wide, well-trodden path leads out of the Market Square, heading towards the Temple in the distance. Tall stone walls line the path, a testament to the Temple's ancient history. The path's worn cobblestones are a reminder of the many pilgrims who have traveled this way over the years.",
-          "label": "a worn path leading to the Temple",
+          "examine_desc": "A winding path made of cobblestones leads away from the square, eventually leading to a beautiful waterfall cascading down from the nearby hills.",
+          "label": "a path leading to the Waterfall]",
           "locked_edge": null,
           "target_id": "waterfall_13"
         }
@@ -10151,26 +10151,26 @@
       "names": ["Mountains"],
       "neighbors": {
         "forest_3": {
-          "examine_desc": "The path winds up the rocky mountainside, through dense foliage and occasional jagged rocks. In the distance stands the watchtower at the summit, its silhouette visible against the sky.",
-          "label": "a winding path leading up the craggy peak",
+          "examine_desc": "A winding path snakes down the mountain, cutting through the dense foliage before leading into the depths of the Forest.",
+          "label": "a winding path leading into the Forest",
           "locked_edge": null,
           "target_id": "forest_3"
         },
         "plains_4": {
-          "examine_desc": "The winding path snakes down the mountain, revealing a lush valley below. The path is covered in jagged rocks and thick foliage, making it treacherous and difficult to traverse.",
-          "label": "a winding path leading to the Valley",
+          "examine_desc": "The winding trail snakes through the mountains, providing an arduous but navigable path to the Plains beyond. With every turn, the view of the jungle gets more and more distant, until eventually the Plains can be seen in the distance.",
+          "label": "a winding trail leading to the Plains",
           "locked_edge": null,
           "target_id": "plains_4"
         },
         "valley_10": {
-          "examine_desc": "The winding trail snakes through the mountains, providing an arduous but navigable path to the Plains beyond. With every turn, the view of the jungle gets more and more distant, until eventually the Plains can be seen in the distance.",
-          "label": "a winding trail leading to the Plains",
+          "examine_desc": "The winding path snakes down the mountain, revealing a lush valley below. The path is covered in jagged rocks and thick foliage, making it treacherous and difficult to traverse.",
+          "label": "a winding path leading to the Valley",
           "locked_edge": null,
           "target_id": "valley_10"
         },
         "watchtower_18": {
-          "examine_desc": "A winding path snakes down the mountain, cutting through the dense foliage before leading into the depths of the Forest.",
-          "label": "a winding path leading into the Forest",
+          "examine_desc": "The path winds up the rocky mountainside, through dense foliage and occasional jagged rocks. In the distance stands the watchtower at the summit, its silhouette visible against the sky.",
+          "label": "a winding path leading up the craggy peak",
           "locked_edge": null,
           "target_id": "watchtower_18"
         }
@@ -11126,14 +11126,14 @@
       "names": ["Observation Deck"],
       "neighbors": {
         "barracks_22": {
-          "examine_desc": "A large stairwell descends from the Observation Deck, winding through the shadows and eventually leading to the Storage Room below.",
-          "label": "a dark stairwell leading downwards",
+          "examine_desc": "The staircase winds its way down through the walls of the watchtower, leading to the barracks below.",
+          "label": "a staircase down",
           "locked_edge": null,
           "target_id": "barracks_22"
         },
         "storage room_23": {
-          "examine_desc": "The staircase winds its way down through the walls of the watchtower, leading to the barracks below.",
-          "label": "a staircase leading downwards",
+          "examine_desc": "A large stairwell descends from the Observation Deck, winding through the shadows and eventually leading to the Storage Room below.",
+          "label": "a musty stairwell leading downwards",
           "locked_edge": null,
           "target_id": "storage room_23"
         }
@@ -11414,8 +11414,8 @@
       "names": ["Plains"],
       "neighbors": {
         "babbling brook_2": {
-          "examine_desc": "On the horizon, a winding path leads away from the Plains, snaking its way through the luscious green grass and eventually disappearing into the distance, towards a shimmering river.",
-          "label": "a winding path leading to the River",
+          "examine_desc": "A narrow dirt path winds its way through the Plains, leading towards the distant sound of a bubbling brook. The path is lined with tall grass and wildflowers, and the sun glistens off the surface of the water, beckoning one to follow.",
+          "label": "a narrow path winding towards the Babbling Brook",
           "locked_edge": null,
           "target_id": "babbling brook_2"
         },
@@ -11426,20 +11426,20 @@
           "target_id": "forest_3"
         },
         "mountains_5": {
-          "examine_desc": "A winding path of packed dirt cuts through the grassy plains, leading to a large temple on the horizon. It is surrounded by ancient stone walls and a few trees. The path is well-worn, suggesting frequent visitors.",
-          "label": "a winding path leading to the Temple (outside)",
+          "examine_desc": "A winding dirt path cuts through the grassy plains, snaking its way up towards a distant mountain range. In the distance, the sun glints off of the rocky outcrops, beckoning travelers to explore the unknown.",
+          "label": "a winding path leading into the distance",
           "locked_edge": null,
           "target_id": "mountains_5"
         },
         "river_9": {
-          "examine_desc": "A narrow dirt path winds its way through the Plains, leading towards the distant sound of a bubbling brook. The path is lined with tall grass and wildflowers, and the sun glistens off the surface of the water, beckoning one to follow.",
-          "label": "a narrow path winding towards the Babbling Brook",
+          "examine_desc": "On the horizon, a winding path leads away from the Plains, snaking its way through the luscious green grass and eventually disappearing into the distance, towards a shimmering river.",
+          "label": "a winding path leading to the River",
           "locked_edge": null,
           "target_id": "river_9"
         },
         "temple_14": {
-          "examine_desc": "A winding dirt path cuts through the grassy plains, snaking its way up towards a distant mountain range. In the distance, the sun glints off of the rocky outcrops, beckoning travelers to explore the unknown.",
-          "label": "a winding path leading into the distance",
+          "examine_desc": "A winding path of packed dirt cuts through the grassy plains, leading to a large temple on the horizon. It is surrounded by ancient stone walls and a few trees. The path is well-worn, suggesting frequent visitors.",
+          "label": "a winding path leading to the Temple (outside)",
           "locked_edge": null,
           "target_id": "temple_14"
         }
@@ -11527,14 +11527,14 @@
       "names": ["Prayer Chamber"],
       "neighbors": {
         "altar room_25": {
-          "examine_desc": "A small wooden doorway leads out into the Main Hall, illuminated by the soft light of the candle burning at the center of the Prayer Chamber. The doorway is flanked by two symbols of the Ara's faith, and the smell of incense still lingers in the air.",
-          "label": "a small doorway leading outwards",
+          "examine_desc": "A wooden door, carved with intricate symbols, stands in the wall between the Prayer Chamber and the Altar Room. The door looks old and worn, but still sturdy and inviting.",
+          "label": "a wooden door leading to the Altar Room",
           "locked_edge": null,
           "target_id": "altar room_25"
         },
         "main hall_20": {
-          "examine_desc": "A wooden door, carved with intricate symbols, stands in the wall between the Prayer Chamber and the Altar Room. The door looks old and worn, but still sturdy and inviting.",
-          "label": "a wooden door leading to the Altar Room",
+          "examine_desc": "A small wooden doorway leads out into the Main Hall, illuminated by the soft light of the candle burning at the center of the Prayer Chamber. The doorway is flanked by two symbols of the Ara's faith, and the smell of incense still lingers in the air.",
+          "label": "a small doorway leading outwards",
           "locked_edge": null,
           "target_id": "main hall_20"
         }
@@ -12016,26 +12016,26 @@
       "names": ["River"],
       "neighbors": {
         "cliffs of doom_8": {
-          "examine_desc": "A winding path leads out from the edge of the River, winding its way through the thick jungle. The path is well-trodden and appears to lead towards the Plains in the distance.",
-          "label": "a winding path leading to the Plains",
+          "examine_desc": "A narrow path winds its way through the dense jungle, leading towards the distant Cliffs of Doom. The path is overgrown and dotted with large boulders, making it difficult to traverse at times. The sound of the rushing river fades away as you make your way further into the jungle.",
+          "label": "a winding path leading towards the Cliffs of Doom",
           "locked_edge": null,
           "target_id": "cliffs of doom_8"
         },
         "forest_3": {
-          "examine_desc": "The path winds its way through the jungle, leading into the distant Valley. Trees and foliage line the path, and the sound of the river can still be heard in the background.",
-          "label": "a winding path leading into the Valley",
+          "examine_desc": "A narrow path winds its way along the edge of the river, leading into the depths of the nearby forest. The path is overgrown with lush vegetation, and the sound of wildlife can be heard in the distance.",
+          "label": "a winding path leading into the forest",
           "locked_edge": null,
           "target_id": "forest_3"
         },
         "plains_4": {
-          "examine_desc": "A narrow path winds its way through the dense jungle, leading towards the distant Cliffs of Doom. The path is overgrown and dotted with large boulders, making it difficult to traverse at times. The sound of the rushing river fades away as you make your way further into the jungle.",
-          "label": "a winding path leading towards the Cliffs of Doom",
+          "examine_desc": "A winding path leads out from the edge of the River, winding its way through the thick jungle. The path is well-trodden and appears to lead towards the Plains in the distance.",
+          "label": "a winding path leading to the Plains",
           "locked_edge": null,
           "target_id": "plains_4"
         },
         "valley_10": {
-          "examine_desc": "A narrow path winds its way along the edge of the river, leading into the depths of the nearby forest. The path is overgrown with lush vegetation, and the sound of wildlife can be heard in the distance.",
-          "label": "a winding path leading into the forest",
+          "examine_desc": "The path winds its way through the jungle, leading into the distant Valley. Trees and foliage line the path, and the sound of the river can still be heard in the background.",
+          "label": "a winding path leading into the Valley",
           "locked_edge": null,
           "target_id": "valley_10"
         }
@@ -15020,14 +15020,14 @@
       "names": ["Storage Room"],
       "neighbors": {
         "barracks_22": {
-          "examine_desc": "Leading away from the storage room is a narrow staircase, winding up towards the observation deck. The walls are made of stone, and the steps are well-worn from use. The staircase is illuminated by an eerie green light, emanating from the observation deck above.",
-          "label": "a narrow staircase leading upwards",
+          "examine_desc": "An ancient stone doorway stands at the far end of the room, leading further into the watchtower and the Barracks beyond. It appears to be the only way out of the Storage Room.",
+          "label": "an old doorway leading to the Barracks",
           "locked_edge": null,
           "target_id": "barracks_22"
         },
         "observation deck_21": {
-          "examine_desc": "An ancient stone doorway stands at the far end of the room, leading further into the watchtower and the Barracks beyond. It appears to be the only way out of the Storage Room.",
-          "label": "an old doorway leading to the Barracks",
+          "examine_desc": "Leading away from the storage room is a narrow staircase, winding up towards the observation deck. The walls are made of stone, and the steps are well-worn from use. The staircase is illuminated by an eerie green light, emanating from the observation deck above.",
+          "label": "a narrow staircase leading upwards",
           "locked_edge": null,
           "target_id": "observation deck_21"
         }
@@ -15900,8 +15900,8 @@
       "names": ["Temple"],
       "neighbors": {
         "main hall_20": {
-          "examine_desc": "Two large stone arches stand at the entrance to the temple, leading away into the plains beyond. Beyond the arches lies a vast expanse of grassy plains, stretching for as far as the eye can see.",
-          "label": "ancient Arches leading to Plains",
+          "examine_desc": "A wide stone archway stands at the edge of the temple courtyard, its entrance flanked by two tall columns. Beyond the archway lies a path leading to the Main Hall, lined with tall trees and lush vegetation.",
+          "label": "an arched stone doorway leading to the Main Hall",
           "locked_edge": null,
           "target_id": "main hall_20"
         },
@@ -15912,8 +15912,8 @@
           "target_id": "market square_11"
         },
         "plains_4": {
-          "examine_desc": "A wide stone archway stands at the edge of the temple courtyard, its entrance flanked by two tall columns. Beyond the archway lies a path leading to the Main Hall, lined with tall trees and lush vegetation.",
-          "label": "an arched stone doorway leading to the Main Hall",
+          "examine_desc": "Two large stone arches stand at the entrance to the temple, leading away into the plains beyond. Beyond the arches lies a vast expanse of grassy plains, stretching for as far as the eye can see.",
+          "label": "ancient Arches leading to Plains",
           "locked_edge": null,
           "target_id": "plains_4"
         }
@@ -16354,14 +16354,14 @@
       "names": ["Training Grounds"],
       "neighbors": {
         "armory_16": {
-          "examine_desc": "A wide, well-worn path leads from the Training Grounds, winding around various obstacles and training equipment, before eventually opening up to the Main Gate of the Kha Stronghold.",
-          "label": "a broad path leading to the Main Gate",
+          "examine_desc": "A small, winding path leads to a large, iron-clad door, which is the entrance to the Armory. The path is lined with torches, illuminating the way in the darkness.",
+          "label": "a narrow path leading to the Armory",
           "locked_edge": null,
           "target_id": "armory_16"
         },
         "main gate_15": {
-          "examine_desc": "A small, winding path leads to a large, iron-clad door, which is the entrance to the Armory. The path is lined with torches, illuminating the way in the darkness.",
-          "label": "a narrow path leading to the Armory",
+          "examine_desc": "A wide, well-worn path leads from the Training Grounds, winding around various obstacles and training equipment, before eventually opening up to the Main Gate of the Kha Stronghold.",
+          "label": "a broad path leading to the Main Gate",
           "locked_edge": null,
           "target_id": "main gate_15"
         },
@@ -17157,14 +17157,14 @@
       "names": ["Upper Falls"],
       "neighbors": {
         "lower falls_24": {
-          "examine_desc": "A well-trodden path snakes away from the Upper Falls, winding its way down the slope to the foot of the waterfall. The ground is damp and slippery, but the path is sturdy, allowing for a safe passage to the lower reaches of the falls.",
-          "label": "a winding path leading down to the waterfall",
+          "examine_desc": "A winding path leads down from the top of the waterfall, skirting alongside the edge of the pool and snaking its way through the dense foliage. Ancient trees provide shade and protection from the elements, while the sound of the rushing water grows louder as you descend.",
+          "label": "a path leading down to Lower Falls",
           "locked_edge": null,
           "target_id": "lower falls_24"
         },
         "waterfall_13": {
-          "examine_desc": "A winding path leads down from the top of the waterfall, skirting alongside the edge of the pool and snaking its way through the dense foliage. Ancient trees provide shade and protection from the elements, while the sound of the rushing water grows louder as you descend.",
-          "label": "a path leading down to Lower Falls",
+          "examine_desc": "A well-trodden path snakes away from the Upper Falls, winding its way down the slope to the foot of the waterfall. The ground is damp and slippery, but the path is sturdy, allowing for a safe passage to the lower reaches of the falls.",
+          "label": "a winding path leading down to the waterfall",
           "locked_edge": null,
           "target_id": "waterfall_13"
         }
@@ -17217,26 +17217,26 @@
       "names": ["Valley of Giants"],
       "neighbors": {
         "cave_6": {
-          "examine_desc": "A winding path leads away from the Valley of Giants, snaking its way through the thick undergrowth and tall trees. The path is narrow and uneven, with patches of overgrown grass and wildflowers. In the distance, the trees of the forest can be seen, beckoning you onwards.",
-          "label": "a winding path leading into the forest",
+          "examine_desc": "A narrow, winding path leads away from the Valley of Giants and into the dark depths of the nearby cave. It is mostly hidden beneath the undergrowth, but the faint sound of dripping water can be heard echoing from within.",
+          "label": "a winding path leading into the darkness",
           "locked_edge": null,
           "target_id": "cave_6"
         },
         "cliffs of doom_8": {
-          "examine_desc": "A winding path leads away from the Valley of Giants, passing through thick undergrowth and winding around trees and hills. The air is still and humid, the sunlight blocked by a canopy of leaves. The path appears well-trodden and is marked with signs of the Ara and Kha tribes, leading towards the distant Valley.",
-          "label": "a winding path leading to Valley",
+          "examine_desc": "A narrow path leads away from the Valley of Giants, winding through the tall trees and undergrowth. In the distance, you can make out the looming shape of the Cliffs of Doom.",
+          "label": "a winding path leading to the Cliffs of Doom",
           "locked_edge": null,
           "target_id": "cliffs of doom_8"
         },
         "forest_3": {
-          "examine_desc": "A narrow, winding path leads away from the Valley of Giants and into the dark depths of the nearby cave. It is mostly hidden beneath the undergrowth, but the faint sound of dripping water can be heard echoing from within.",
-          "label": "a winding path leading into the darkness",
+          "examine_desc": "A winding path leads away from the Valley of Giants, snaking its way through the thick undergrowth and tall trees. The path is narrow and uneven, with patches of overgrown grass and wildflowers. In the distance, the trees of the forest can be seen, beckoning you onwards.",
+          "label": "a winding path leading into the forest",
           "locked_edge": null,
           "target_id": "forest_3"
         },
         "valley_10": {
-          "examine_desc": "A narrow path leads away from the Valley of Giants, winding through the tall trees and undergrowth. In the distance, you can make out the looming shape of the Cliffs of Doom.",
-          "label": "a winding path leading to the Cliffs of Doom",
+          "examine_desc": "A winding path leads away from the Valley of Giants, passing through thick undergrowth and winding around trees and hills. The air is still and humid, the sunlight blocked by a canopy of leaves. The path appears well-trodden and is marked with signs of the Ara and Kha tribes, leading towards the distant Valley.",
+          "label": "a winding path leading to Valley",
           "locked_edge": null,
           "target_id": "valley_10"
         }
@@ -17295,26 +17295,26 @@
       "names": ["Valley"],
       "neighbors": {
         "main gate_15": {
-          "examine_desc": "A narrow dirt path winds through the valley, leading towards a distant mountain range. The path is lined with boulders and wildflowers, and the air is filled with the sound of chirping birds.",
-          "label": "a narrow path winding through the valley",
+          "examine_desc": "A narrow dirt path winds its way up the hill, leading towards the Main Gate of the Kha Stronghold. The path is flanked by thick foliage, and it is easy to make out the faint sound of the waterfall coming from the Valley.",
+          "label": "a winding path leading to Main Gate",
           "locked_edge": null,
           "target_id": "main gate_15"
         },
         "mountains_5": {
-          "examine_desc": "The path winds its way out of the Valley, leading down a gentle slope and through a tunnel of trees. As you make your way along the path, you can hear the distant roar of water, growing louder as you approach.",
-          "label": "a winding path leading to the River",
+          "examine_desc": "A winding path stretches out from the Valley, leading up into the Mountains in the distance. The path is lined with tall trees and lush foliage, and the smell of the fresh mountain air is in the air.",
+          "label": "a winding path leading to the Mountains",
           "locked_edge": null,
           "target_id": "mountains_5"
         },
         "river_9": {
-          "examine_desc": "A winding path stretches out from the Valley, leading up into the Mountains in the distance. The path is lined with tall trees and lush foliage, and the smell of the fresh mountain air is in the air.",
-          "label": "a winding path leading to the Mountains",
+          "examine_desc": "The path winds its way out of the Valley, leading down a gentle slope and through a tunnel of trees. As you make your way along the path, you can hear the distant roar of water, growing louder as you approach.",
+          "label": "a winding path leading to the River",
           "locked_edge": null,
           "target_id": "river_9"
         },
         "valley of giants_7": {
-          "examine_desc": "A narrow dirt path winds its way up the hill, leading towards the Main Gate of the Kha Stronghold. The path is flanked by thick foliage, and it is easy to make out the faint sound of the waterfall coming from the Valley.",
-          "label": "a winding path leading to Main Gate",
+          "examine_desc": "A narrow dirt path winds through the valley, leading towards a distant mountain range. The path is lined with boulders and wildflowers, and the air is filled with the sound of chirping birds.",
+          "label": "a narrow path winding through the valley",
           "locked_edge": null,
           "target_id": "valley of giants_7"
         }
@@ -17624,8 +17624,8 @@
       "names": ["Watchtower"],
       "neighbors": {
         "barracks_22": {
-          "examine_desc": "An imposing stone staircase leads away from the watchtower, winding down the grassy hillside and leading towards the Training Grounds below.",
-          "label": "an imposing stone staircase",
+          "examine_desc": "A wide stone staircase winds its way down to the barracks below, lined with defensive spikes and illuminated by a few torches burning brightly in the night air.",
+          "label": "a stone staircase leading downwards",
           "locked_edge": null,
           "target_id": "barracks_22"
         },
@@ -17636,8 +17636,8 @@
           "target_id": "mountains_5"
         },
         "training grounds_17": {
-          "examine_desc": "A wide stone staircase winds its way down to the barracks below, lined with defensive spikes and illuminated by a few torches burning brightly in the night air.",
-          "label": "a stone staircase leading downwards",
+          "examine_desc": "An imposing stone staircase leads away from the watchtower, winding down the grassy hillside and leading towards the Training Grounds below.",
+          "label": "an imposing stone staircase",
           "locked_edge": null,
           "target_id": "training grounds_17"
         }
@@ -17740,8 +17740,8 @@
       "names": ["Waterfall"],
       "neighbors": {
         "chief kedir's house_12": {
-          "examine_desc": "A narrow, winding path leads up the cliffside, towards the Upper Falls. It is lined with tall trees, and the sound of the waterfall below fades away as you climb higher.",
-          "label": "a path leading up to the Upper Falls",
+          "examine_desc": "A worn dirt path winds its way up the hill, leading towards a small hut nestled amongst the trees. A faint wisp of smoke can be seen rising from the chimney of the hut, indicating that someone is home.",
+          "label": "a dirt path leading to Chief Kedir's House",
           "locked_edge": null,
           "target_id": "chief kedir's house_12"
         },
@@ -17752,8 +17752,8 @@
           "target_id": "market square_11"
         },
         "upper falls_19": {
-          "examine_desc": "A worn dirt path winds its way up the hill, leading towards a small hut nestled amongst the trees. A faint wisp of smoke can be seen rising from the chimney of the hut, indicating that someone is home.",
-          "label": "a dirt path leading to Chief Kedir's House",
+          "examine_desc": "A narrow, winding path leads up the cliffside, towards the Upper Falls. It is lined with tall trees, and the sound of the waterfall below fades away as you climb higher.",
+          "label": "a path leading up to the Upper Falls",
           "locked_edge": null,
           "target_id": "upper falls_19"
         }

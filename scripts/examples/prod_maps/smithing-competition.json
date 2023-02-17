@@ -10502,14 +10502,14 @@
       "names": ["The Ancient Forests"],
       "neighbors": {
         "the deepest woods_9": {
-          "examine_desc": "A narrow, winding path lined with tall trees and wildflowers leads into the depths of the forest, beckoning exploration.",
-          "label": "the Ancient Forests' Trail",
+          "examine_desc": "A path, lined with moss and winding roots, leads away from the Ancient Forests and into the depths of the woods. The trees become thicker and taller as you follow the path, and the air grows more still. You can hear the occasional birdsong or rustle of leaves, but the atmosphere is still and quiet.",
+          "label": "a winding path leading into the depths of the forest",
           "locked_edge": null,
           "target_id": "the deepest woods_9"
         },
         "the forest_1": {
-          "examine_desc": "A path, lined with moss and winding roots, leads away from the Ancient Forests and into the depths of the woods. The trees become thicker and taller as you follow the path, and the air grows more still. You can hear the occasional birdsong or rustle of leaves, but the atmosphere is still and quiet.",
-          "label": "a winding path leading into the depths of the forest",
+          "examine_desc": "A narrow, winding path lined with tall trees and wildflowers leads into the depths of the forest, beckoning exploration.",
+          "label": "the Ancient Forests' Trail",
           "locked_edge": null,
           "target_id": "the forest_1"
         },
@@ -10598,14 +10598,14 @@
       "names": ["The Armory"],
       "neighbors": {
         "the forge_23": {
-          "examine_desc": "A winding corridor carved into the stone of the Armory leads away from the weaponry and armor, fading into darkness until it reaches the Judging Table.",
-          "label": "a narrow corridor leading to the Judging Table",
+          "examine_desc": "The Armory is connected to The Forge (outside) by a sturdy wooden door with a large iron handle. The door is propped open, the sunlight streaming in through the entrance. A path of cobblestones stretches out in front of the door, leading off into the distance.",
+          "label": "a sturdy wooden door leading outside",
           "locked_edge": null,
           "target_id": "the forge_23"
         },
         "the judging table_21": {
-          "examine_desc": "The Armory is connected to The Forge (outside) by a sturdy wooden door with a large iron handle. The door is propped open, the sunlight streaming in through the entrance. A path of cobblestones stretches out in front of the door, leading off into the distance.",
-          "label": "a sturdy wooden door leading outside",
+          "examine_desc": "A winding corridor carved into the stone of the Armory leads away from the weaponry and armor, fading into darkness until it reaches the Judging Table.",
+          "label": "a narrow corridor leading to the Judging Table",
           "locked_edge": null,
           "target_id": "the judging table_21"
         }
@@ -10673,26 +10673,26 @@
       "names": ["The Blacksmiths' Workshop"],
       "neighbors": {
         "the farmer's market_14": {
-          "examine_desc": "An old dirt path winds its way out of the workshop and into the distance, leading directly to The Inn. The path is lined with tall grass and wildflowers, and the sun casts its warm light on the path ahead.",
-          "label": "an old dirt path leading to The Inn",
+          "examine_desc": "A narrow dirt path leads away from the Blacksmiths' Workshop, winding its way through the trees and fields before finally arriving at the bustling Farmer's Market.",
+          "label": "a dirt path leading to the Farmer's Market",
           "locked_edge": null,
           "target_id": "the farmer's market_14"
         },
         "the inn_16": {
-          "examine_desc": "A narrow dirt path leads away from the Blacksmiths' Workshop, winding its way through the trees and fields before finally arriving at the bustling Farmer's Market.",
-          "label": "a dirt path leading to the Farmer's Market",
+          "examine_desc": "An old dirt path winds its way out of the workshop and into the distance, leading directly to The Inn. The path is lined with tall grass and wildflowers, and the sun casts its warm light on the path ahead.",
+          "label": "an old dirt path leading to The Inn",
           "locked_edge": null,
           "target_id": "the inn_16"
         },
         "the main square_17": {
-          "examine_desc": "A worn cobblestone path leads away from the Blacksmiths' Workshop, winding through the streets of the town and eventually leading up to The Town Hall.",
-          "label": "a cobblestone path leading to The Town Hall",
+          "examine_desc": "A wide stone archway leads out of the workshop, with a path winding away from the building and into the bustling streets of the Main Square.",
+          "label": "a stone archway leading outward",
           "locked_edge": null,
           "target_id": "the main square_17"
         },
         "the town hall_15": {
-          "examine_desc": "A wide stone archway leads out of the workshop, with a path winding away from the building and into the bustling streets of the Main Square.",
-          "label": "a stone archway leading outward",
+          "examine_desc": "A worn cobblestone path leads away from the Blacksmiths' Workshop, winding through the streets of the town and eventually leading up to The Town Hall.",
+          "label": "a cobblestone path leading to The Town Hall",
           "locked_edge": null,
           "target_id": "the town hall_15"
         }
@@ -10736,14 +10736,14 @@
           "target_id": "the crashed shipwreck_6"
         },
         "the rocky coastline_2": {
-          "examine_desc": "Through the depths of the coral, an old tunnel can be seen leading away from the reef. It looks like a forgotten passageway, with stalactites and stalagmites lining the walls. The darkness ahead beckons with the promise of mystery and adventure.",
-          "label": "an old tunnel leading to The Sunken Cave",
+          "examine_desc": "A winding path leads away from the reef, dotted with small rocks and shells leading up to the rocky coastline beyond.",
+          "label": "pathway to Rocky Coastline",
           "locked_edge": null,
           "target_id": "the rocky coastline_2"
         },
         "the sunken cave_8": {
-          "examine_desc": "A winding path leads away from the reef, dotted with small rocks and shells leading up to the rocky coastline beyond.",
-          "label": "pathway to Rocky Coastline",
+          "examine_desc": "Through the depths of the coral, an old tunnel can be seen leading away from the reef. It looks like a forgotten passageway, with stalactites and stalagmites lining the walls. The darkness ahead beckons with the promise of mystery and adventure.",
+          "label": "an old tunnel leading to The Sunken Cave",
           "locked_edge": null,
           "target_id": "the sunken cave_8"
         }
@@ -10796,14 +10796,14 @@
       "names": ["The Crashed Shipwreck"],
       "neighbors": {
         "the coral reef_7": {
-          "examine_desc": "Through a gap in the rocks, a narrow trail leads further inland, winding away from the shipwreck and towards the dark depths of a nearby cave.",
-          "label": "a narrow trail leading through the rocks",
+          "examine_desc": "A narrow path of blue stones leads out from the broken hull of the shipwreck, winding through the jagged rocks and leading out to the open sea. The sound of waves and the smell of saltwater fill the air, and as you look out, you can see the distant shimmer of the Coral Reef.",
+          "label": "a bright blue path leading out to sea",
           "locked_edge": null,
           "target_id": "the coral reef_7"
         },
         "the sunken cave_8": {
-          "examine_desc": "A narrow path of blue stones leads out from the broken hull of the shipwreck, winding through the jagged rocks and leading out to the open sea. The sound of waves and the smell of saltwater fill the air, and as you look out, you can see the distant shimmer of the Coral Reef.",
-          "label": "a bright blue path leading out to sea",
+          "examine_desc": "Through a gap in the rocks, a narrow trail leads further inland, winding away from the shipwreck and towards the dark depths of a nearby cave.",
+          "label": "a narrow trail leading through the rocks",
           "locked_edge": null,
           "target_id": "the sunken cave_8"
         }
@@ -10850,14 +10850,14 @@
       "names": ["The Deepest Woods"],
       "neighbors": {
         "the ancient forests_3": {
-          "examine_desc": "A narrow path winds its way through the dense foliage, leading away into the depths of the woods. It is covered in moss, leaves, and patches of dirt, and the trees seem to grow ever closer as one follows it.",
-          "label": "a narrow path winding through the trees",
+          "examine_desc": "The path winds through the ancient trees, the thick foliage providing a canopy that blocks out the sky. As you follow it, you can make out the shape of the Ancient Forests in the distance. The path is overgrown with bushes and ferns, but it is still easy to follow.",
+          "label": "a path leading through the trees towards the Ancient Forests",
           "locked_edge": null,
           "target_id": "the ancient forests_3"
         },
         "the sacred grove_19": {
-          "examine_desc": "The path winds through the ancient trees, the thick foliage providing a canopy that blocks out the sky. As you follow it, you can make out the shape of the Ancient Forests in the distance. The path is overgrown with bushes and ferns, but it is still easy to follow.",
-          "label": "a path leading through the trees towards the Ancient Forests",
+          "examine_desc": "A narrow path winds its way through the dense foliage, leading away into the depths of the woods. It is covered in moss, leaves, and patches of dirt, and the trees seem to grow ever closer as one follows it.",
+          "label": "a narrow path winding through the trees",
           "locked_edge": null,
           "target_id": "the sacred grove_19"
         }
@@ -10895,14 +10895,14 @@
       "names": ["The Fallen Tree"],
       "neighbors": {
         "the sacred grove_19": {
-          "examine_desc": "A winding path of vibrant foliage and enchanting plants leads to a mysterious cave hidden deep within the forest. The air is thick with the scent of magic, and the trees whisper secrets in the wind.",
-          "label": "an enchanting path leading to The Witch's Cave",
+          "examine_desc": "A wide and winding path meanders through the trees, leading away from The Fallen Tree and towards The Sacred Grove. The path is overgrown with weeds and grass, and the occasional wildflower can be seen peeking through. The shadows of the trees stretch out across the path, and a cool breeze rustles the leaves.",
+          "label": "a winding path leading to The Sacred Grove",
           "locked_edge": null,
           "target_id": "the sacred grove_19"
         },
         "the witch's cave_20": {
-          "examine_desc": "A wide and winding path meanders through the trees, leading away from The Fallen Tree and towards The Sacred Grove. The path is overgrown with weeds and grass, and the occasional wildflower can be seen peeking through. The shadows of the trees stretch out across the path, and a cool breeze rustles the leaves.",
-          "label": "a winding path leading to The Sacred Grove",
+          "examine_desc": "A winding path of vibrant foliage and enchanting plants leads to a mysterious cave hidden deep within the forest. The air is thick with the scent of magic, and the trees whisper secrets in the wind.",
+          "label": "an enchanting path leading to The Witch's Cave",
           "locked_edge": null,
           "target_id": "the witch's cave_20"
         }
@@ -10952,26 +10952,26 @@
       "names": ["The Farmer's Market"],
       "neighbors": {
         "the blacksmiths' workshop_13": {
-          "examine_desc": "A wide cobblestone path stretches out before you, leading up a small hill to a large stone building with a tall spire: The Town Hall. The path is lined with tall trees, their leaves rustling gently in the breeze. The air is clean and fresh, and the sound of birdsong fills the air.",
-          "label": "an old cobblestone path leading to The Town Hall",
+          "examine_desc": "A cobbled path winds its way through the Farmer's Market, leading to a large building in the distance. The loud clanging of hammers and anvils can be heard coming from the building, and the air is filled with the scent of smoke and metal.",
+          "label": "a cobbled path leading to the Blacksmiths' Workshop",
           "locked_edge": null,
           "target_id": "the blacksmiths' workshop_13"
         },
         "the inn_16": {
-          "examine_desc": "The cobblestone path winds its way through the hustle and bustle of the Farmer's Market, leading out of the area and towards The Main Square (outside).",
-          "label": "a cobblestone path leading to The Main Square (outside)",
+          "examine_desc": "The cobblestone path winds through the market stalls, leading away from the bustle of the Farmer's Market and towards The Inn. The path is lined with rustic lanterns, casting a soft, warm glow into the night. The air is filled with the scents of fresh produce and the sound of excited chatter.",
+          "label": "a narrow cobblestone path leading to The Inn",
           "locked_edge": null,
           "target_id": "the inn_16"
         },
         "the main square_17": {
-          "examine_desc": "The cobblestone path winds through the market stalls, leading away from the bustle of the Farmer's Market and towards The Inn. The path is lined with rustic lanterns, casting a soft, warm glow into the night. The air is filled with the scents of fresh produce and the sound of excited chatter.",
-          "label": "a narrow cobblestone path leading to The Inn",
+          "examine_desc": "The cobblestone path winds its way through the hustle and bustle of the Farmer's Market, leading out of the area and towards The Main Square (outside).",
+          "label": "a cobblestone path leading to The Main Square (outside)",
           "locked_edge": null,
           "target_id": "the main square_17"
         },
         "the town hall_15": {
-          "examine_desc": "A cobbled path winds its way through the Farmer's Market, leading to a large building in the distance. The loud clanging of hammers and anvils can be heard coming from the building, and the air is filled with the scent of smoke and metal.",
-          "label": "a cobbled path leading to the Blacksmiths' Workshop",
+          "examine_desc": "A wide cobblestone path stretches out before you, leading up a small hill to a large stone building with a tall spire: The Town Hall. The path is lined with tall trees, their leaves rustling gently in the breeze. The air is clean and fresh, and the sound of birdsong fills the air.",
+          "label": "an old cobblestone path leading to The Town Hall",
           "locked_edge": null,
           "target_id": "the town hall_15"
         }
@@ -11021,14 +11021,14 @@
       "names": ["The Forest"],
       "neighbors": {
         "the ancient forests_3": {
-          "examine_desc": "A dirt trail leads out of the forest, winding its way down the hillside and towards the distant shoreline. The path is overgrown with grass and wildflowers, and the sound of waves crashing against the rocks can be heard in the distance.",
-          "label": "a winding path leading to the sea",
+          "examine_desc": "The winding path leads away from the hut, through the trees and into the distance. It is overgrown with shrubs and small trees, and it seems to stretch on for miles. The air is fresh and crisp, and the sun shines down through the canopy of trees. Somewhere, in the distance, the Ancient Forests can be seen.",
+          "label": "a winding path leading towards the Ancient Forests",
           "locked_edge": null,
           "target_id": "the ancient forests_3"
         },
         "the pirate's cove_0": {
-          "examine_desc": "The winding path leads away from the hut, through the trees and into the distance. It is overgrown with shrubs and small trees, and it seems to stretch on for miles. The air is fresh and crisp, and the sun shines down through the canopy of trees. Somewhere, in the distance, the Ancient Forests can be seen.",
-          "label": "a winding path leading towards the Ancient Forests",
+          "examine_desc": "A dirt trail leads out of the forest, winding its way down the hillside and towards the distant shoreline. The path is overgrown with grass and wildflowers, and the sound of waves crashing against the rocks can be heard in the distance.",
+          "label": "a winding path leading to the sea",
           "locked_edge": null,
           "target_id": "the pirate's cove_0"
         },
@@ -11075,26 +11075,26 @@
       "names": ["The Forge"],
       "neighbors": {
         "the anvil_24": {
-          "examine_desc": "A large, sturdy wooden door stands in the wall of The Forge, leading inside. It appears sturdy and well-crafted, and is adorned with intricate carvings that hint at the craftsmanship of the dwarves.",
-          "label": "a large wooden door leading inside",
+          "examine_desc": "An open doorway almost blends into the walls of The Forge, leading inside to The Anvil. The heat and smoke emanating from the forge make it difficult to see inside, but the sound of hammering and the clanging of metal can be heard.",
+          "label": "an open doorway leading inside",
           "locked_edge": null,
           "target_id": "the anvil_24"
         },
         "the armory_22": {
-          "examine_desc": "The path leads away from the Forge, winding through the streets and eventually leading to the bustling Main Square.",
-          "label": "a cobblestone path",
+          "examine_desc": "An ancient, weathered door stands between The Forge (outside) and The Armory. It is crafted of iron and wood, and looks as though it has weathered many a storm. The door is secured with a heavy lock, but a keyhole can be seen in the center of the door.",
+          "label": "a stout door leading into The Armory",
           "locked_edge": null,
           "target_id": "the armory_22"
         },
         "the judging table_21": {
-          "examine_desc": "An open doorway almost blends into the walls of The Forge, leading inside to The Anvil. The heat and smoke emanating from the forge make it difficult to see inside, but the sound of hammering and the clanging of metal can be heard.",
-          "label": "an open doorway leading inside",
+          "examine_desc": "A large, sturdy wooden door stands in the wall of The Forge, leading inside. It appears sturdy and well-crafted, and is adorned with intricate carvings that hint at the craftsmanship of the dwarves.",
+          "label": "a large wooden door leading inside",
           "locked_edge": null,
           "target_id": "the judging table_21"
         },
         "the main square_17": {
-          "examine_desc": "An ancient, weathered door stands between The Forge (outside) and The Armory. It is crafted of iron and wood, and looks as though it has weathered many a storm. The door is secured with a heavy lock, but a keyhole can be seen in the center of the door.",
-          "label": "a stout door leading into The Armory",
+          "examine_desc": "The path leads away from the Forge, winding through the streets and eventually leading to the bustling Main Square.",
+          "label": "a cobblestone path",
           "locked_edge": null,
           "target_id": "the main square_17"
         }
@@ -11135,14 +11135,14 @@
       "names": ["The Frozen Lake"],
       "neighbors": {
         "the highest peak_10": {
-          "examine_desc": "A winding mountain path snakes its way into the distance, disappearing into a shadowy valley in the far distance.",
-          "label": "a winding mountain path",
+          "examine_desc": "A winding path leads up the mountain, ascending through patches of snow and ice. The path is old and worn, but still solid, and the air is thin and cold. As you make your way up the mountain, the views of the lake and the surrounding landscape become more and more breathtaking.",
+          "label": "a winding path leading up the mountain",
           "locked_edge": null,
           "target_id": "the highest peak_10"
         },
         "the shadowy valley_11": {
-          "examine_desc": "A winding path leads up the mountain, ascending through patches of snow and ice. The path is old and worn, but still solid, and the air is thin and cold. As you make your way up the mountain, the views of the lake and the surrounding landscape become more and more breathtaking.",
-          "label": "a winding path leading up the mountain",
+          "examine_desc": "A winding mountain path snakes its way into the distance, disappearing into a shadowy valley in the far distance.",
+          "label": "a winding mountain path",
           "locked_edge": null,
           "target_id": "the shadowy valley_11"
         }
@@ -11189,8 +11189,8 @@
       "names": ["The Highest Peak"],
       "neighbors": {
         "the frozen lake_12": {
-          "examine_desc": "A narrow, winding path winds its way down the mountain, descending into the misty depths of the Tall Mountains below.",
-          "label": "a winding path leading downwards",
+          "examine_desc": "A winding path snakes its way down the side of the mountain, leading to the glimmering frozen lake below. Snow-covered trees line the path, and the occasional sound of a bird or animal can be heard in the distance.",
+          "label": "a winding path leading down the mountain",
           "locked_edge": null,
           "target_id": "the frozen lake_12"
         },
@@ -11201,8 +11201,8 @@
           "target_id": "the shadowy valley_11"
         },
         "the tall mountains_4": {
-          "examine_desc": "A winding path snakes its way down the side of the mountain, leading to the glimmering frozen lake below. Snow-covered trees line the path, and the occasional sound of a bird or animal can be heard in the distance.",
-          "label": "a winding path leading down the mountain",
+          "examine_desc": "A narrow, winding path winds its way down the mountain, descending into the misty depths of the Tall Mountains below.",
+          "label": "a winding path leading downwards",
           "locked_edge": null,
           "target_id": "the tall mountains_4"
         }
@@ -11246,26 +11246,26 @@
       "names": ["The Inn"],
       "neighbors": {
         "the blacksmiths' workshop_13": {
-          "examine_desc": "The path begins at the Inn, leading away from the building towards the distant Farmer's Market. The dirt path is overgrown with wildflowers and lined with tall trees providing shade. In the distance, the sound of laughter and conversation from the market can be heard.",
-          "label": "a winding path leading towards the market",
+          "examine_desc": "A weathered wooden door is set in the wall of the Inn, leading out into the street. From here, a path can be seen leading away into the distance, winding its way towards the Blacksmiths' Workshop.",
+          "label": "an old door leading to the Blacksmiths' Workshop",
           "locked_edge": null,
           "target_id": "the blacksmiths' workshop_13"
         },
         "the farmer's market_14": {
-          "examine_desc": "A weathered wooden door is set in the wall of the Inn, leading out into the street. From here, a path can be seen leading away into the distance, winding its way towards the Blacksmiths' Workshop.",
-          "label": "an old door leading to the Blacksmiths' Workshop",
+          "examine_desc": "The path begins at the Inn, leading away from the building towards the distant Farmer's Market. The dirt path is overgrown with wildflowers and lined with tall trees providing shade. In the distance, the sound of laughter and conversation from the market can be heard.",
+          "label": "a winding path leading towards the market",
           "locked_edge": null,
           "target_id": "the farmer's market_14"
         },
         "the main square_17": {
-          "examine_desc": "A cobblestone path stretches away from the Inn, winding its way through the town and eventually leading to the Town Hall in the center.",
-          "label": "a cobblestone path leading to the Town Hall",
+          "examine_desc": "A wooden door stands at the entrance of The Inn, leading outwards to the bustling Main Square.",
+          "label": "a wooden door leading outwards",
           "locked_edge": null,
           "target_id": "the main square_17"
         },
         "the town hall_15": {
-          "examine_desc": "A wooden door stands at the entrance of The Inn, leading outwards to the bustling Main Square.",
-          "label": "a wooden door leading outwards",
+          "examine_desc": "A cobblestone path stretches away from the Inn, winding its way through the town and eventually leading to the Town Hall in the center.",
+          "label": "a cobblestone path leading to the Town Hall",
           "locked_edge": null,
           "target_id": "the town hall_15"
         }
@@ -11293,14 +11293,14 @@
       "names": ["The Judging Table"],
       "neighbors": {
         "the armory_22": {
-          "examine_desc": "The path leading from The Judging Table to The Forge (outside) is marked by a large, wooden doorway. The doorway is framed by two tall pillars, adorned with carvings of ancient smithy tools. The doorway opens up to a wide, cobblestoned courtyard, leading out to the Forge.",
-          "label": "a large, wooden doorway leading outwards",
+          "examine_desc": "A wide cobblestone path leads away from the Judging Table towards The Armory, surrounded by the cheerful chatter of the crowd. The path is lined with torches and bordered by small vendors selling their trinkets and wares. At the end of the path stands a large, imposing door, marking the entrance to The Armory.",
+          "label": "a cobblestone path leading to The Armory",
           "locked_edge": null,
           "target_id": "the armory_22"
         },
         "the forge_23": {
-          "examine_desc": "A wide cobblestone path leads away from the Judging Table towards The Armory, surrounded by the cheerful chatter of the crowd. The path is lined with torches and bordered by small vendors selling their trinkets and wares. At the end of the path stands a large, imposing door, marking the entrance to The Armory.",
-          "label": "a cobblestone path leading to The Armory",
+          "examine_desc": "The path leading from The Judging Table to The Forge (outside) is marked by a large, wooden doorway. The doorway is framed by two tall pillars, adorned with carvings of ancient smithy tools. The doorway opens up to a wide, cobblestoned courtyard, leading out to the Forge.",
+          "label": "a large, wooden doorway leading outwards",
           "locked_edge": null,
           "target_id": "the forge_23"
         }
@@ -11338,38 +11338,38 @@
       "names": ["The Main Square"],
       "neighbors": {
         "the blacksmiths' workshop_13": {
-          "examine_desc": "A wide cobblestone path winds its way through the pines, leading towards an invitingly lit building in the distance.",
-          "label": "a cobblestone path leading to The Inn",
+          "examine_desc": "A narrow alleyway between two buildings leads away from the plaza and towards the workshop. The cobblestones are worn and uneven, and the alley is filled with the sweet smell of burning coal.",
+          "label": "a small alleyway leading to the Blacksmiths' Workshop",
           "locked_edge": null,
           "target_id": "the blacksmiths' workshop_13"
         },
         "the farmer's market_14": {
-          "examine_desc": "An old cobblestone path leads away from the plaza, winding through the tall pines until it reaches the entrance of the Forge, a large building made from sturdy stone.",
-          "label": "an old cobblestone path leading to the Forge",
+          "examine_desc": "The cobblestone path winds its way through the pines, eventually leading towards the Farmer's Market, which sits on the other side of the village. The path is lined with stalls and vendors, offering their wares to the townsfolk. The smell of fresh bread and spices drifts through the air, and a cheerful buzz of conversation fills the air.",
+          "label": "a cobblestone path leading to the Farmer's Market",
           "locked_edge": null,
           "target_id": "the farmer's market_14"
         },
         "the forge_23": {
-          "examine_desc": "The cobblestone path winds its way through the pines, eventually leading towards the Farmer's Market, which sits on the other side of the village. The path is lined with stalls and vendors, offering their wares to the townsfolk. The smell of fresh bread and spices drifts through the air, and a cheerful buzz of conversation fills the air.",
-          "label": "a cobblestone path leading to the Farmer's Market",
+          "examine_desc": "An old cobblestone path leads away from the plaza, winding through the tall pines until it reaches the entrance of the Forge, a large building made from sturdy stone.",
+          "label": "an old cobblestone path leading to the Forge",
           "locked_edge": null,
           "target_id": "the forge_23"
         },
         "the inn_16": {
-          "examine_desc": "A narrow alleyway between two buildings leads away from the plaza and towards the workshop. The cobblestones are worn and uneven, and the alley is filled with the sweet smell of burning coal.",
-          "label": "a small alleyway leading to the Blacksmiths' Workshop",
+          "examine_desc": "A wide cobblestone path winds its way through the pines, leading towards an invitingly lit building in the distance.",
+          "label": "a cobblestone path leading to The Inn",
           "locked_edge": null,
           "target_id": "the inn_16"
         },
         "the town hall_15": {
-          "examine_desc": "A wide cobblestone path connects the Main Square to the Village Square, winding its way through a group of tall pine trees. The path is lined with small stone markers, each one engraved with a simple symbol that locals use to navigate the village. Ahead, the path opens up to a large village square, the center of activity in this small town.",
-          "label": "a cobblestone path leading towards the Village Square",
+          "examine_desc": "A wide cobblestone path winds its way through the trees, leading towards the Town Hall in the distance.",
+          "label": "a cobblestone path leading to the Town Hall",
           "locked_edge": null,
           "target_id": "the town hall_15"
         },
         "the village square_5": {
-          "examine_desc": "A wide cobblestone path winds its way through the trees, leading towards the Town Hall in the distance.",
-          "label": "a cobblestone path leading to the Town Hall",
+          "examine_desc": "A wide cobblestone path connects the Main Square to the Village Square, winding its way through a group of tall pine trees. The path is lined with small stone markers, each one engraved with a simple symbol that locals use to navigate the village. Ahead, the path opens up to a large village square, the center of activity in this small town.",
+          "label": "a cobblestone path leading towards the Village Square",
           "locked_edge": null,
           "target_id": "the village square_5"
         }
@@ -11428,14 +11428,14 @@
       "names": ["The Pirate's Cove"],
       "neighbors": {
         "the forest_1": {
-          "examine_desc": "A narrow path lined with rocks and jagged edges can be seen leading away from the cove and out towards the rocky coastline beyond.",
-          "label": "a rocky path leading outwards",
+          "examine_desc": "A narrow, winding path made of jagged rocks winds its way up a steep hillside and into the dense forest beyond. The path is lined with tall trees on either side, and the occasional bird can be heard chirping in the distance.",
+          "label": "a rocky path leading into the forest",
           "locked_edge": null,
           "target_id": "the forest_1"
         },
         "the rocky coastline_2": {
-          "examine_desc": "A narrow, winding path made of jagged rocks winds its way up a steep hillside and into the dense forest beyond. The path is lined with tall trees on either side, and the occasional bird can be heard chirping in the distance.",
-          "label": "a rocky path leading into the forest",
+          "examine_desc": "A narrow path lined with rocks and jagged edges can be seen leading away from the cove and out towards the rocky coastline beyond.",
+          "label": "a rocky path leading outwards",
           "locked_edge": null,
           "target_id": "the rocky coastline_2"
         }
@@ -11482,8 +11482,8 @@
       "names": ["The Rocky Coastline"],
       "neighbors": {
         "the coral reef_7": {
-          "examine_desc": "An old wooden bridge spans the cliffs, leading further inland to The Pirate's Cove. Its creaky boards are worn and weathered by the sea air, but it still stands strong against the crashing waves.",
-          "label": "an old wooden bridge spanning the cliffs",
+          "examine_desc": "A winding path of jagged rocks leads out to the sea, offering a clear route down to the glittering waves of the Coral Reef.",
+          "label": "a rocky path leading out to the sea",
           "locked_edge": null,
           "target_id": "the coral reef_7"
         },
@@ -11494,8 +11494,8 @@
           "target_id": "the forest_1"
         },
         "the pirate's cove_0": {
-          "examine_desc": "A winding path of jagged rocks leads out to the sea, offering a clear route down to the glittering waves of the Coral Reef.",
-          "label": "a rocky path leading out to the sea",
+          "examine_desc": "An old wooden bridge spans the cliffs, leading further inland to The Pirate's Cove. Its creaky boards are worn and weathered by the sea air, but it still stands strong against the crashing waves.",
+          "label": "an old wooden bridge spanning the cliffs",
           "locked_edge": null,
           "target_id": "the pirate's cove_0"
         }
@@ -11530,14 +11530,14 @@
       "names": ["The Sacred Grove"],
       "neighbors": {
         "the deepest woods_9": {
-          "examine_desc": "A narrow dirt path winds through the Sacred Grove, leading deeper into the forest towards the Fallen Tree. Ancient trees line the path on either side, their gnarled branches creating a canopy of shade overhead. The air is filled with the sweet scent of wildflowers and the soft chirp of birds.",
-          "label": "a winding path leading to the Fallen Tree",
+          "examine_desc": "The path leading out of the Sacred Grove is ancient, lined with ancient trees and plants that sway with the breeze. The path is wide and well-worn, leading outwards into the Deepest Woods.",
+          "label": "an ancient path leading outwards",
           "locked_edge": null,
           "target_id": "the deepest woods_9"
         },
         "the fallen tree_18": {
-          "examine_desc": "The path leading out of the Sacred Grove is ancient, lined with ancient trees and plants that sway with the breeze. The path is wide and well-worn, leading outwards into the Deepest Woods.",
-          "label": "an ancient path leading outwards",
+          "examine_desc": "A narrow dirt path winds through the Sacred Grove, leading deeper into the forest towards the Fallen Tree. Ancient trees line the path on either side, their gnarled branches creating a canopy of shade overhead. The air is filled with the sweet scent of wildflowers and the soft chirp of birds.",
+          "label": "a winding path leading to the Fallen Tree",
           "locked_edge": null,
           "target_id": "the fallen tree_18"
         }
@@ -11584,14 +11584,14 @@
       "names": ["The Shadowy Valley"],
       "neighbors": {
         "the frozen lake_12": {
-          "examine_desc": "A winding path leads up the mountain, surrounded by tall trees and darkened by the shadows of the tall peaks. The path is steep and rocky, but leads up to the highest peak.",
-          "label": "a steep path winding up the mountain",
+          "examine_desc": "A winding path leads down into the depths of the valley, disappearing into the fog. The air is still and silent, and a chill runs through the air. Somewhere in the depths lies the Frozen Lake, a place of great power and beauty.",
+          "label": "a winding path leading down into the valley",
           "locked_edge": null,
           "target_id": "the frozen lake_12"
         },
         "the highest peak_10": {
-          "examine_desc": "A winding path leads down into the depths of the valley, disappearing into the fog. The air is still and silent, and a chill runs through the air. Somewhere in the depths lies the Frozen Lake, a place of great power and beauty.",
-          "label": "a winding path leading down into the valley",
+          "examine_desc": "A winding path leads up the mountain, surrounded by tall trees and darkened by the shadows of the tall peaks. The path is steep and rocky, but leads up to the highest peak.",
+          "label": "a steep path winding up the mountain",
           "locked_edge": null,
           "target_id": "the highest peak_10"
         }
@@ -11638,14 +11638,14 @@
       "names": ["The Sunken Cave"],
       "neighbors": {
         "the coral reef_7": {
-          "examine_desc": "A narrow, submerged path winds its way from the Sunken Cave, leading towards the Crashed Shipwreck in the distance. The murky waters are filled with strange creatures, casting eerie shadows on the walls of the cave.",
-          "label": "a sunken path leading to the Shipwreck",
+          "examine_desc": "A small, dark tunnel, partially hidden in shadows, leads off from the cave and into the depths of the sea. The walls are covered in a thick layer of slime, and the passage is filled with an eerie silence. As you look closer, you can make out the glimmer of sunlight reflecting off the surface of the Coral Reef in the distance.",
+          "label": "a tunnel leading to The Coral Reef",
           "locked_edge": null,
           "target_id": "the coral reef_7"
         },
         "the crashed shipwreck_6": {
-          "examine_desc": "A small, dark tunnel, partially hidden in shadows, leads off from the cave and into the depths of the sea. The walls are covered in a thick layer of slime, and the passage is filled with an eerie silence. As you look closer, you can make out the glimmer of sunlight reflecting off the surface of the Coral Reef in the distance.",
-          "label": "a tunnel leading to The Coral Reef",
+          "examine_desc": "A narrow, submerged path winds its way from the Sunken Cave, leading towards the Crashed Shipwreck in the distance. The murky waters are filled with strange creatures, casting eerie shadows on the walls of the cave.",
+          "label": "a sunken path leading to the Shipwreck",
           "locked_edge": null,
           "target_id": "the crashed shipwreck_6"
         }
@@ -11698,14 +11698,14 @@
           "target_id": "the ancient forests_3"
         },
         "the highest peak_10": {
-          "examine_desc": "A winding path of dirt and stone leads down the mountain, providing an easy descent to the village square below. The path is lined with tall evergreens and wildflowers, providing a pleasant view during the descent.",
-          "label": "a winding path leading down the mountain",
+          "examine_desc": "The path is worn and rugged, winding up the side of the mountain in a slow and steady climb. It's surrounded by tall trees and other vegetation, with large rocks scattered throughout. The path seems to lead to the highest peak of the mountain, which can be seen in the distance.",
+          "label": "a steep and winding path leading up the side of the mountain",
           "locked_edge": null,
           "target_id": "the highest peak_10"
         },
         "the village square_5": {
-          "examine_desc": "The path is worn and rugged, winding up the side of the mountain in a slow and steady climb. It's surrounded by tall trees and other vegetation, with large rocks scattered throughout. The path seems to lead to the highest peak of the mountain, which can be seen in the distance.",
-          "label": "a steep and winding path leading up the side of the mountain",
+          "examine_desc": "A winding path of dirt and stone leads down the mountain, providing an easy descent to the village square below. The path is lined with tall evergreens and wildflowers, providing a pleasant view during the descent.",
+          "label": "a winding path leading down the mountain",
           "locked_edge": null,
           "target_id": "the village square_5"
         }
@@ -11755,26 +11755,26 @@
       "names": ["The Town Hall"],
       "neighbors": {
         "the blacksmiths' workshop_13": {
-          "examine_desc": "A cobblestone path winds away from the Town Hall, leading through the Main Square and towards the Inn. Along the way, you can see the villagers milling about, enjoying the festivities of the Smithing Competition. The distant sound of laughter and music drifts in the air, inviting you to explore the village further.",
-          "label": "a cobblestone path leading to The Inn",
+          "examine_desc": "The path leads away from the Town Hall, winding through the cobblestone streets of the village and eventually leading to the Blacksmiths' Workshop. The path is lined with large oak trees and the occasional shrub, and is illuminated by the soft glow of the moonlight.",
+          "label": "an ancient cobblestone path",
           "locked_edge": null,
           "target_id": "the blacksmiths' workshop_13"
         },
         "the farmer's market_14": {
-          "examine_desc": "Leading away from the Town Hall is a large entranceway, framed by two imposing statues of dragons. A long, wide pathway lined with cobblestones leads out of the entrance, towards the Main Square.",
-          "label": "a grand entrance leading to the Main Square",
+          "examine_desc": "The cobblestone path winds its way between the buildings, leading away from the Town Hall and ultimately to The Farmer's Market, which is bustling with activity. Along the way, you can see a variety of stalls and shops, all hawking their wares to the passing crowd.",
+          "label": "a cobblestone path leading to The Farmer's Market",
           "locked_edge": null,
           "target_id": "the farmer's market_14"
         },
         "the inn_16": {
-          "examine_desc": "The path leads away from the Town Hall, winding through the cobblestone streets of the village and eventually leading to the Blacksmiths' Workshop. The path is lined with large oak trees and the occasional shrub, and is illuminated by the soft glow of the moonlight.",
-          "label": "an ancient cobblestone path",
+          "examine_desc": "A cobblestone path winds away from the Town Hall, leading through the Main Square and towards the Inn. Along the way, you can see the villagers milling about, enjoying the festivities of the Smithing Competition. The distant sound of laughter and music drifts in the air, inviting you to explore the village further.",
+          "label": "a cobblestone path leading to The Inn",
           "locked_edge": null,
           "target_id": "the inn_16"
         },
         "the main square_17": {
-          "examine_desc": "The cobblestone path winds its way between the buildings, leading away from the Town Hall and ultimately to The Farmer's Market, which is bustling with activity. Along the way, you can see a variety of stalls and shops, all hawking their wares to the passing crowd.",
-          "label": "a cobblestone path leading to The Farmer's Market",
+          "examine_desc": "Leading away from the Town Hall is a large entranceway, framed by two imposing statues of dragons. A long, wide pathway lined with cobblestones leads out of the entrance, towards the Main Square.",
+          "label": "a grand entrance leading to the Main Square",
           "locked_edge": null,
           "target_id": "the main square_17"
         }
@@ -11821,14 +11821,14 @@
       "names": ["The Village Square"],
       "neighbors": {
         "the main square_17": {
-          "examine_desc": "A winding path meanders through the square, leading towards the imposing Tall Mountains in the distance. It is lined with tall grass and small shrubs, and its path is marked with stones and markers.",
-          "label": "a winding path leading to the Tall Mountains",
+          "examine_desc": "A straight cobblestone path leads away from the bustling Village Square, winding its way through the mountain pass in the distance and eventually leading to The Main Square.",
+          "label": "a cobblestone path leading to The Main Square",
           "locked_edge": null,
           "target_id": "the main square_17"
         },
         "the tall mountains_4": {
-          "examine_desc": "A straight cobblestone path leads away from the bustling Village Square, winding its way through the mountain pass in the distance and eventually leading to The Main Square.",
-          "label": "a cobblestone path leading to The Main Square",
+          "examine_desc": "A winding path meanders through the square, leading towards the imposing Tall Mountains in the distance. It is lined with tall grass and small shrubs, and its path is marked with stones and markers.",
+          "label": "a winding path leading to the Tall Mountains",
           "locked_edge": null,
           "target_id": "the tall mountains_4"
         }

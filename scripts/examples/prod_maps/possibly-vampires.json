@@ -441,14 +441,14 @@
       "names": ["Armory"],
       "neighbors": {
         "grand hall_12": {
-          "examine_desc": "An old wooden door stands in the corner of the room, leading out to The Manor House (outside). It is slightly ajar, allowing a glimpse of the outside world beyond.",
-          "label": "an old doorway leading outwards",
           "locked_edge": null,
+          "examine_desc": "An ornate archway leading to the Grand Hall stands in the center of the room, flanked by suits of armor and surrounded by a wide array of weapons. It is framed with intricate carvings and illuminated by a single torch burning in its depths.",
+          "label": "an ornate archway leading to the Grand Hall",
           "target_id": "grand hall_12"
         },
         "the manor house_17": {
-          "examine_desc": "An ornate archway leading to the Grand Hall stands in the center of the room, flanked by suits of armor and surrounded by a wide array of weapons. It is framed with intricate carvings and illuminated by a single torch burning in its depths.",
-          "label": "an ornate archway leading to the Grand Hall",
+          "examine_desc": "An old wooden door stands in the corner of the room, leading out to The Manor House (outside). It is slightly ajar, allowing a glimpse of the outside world beyond.",
+          "label": "an old doorway leading outwards",
           "locked_edge": null,
           "target_id": "the manor house_17"
         }
@@ -729,14 +729,14 @@
       "names": ["Bedrooms"],
       "neighbors": {
         "dining room_20": {
-          "examine_desc": "An open doorway leads into the dimly lit hallway, with the faint sound of distant chatter echoing in the distance.",
-          "label": "an open doorway leading to the hallway",
+          "examine_desc": "Just off to one side of the Bedrooms lies an ornate wooden doorway, leading into the Dining Room. The door is decorated with intricate carvings and polished brass fixtures, and a thick red rug lies on the floor in front of it.",
+          "label": "an ornate doorway leading to the Dining Room",
           "locked_edge": null,
           "target_id": "dining room_20"
         },
         "hallway_19": {
-          "examine_desc": "Just off to one side of the Bedrooms lies an ornate wooden doorway, leading into the Dining Room. The door is decorated with intricate carvings and polished brass fixtures, and a thick red rug lies on the floor in front of it.",
-          "label": "an ornate doorway leading to the Dining Room",
+          "examine_desc": "An open doorway leads into the dimly lit hallway, with the faint sound of distant chatter echoing in the distance.",
+          "label": "an open doorway leading to the hallway",
           "locked_edge": null,
           "target_id": "hallway_19"
         },
@@ -786,14 +786,14 @@
       "names": ["Blacksmith's Shop"],
       "neighbors": {
         "town gates_4": {
-          "examine_desc": "A narrow path leads away from the Blacksmith's Shop, winding its way through the streets of the town and eventually leading to the Town Square. The cobblestone path is lined with small shops, and the occasional passerby can be seen walking down the path.",
-          "label": "a narrow path leading out of the Blacksmith's Shop",
+          "examine_desc": "A dirt path leads away from the Blacksmith's Shop, winding its way through the countryside and eventually ending at the imposing Town Gates.",
+          "label": "a dirt path leading to the Town Gates",
           "locked_edge": null,
           "target_id": "town gates_4"
         },
         "town square_0": {
-          "examine_desc": "A dirt path leads away from the Blacksmith's Shop, winding its way through the countryside and eventually ending at the imposing Town Gates.",
-          "label": "a dirt path leading to the Town Gates",
+          "examine_desc": "A narrow path leads away from the Blacksmith's Shop, winding its way through the streets of the town and eventually leading to the Town Square. The cobblestone path is lined with small shops, and the occasional passerby can be seen walking down the path.",
+          "label": "a narrow path leading out of the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "town square_0"
         }
@@ -1779,14 +1779,14 @@
           "target_id": "great hall_7"
         },
         "secret passageways_11": {
-          "examine_desc": "The cobblestone path winds its way through the courtyard, lined with ancient stone walls. It leads to an imposing stone tower at the end of the courtyard, its entrance looming in the distance.",
-          "label": "a cobblestone path leading to the Tower",
+          "examine_desc": "An arched stone doorway stands at the edge of the courtyard, leading inward to a long, dark hallway beyond.",
+          "label": "an arched stone doorway leading inward",
           "locked_edge": null,
           "target_id": "secret passageways_11"
         },
         "tower_10": {
-          "examine_desc": "An arched stone doorway stands at the edge of the courtyard, leading inward to a long, dark hallway beyond.",
-          "label": "an arched stone doorway leading inward",
+          "examine_desc": "The cobblestone path winds its way through the courtyard, lined with ancient stone walls. It leads to an imposing stone tower at the end of the courtyard, its entrance looming in the distance.",
+          "label": "a cobblestone path leading to the Tower",
           "locked_edge": null,
           "target_id": "tower_10"
         }
@@ -1958,14 +1958,14 @@
           "target_id": "bedrooms_21"
         },
         "hallway_19": {
-          "examine_desc": "At the far end of the Dining Room is an ornate door, its surface decorated with intricate carvings and its handle made from a polished silver. Beyond the door lies the Study, waiting to be explored.",
-          "label": "an ornate door leading to the Study",
+          "examine_desc": "At the back of the Dining Room, an intricate wooden doorway with a carved frame stands invitingly open, leading to a long hallway beyond.",
+          "label": "an ornate doorway leading to the Hallway",
           "locked_edge": null,
           "target_id": "hallway_19"
         },
         "study_22": {
-          "examine_desc": "At the back of the Dining Room, an intricate wooden doorway with a carved frame stands invitingly open, leading to a long hallway beyond.",
-          "label": "an ornate doorway leading to the Hallway",
+          "examine_desc": "At the far end of the Dining Room is an ornate door, its surface decorated with intricate carvings and its handle made from a polished silver. Beyond the door lies the Study, waiting to be explored.",
+          "label": "an ornate door leading to the Study",
           "locked_edge": null,
           "target_id": "study_22"
         }
@@ -2049,14 +2049,14 @@
       "names": ["Dungeons"],
       "neighbors": {
         "great hall_7": {
-          "examine_desc": "An old, decrepit doorway leads away from the Dungeons, winding its way up through the castle to the Tower above. It is dark, and the air is musty, but a faint light can be seen emanating from the doorway.",
-          "label": "an old doorway leading to the Tower",
+          "examine_desc": "A narrow, winding passage leads away from the dungeons, eventually opening into a large, grand hallway. The walls here are adorned with tapestries, and the air is filled with the sound of distant laughter and music.",
+          "label": "a narrow passage leading to the Great Hall",
           "locked_edge": null,
           "target_id": "great hall_7"
         },
         "tower_10": {
-          "examine_desc": "A narrow, winding passage leads away from the dungeons, eventually opening into a large, grand hallway. The walls here are adorned with tapestries, and the air is filled with the sound of distant laughter and music.",
-          "label": "a narrow passage leading to the Great Hall",
+          "examine_desc": "An old, decrepit doorway leads away from the Dungeons, winding its way up through the castle to the Tower above. It is dark, and the air is musty, but a faint light can be seen emanating from the doorway.",
+          "label": "an old doorway leading to the Tower",
           "locked_edge": null,
           "target_id": "tower_10"
         }
@@ -2273,14 +2273,14 @@
       "names": ["Feed Room"],
       "neighbors": {
         "hay loft_24": {
-          "examine_desc": "An old wooden door stands in the wall, its hinges creaking slightly as it swings inwards. Beyond it lies the Horse Tack Room, a room filled with saddles, bridles, and other horse-related equipment.",
-          "label": "an old wooden door leading to the Horse Tack Room",
+          "examine_desc": "An old wooden door sits at the back of the Feed Room, its hinges creaking slightly as it swings inwards. Beyond it is a dark, musty hallway, leading up a flight of stairs to the Hay Loft.",
+          "label": "an old wooden door leading to the Hay Loft",
           "locked_edge": null,
           "target_id": "hay loft_24"
         },
         "horse tack room_25": {
-          "examine_desc": "An old wooden door sits at the back of the Feed Room, its hinges creaking slightly as it swings inwards. Beyond it is a dark, musty hallway, leading up a flight of stairs to the Hay Loft.",
-          "label": "an old wooden door leading to the Hay Loft",
+          "examine_desc": "An old wooden door stands in the wall, its hinges creaking slightly as it swings inwards. Beyond it lies the Horse Tack Room, a room filled with saddles, bridles, and other horse-related equipment.",
+          "label": "an old wooden door leading to the Horse Tack Room",
           "locked_edge": null,
           "target_id": "horse tack room_25"
         }
@@ -2493,14 +2493,14 @@
       "names": ["Garden"],
       "neighbors": {
         "grand hall_12": {
-          "examine_desc": "An old, weathered stone doorway stands at the edge of the garden, leading into the depths of The Manor House (outside). The door is made of aged wood, and a heavy iron knocker hangs from the middle.",
-          "label": "the old doorway leading to The Manor House (outside)",
+          "examine_desc": "The path is lined with lush vegetation and colorful flowers, leading to a large wooden door that leads inside the Grand Hall.",
+          "label": "a winding path leading to the Grand Hall",
           "locked_edge": null,
           "target_id": "grand hall_12"
         },
         "the manor house_17": {
-          "examine_desc": "The path is lined with lush vegetation and colorful flowers, leading to a large wooden door that leads inside the Grand Hall.",
-          "label": "a winding path leading to the Grand Hall",
+          "examine_desc": "An old, weathered stone doorway stands at the edge of the garden, leading into the depths of The Manor House (outside). The door is made of aged wood, and a heavy iron knocker hangs from the middle.",
+          "label": "the old doorway leading to The Manor House (outside)",
           "locked_edge": null,
           "target_id": "the manor house_17"
         }
@@ -2609,8 +2609,8 @@
       "names": ["Grand Hall"],
       "neighbors": {
         "armory_16": {
-          "examine_desc": "A wide archway made of stone leads to a room where the smell of freshly cooked meals wafts through the air.",
-          "label": "a wide archway leading to the Kitchen",
+          "examine_desc": "An ancient staircase, carved from stone and worn with age, leads down to the Armory. The stairs are wide and sturdy, and you can see a faint light flickering from the bottom of the staircase.",
+          "label": "an ancient staircase leading down",
           "locked_edge": null,
           "target_id": "armory_16"
         },
@@ -2621,8 +2621,8 @@
           "target_id": "garden_13"
         },
         "kitchen_14": {
-          "examine_desc": "An ancient staircase, carved from stone and worn with age, leads down to the Armory. The stairs are wide and sturdy, and you can see a faint light flickering from the bottom of the staircase.",
-          "label": "an ancient staircase leading down",
+          "examine_desc": "A wide archway made of stone leads to a room where the smell of freshly cooked meals wafts through the air.",
+          "label": "a wide archway leading to the Kitchen",
           "locked_edge": null,
           "target_id": "kitchen_14"
         },
@@ -2690,14 +2690,14 @@
       "names": ["Great Hall"],
       "neighbors": {
         "courtyard_8": {
-          "examine_desc": "An ancient stone archway looms at the far end of the Great Hall, leading inwards towards the dark and dank Dungeons. A musty smell wafts from the opening, and the faint sound of dripping water can be heard from within.",
-          "label": "an ancient stone archway leading to the Dungeons",
+          "examine_desc": "A large, arched doorway leads outwards from the Great Hall, towards the Courtyard. The door is made of heavy wood and is adorned with intricate carvings. It is slightly ajar, letting in a stream of warm sunlight.",
+          "label": "old doorway leading outwards",
           "locked_edge": null,
           "target_id": "courtyard_8"
         },
         "dungeons_9": {
-          "examine_desc": "A large, arched doorway leads outwards from the Great Hall, towards the Courtyard. The door is made of heavy wood and is adorned with intricate carvings. It is slightly ajar, letting in a stream of warm sunlight.",
-          "label": "old doorway leading outwards",
+          "examine_desc": "An ancient stone archway looms at the far end of the Great Hall, leading inwards towards the dark and dank Dungeons. A musty smell wafts from the opening, and the faint sound of dripping water can be heard from within.",
+          "label": "an ancient stone archway leading to the Dungeons",
           "locked_edge": null,
           "target_id": "dungeons_9"
         },
@@ -2929,26 +2929,26 @@
       "names": ["Hallway"],
       "neighbors": {
         "bedrooms_21": {
-          "examine_desc": "A grand doorway stood at the end of the hallway, leading out of the Manor House and into the outside world.",
-          "label": "a grand doorway leading outside",
+          "examine_desc": "At one end of the hallway is a winding staircase with intricate carvings and intricate railings. Its steps lead up to the second floor, where the bedrooms are located.",
+          "label": "an ornate staircase leading upstairs",
           "locked_edge": null,
           "target_id": "bedrooms_21"
         },
         "dining room_20": {
-          "examine_desc": "At the end of the hallway is a winding staircase, leading up to the second floor. The steps are made of polished stone and are illuminated by the light coming through the many windows.",
-          "label": "a winding staircase leading up",
+          "examine_desc": "An ancient stone archway, decorated with intricate carvings and symbols, stands at the end of the hallway. It leads into a large chamber, from which the smell of cooked food wafts out.",
+          "label": "an ancient stone archway leading to the Dining Room",
           "locked_edge": null,
           "target_id": "dining room_20"
         },
         "study_22": {
-          "examine_desc": "An ancient stone archway, decorated with intricate carvings and symbols, stands at the end of the hallway. It leads into a large chamber, from which the smell of cooked food wafts out.",
-          "label": "an ancient stone archway leading to the Dining Room",
+          "examine_desc": "At one end of the hallway is a winding staircase, leading up to the second floor. The steps are made of polished stone and are illuminated by the light coming through the many windows.",
+          "label": "simple stairs to the study",
           "locked_edge": null,
           "target_id": "study_22"
         },
         "the manor house_17": {
-          "examine_desc": "At the end of the hallway was a winding staircase with intricate carvings and intricate railings. Its steps led up to the second floor, where the bedrooms were located.",
-          "label": "an ornate staircase leading upstairs",
+          "examine_desc": "A grand doorway stood at the end of the hallway, leading out of the Manor House and into the outside world.",
+          "label": "a grand doorway leading outside",
           "locked_edge": null,
           "target_id": "the manor house_17"
         }
@@ -2986,14 +2986,14 @@
       "names": ["Hay Loft"],
       "neighbors": {
         "feed room_23": {
-          "examine_desc": "A rickety wooden staircase leads downwards, providing access to the Horse Tack Room below.",
-          "label": "a rickety wooden staircase",
+          "examine_desc": "A narrow staircase made of wooden planks descends from the Hay Loft, leading down to the Feed Room below.",
+          "label": "a narrow staircase leading down",
           "locked_edge": null,
           "target_id": "feed room_23"
         },
         "horse tack room_25": {
-          "examine_desc": "A narrow staircase made of wooden planks descends from the Hay Loft, leading down to the Feed Room below.",
-          "label": "a narrow staircase leading down",
+          "examine_desc": "A rickety wooden staircase leads downwards, providing access to the Horse Tack Room below.",
+          "label": "a rickety wooden staircase",
           "locked_edge": null,
           "target_id": "horse tack room_25"
         }
@@ -3284,14 +3284,14 @@
           "target_id": "feed room_23"
         },
         "hay loft_24": {
-          "examine_desc": "An old, weathered wooden door stands in the back wall of the Horse Tack Room, leading out into the Stableyard beyond.",
-          "label": "an old doorway leading to the Stableyard",
+          "examine_desc": "A narrow doorway leads from the Horse Tack Room to the Hay Loft, its old wooden frame worn from years of use. A faint light filters in from the other side, and a few strands of hay can be seen lightly scattered on the ground.",
+          "label": "a narrow doorway leading to the Hay Loft",
           "locked_edge": null,
           "target_id": "hay loft_24"
         },
         "stableyard_26": {
-          "examine_desc": "A narrow doorway leads from the Horse Tack Room to the Hay Loft, its old wooden frame worn from years of use. A faint light filters in from the other side, and a few strands of hay can be seen lightly scattered on the ground.",
-          "label": "a narrow doorway leading to the Hay Loft",
+          "examine_desc": "An old, weathered wooden door stands in the back wall of the Horse Tack Room, leading out into the Stableyard beyond.",
+          "label": "an old doorway leading to the Stableyard",
           "locked_edge": null,
           "target_id": "stableyard_26"
         }
@@ -3558,14 +3558,14 @@
       "names": ["Kitchen"],
       "neighbors": {
         "grand hall_12": {
-          "examine_desc": "An open doorway beckons, leading out into the grounds of the Manor House. A cobblestone path winds away from the doorway into the distance, flanked by lush green gardens.",
-          "label": "an open doorway leading outside",
+          "examine_desc": "A wide stone passageway was carved into the wall, connecting the kitchen to the grand hall. It was illuminated by a series of torches, casting dancing shadows on the walls.",
+          "label": "a passageway leading to the Grand Hall",
           "locked_edge": null,
           "target_id": "grand hall_12"
         },
         "the manor house_17": {
-          "examine_desc": "A wide stone passageway was carved into the wall, connecting the kitchen to the grand hall. It was illuminated by a series of torches, casting dancing shadows on the walls.",
-          "label": "a passageway leading to the Grand Hall",
+          "examine_desc": "An open doorway beckons, leading out into the grounds of the Manor House. A cobblestone path winds away from the doorway into the distance, flanked by lush green gardens.",
+          "label": "an open doorway leading outside",
           "locked_edge": null,
           "target_id": "the manor house_17"
         }
@@ -4382,14 +4382,14 @@
       "names": ["Library"],
       "neighbors": {
         "grand hall_12": {
-          "examine_desc": "An arched doorway stands at the far end of the library, leading out towards the manor house. The door is crafted from thick oak and is inlaid with intricate patterns and symbols. A thick layer of dust covers the surface, betraying its age.",
-          "label": "an arched doorway leading outside",
+          "examine_desc": "An open doorway at the far end of the library leads to the grand hall, beckoning with its grand entrance.",
+          "label": "an open doorway leading to the Grand Hall",
           "locked_edge": null,
           "target_id": "grand hall_12"
         },
         "the manor house_17": {
-          "examine_desc": "An open doorway at the far end of the library leads to the grand hall, beckoning with its grand entrance.",
-          "label": "an open doorway leading to the Grand Hall",
+          "examine_desc": "An arched doorway stands at the far end of the library, leading out towards the manor house. The door is crafted from thick oak and is inlaid with intricate patterns and symbols. A thick layer of dust covers the surface, betraying its age.",
+          "label": "an arched doorway leading outside",
           "locked_edge": null,
           "target_id": "the manor house_17"
         }
@@ -5477,14 +5477,14 @@
       "names": ["Secret Passageways"],
       "neighbors": {
         "courtyard_8": {
-          "examine_desc": "A narrow tunnel leads away from the Secret Passageways, winding through the darkness and eventually opening up into The Forest beyond.",
-          "label": "a winding tunnel leading to The Forest",
+          "examine_desc": "An old, weathered doorway set into the stone wall leads to a bright, open space beyond.",
+          "label": "a doorway leading to the Courtyard",
           "locked_edge": null,
           "target_id": "courtyard_8"
         },
         "the forest_5": {
-          "examine_desc": "An old, weathered doorway set into the stone wall leads to a bright, open space beyond.",
-          "label": "a doorway leading to the Courtyard",
+          "examine_desc": "A narrow tunnel leads away from the Secret Passageways, winding through the darkness and eventually opening up into The Forest beyond.",
+          "label": "a winding tunnel leading to The Forest",
           "locked_edge": null,
           "target_id": "the forest_5"
         }
@@ -6451,14 +6451,14 @@
       "names": ["Stableyard"],
       "neighbors": {
         "horse tack room_25": {
-          "examine_desc": "The cobblestone path is lined with wildflowers and leads up a gentle slope towards the Stables (outside). In the distance, you can make out the large wooden doors of the Stables, invitingly open.",
-          "label": "a cobblestone path leading towards the Stables (outside)",
+          "examine_desc": "A wide cobblestone path lined with trees and wildflowers leads away from the Stableyard, winding its way towards the Horse Tack Room in the distance.",
+          "label": "a cobblestone path leading to the Horse Tack Room",
           "locked_edge": null,
           "target_id": "horse tack room_25"
         },
         "the stables_18": {
-          "examine_desc": "A wide cobblestone path lined with trees and wildflowers leads away from the Stableyard, winding its way towards the Horse Tack Room in the distance.",
-          "label": "a cobblestone path leading to the Horse Tack Room",
+          "examine_desc": "The cobblestone path is lined with wildflowers and leads up a gentle slope towards the Stables (outside). In the distance, you can make out the large wooden doors of the Stables, invitingly open.",
+          "label": "a cobblestone path leading towards the Stables (outside)",
           "locked_edge": null,
           "target_id": "the stables_18"
         }
@@ -6755,14 +6755,14 @@
           "target_id": "bedrooms_21"
         },
         "dining room_20": {
-          "examine_desc": "A large, wooden doorway stands open, leading into a long hallway lined with various doors and paintings.",
-          "label": "an open doorway leading to the hallway",
+          "examine_desc": "An old wooden door stands in the wall, its frame decorated with intricate carvings depicting scenes of the Viscount's family. The door opens up into a wide hallway that leads to the Dining Room.",
+          "label": "a wide doorway leading into the Dining Room",
           "locked_edge": null,
           "target_id": "dining room_20"
         },
         "hallway_19": {
-          "examine_desc": "An old wooden door stands in the wall, its frame decorated with intricate carvings depicting scenes of the Viscount's family. The door opens up into a wide hallway that leads to the Dining Room.",
-          "label": "a wide doorway leading into the Dining Room",
+          "examine_desc": "A large, wooden doorway stands open, leading into a long hallway lined with various doors and paintings.",
+          "label": "an open doorway leading to the hallway",
           "locked_edge": null,
           "target_id": "hallway_19"
         }
@@ -7389,14 +7389,14 @@
       "names": ["The Forest"],
       "neighbors": {
         "secret passageways_11": {
-          "examine_desc": "A narrow path can be seen winding its way through the trees, leading to the distant Town Gates.",
-          "label": "a narrow path leading towards Town Gates",
+          "examine_desc": "A winding path can be seen snaking through the trees, carpeted with moss and ferns, leading into the depths of the forest.",
+          "label": "a narrow path winding through the trees",
           "locked_edge": null,
           "target_id": "secret passageways_11"
         },
         "town gates_4": {
-          "examine_desc": "A winding path can be seen snaking through the trees, carpeted with moss and ferns, leading into the depths of the forest.",
-          "label": "a narrow path winding through the trees",
+          "examine_desc": "A narrow path can be seen winding its way through the trees, leading to the distant Town Gates.",
+          "label": "a narrow path leading towards Town Gates",
           "locked_edge": null,
           "target_id": "town gates_4"
         }
@@ -7437,50 +7437,50 @@
       "names": ["The Manor House"],
       "neighbors": {
         "armory_16": {
-          "examine_desc": "A grand entrance with two large wooden doors leads inside the Manor House.",
-          "label": "grand Entrance",
+          "examine_desc": "A wide stone path lined with hedgerows leads away from the Manor House, winding its way towards the Armory in the distance.",
+          "label": "a stone path leading to the Armory",
           "locked_edge": null,
           "target_id": "armory_16"
         },
         "garden_13": {
-          "examine_desc": "An impressive entrance with two grand wooden doors leads into the depths of the Manor House, beyond which lies the Library.",
-          "label": "grand Entrance Leading to the Library",
+          "examine_desc": "An ornate, gateway leads to the Garden, surrounded by a tall stone wall.",
+          "label": "the garden gates",
           "locked_edge": null,
           "target_id": "garden_13"
         },
         "grand hall_12": {
-          "examine_desc": "Beyond the tall stone walls of the Manor House is an old path, leading outwards toward the Road. The path is lined with tall trees and is covered in a thick layer of leaves and moss. The sun filters through the branches, casting dappled shadows on the path.",
-          "label": "an old path leading outwards",
+          "examine_desc": "Two large wooden doors, adorned with intricate carvings, lead into the Grand Hall.",
+          "label": "the Grand Hall entrance",
           "locked_edge": null,
           "target_id": "grand hall_12"
         },
         "hallway_19": {
-          "examine_desc": "A wide stone path lined with hedgerows leads away from the Manor House, winding its way towards the Armory in the distance.",
-          "label": "a stone path leading to the Armory",
+          "examine_desc": "The entrance to the Manor House is marked by two large wooden doors, guarded by the Viscount's personal guard and a team of hounds. A large archway leads inside, beckoning you to explore the building.",
+          "label": "a grand entrance leading inside",
           "locked_edge": null,
           "target_id": "hallway_19"
         },
         "kitchen_14": {
-          "examine_desc": "A winding path leads off into the distance, heading towards a distant building that appears to be the Viscount's Stables.",
-          "label": "a path leading to The Stables",
+          "examine_desc": "This side door leads into the kitchen of the manor house, likely placed here for easy entry.",
+          "label": "a side door",
           "locked_edge": null,
           "target_id": "kitchen_14"
         },
         "library_15": {
-          "examine_desc": "An ornate, grand entrance with two large wooden doors leads to the Garden, surrounded by a tall stone wall.",
-          "label": "a grand entrance leading to the Garden",
+          "examine_desc": "An impressive entrance with two grand wooden doors leads into the depths of the Manor House, beyond which lies the Library.",
+          "label": "the entrance to the Library",
           "locked_edge": null,
           "target_id": "library_15"
         },
         "the road_6": {
-          "examine_desc": "Two large wooden doors, adorned with intricate carvings, lead into the Grand Hall.",
-          "label": "grand Entrance Doors",
+          "examine_desc": "Beyond the tall stone walls of the Manor House is an old path, leading outwards toward the Road. The path is lined with tall trees and is covered in a thick layer of leaves and moss. The sun filters through the branches, casting dappled shadows on the path.",
+          "label": "an old path leading outwards",
           "locked_edge": null,
           "target_id": "the road_6"
         },
         "the stables_18": {
-          "examine_desc": "The entrance to the Manor House is marked by two large wooden doors, guarded by the Viscount's personal guard and a team of hounds. A large archway leads inside, beckoning you to explore the building.",
-          "label": "a grand entrance leading inside",
+          "examine_desc": "A winding path leads off into the distance, heading towards a distant building that appears to be the Viscount's Stables.",
+          "label": "a path leading to The Stables",
           "locked_edge": null,
           "target_id": "the stables_18"
         }
@@ -7524,14 +7524,14 @@
           "target_id": "the manor house_17"
         },
         "the stables_18": {
-          "examine_desc": "The path is lined with tall trees and hedges, providing a canopy of shade as it winds its way towards the Town Gates, which can be seen in the near distance. A few small farms line the path, and the occasional traveler or merchant can be seen along the way.",
-          "label": "a winding path leading to the Town Gates",
+          "examine_desc": "A well-worn dirt trail branches off from the main road, leading away from the town and towards a large building in the distance. The stables can be seen up ahead, with the occasional horse and wagon making its way along the path.",
+          "label": "a dirt trail leading to the Stables (outside)",
           "locked_edge": null,
           "target_id": "the stables_18"
         },
         "town gates_4": {
-          "examine_desc": "A well-worn dirt trail branches off from the main road, leading away from the town and towards a large building in the distance. The stables can be seen up ahead, with the occasional horse and wagon making its way along the path.",
-          "label": "a dirt trail leading to the Stables (outside)",
+          "examine_desc": "The path is lined with tall trees and hedges, providing a canopy of shade as it winds its way towards the Town Gates, which can be seen in the near distance. A few small farms line the path, and the occasional traveler or merchant can be seen along the way.",
+          "label": "a winding path leading to the Town Gates",
           "locked_edge": null,
           "target_id": "town gates_4"
         }
@@ -7572,14 +7572,14 @@
       "names": ["The Stables"],
       "neighbors": {
         "stableyard_26": {
-          "examine_desc": "A wide, dirt path stretches out from the stables and leads towards the Manor House, its walls visible in the distance. The path is lined with tall grass and wildflowers, and the sun is setting in the sky, casting a warm, golden light across the land.",
-          "label": "a dirt path leading to the Manor House",
+          "examine_desc": "A worn cobblestone path winds its way through the paddock, leading inwards towards the Stableyard.",
+          "label": "a cobblestone path leading inwards",
           "locked_edge": null,
           "target_id": "stableyard_26"
         },
         "the manor house_17": {
-          "examine_desc": "A worn cobblestone path winds its way through the paddock, leading inwards towards the Stableyard.",
-          "label": "a cobblestone path leading inwards",
+          "examine_desc": "A wide, dirt path stretches out from the stables and leads towards the Manor House, its walls visible in the distance. The path is lined with tall grass and wildflowers, and the sun is setting in the sky, casting a warm, golden light across the land.",
+          "label": "a dirt path leading to the Manor House",
           "locked_edge": null,
           "target_id": "the manor house_17"
         },
@@ -7876,20 +7876,20 @@
       "names": ["Tower"],
       "neighbors": {
         "courtyard_8": {
-          "examine_desc": "A winding staircase carved from stone leads down from the Tower, descending into the dark depths of the Dungeons below. The walls of the staircase are damp and lined with cobwebs, and a musty smell lingers in the air.",
-          "label": "a winding staircase leading down",
+          "examine_desc": "The winding stone staircase leading down from the Tower is covered in cobwebs and dust, giving off an eerie feeling that descends further as one moves closer to the Courtyard below.",
+          "label": "a path to Courtyard",
           "locked_edge": null,
           "target_id": "courtyard_8"
         },
         "dungeons_9": {
-          "examine_desc": "The winding stone staircase leading down from the Tower is covered in cobwebs and dust, giving off an eerie feeling that descends further as one moves closer to the Courtyard below.",
-          "label": "a path to Courtyard",
+          "examine_desc": "A winding staircase carved from stone leads down from the Tower, descending into the dark depths of the Dungeons below. The walls of the staircase are damp and lined with cobwebs, and a musty smell lingers in the air.",
+          "label": "a winding staircase leading down",
           "locked_edge": null,
           "target_id": "dungeons_9"
         },
         "great hall_7": {
           "examine_desc": "A stone staircase leads downwards, winding around the tower as it descends. The walls are covered in cobwebs and dust, and the steps are worn from many years of use. At the bottom of the staircase lies the entrance to the Great Hall.",
-          "label": "a winding staircase leading down to the Great Hall",
+          "label": "stairs to the Great Hall",
           "locked_edge": null,
           "target_id": "great hall_7"
         }
@@ -7974,8 +7974,8 @@
       "names": ["Town Gates"],
       "neighbors": {
         "blacksmith's shop_3": {
-          "examine_desc": "A wide cobbled road leads away from the Town Gates, stretching out into the distance. The distant hills and forests beckon you forward, a promise of grand adventure.",
-          "label": "a cobbled road leading away",
+          "examine_desc": "The cobbled street winds through the town, leading to the Blacksmith's Shop. The smell of burning coal and metal fills the air, and the clang of a hammer striking an anvil can be heard in the distance.",
+          "label": "a cobbled street leading to the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "blacksmith's shop_3"
         },
@@ -7986,8 +7986,8 @@
           "target_id": "the forest_5"
         },
         "the road_6": {
-          "examine_desc": "The cobbled street winds through the town, leading to the Blacksmith's Shop. The smell of burning coal and metal fills the air, and the clang of a hammer striking an anvil can be heard in the distance.",
-          "label": "a cobbled street leading to the Blacksmith's Shop",
+          "examine_desc": "A wide cobbled road leads away from the Town Gates, stretching out into the distance. The distant hills and forests beckon you forward, a promise of grand adventure.",
+          "label": "a cobbled road leading away",
           "locked_edge": null,
           "target_id": "the road_6"
         }
@@ -8111,14 +8111,14 @@
       "names": ["Town Square"],
       "neighbors": {
         "blacksmith's shop_3": {
-          "examine_desc": "The cobblestone path leads away from the bustling Town Square, winding its way towards the old tavern in the distance. The path is well-worn and lined with small houses, the occasional shop, and the sounds of people enjoying life in the city.",
-          "label": "a cobblestone path leading towards the tavern",
+          "examine_desc": "A wide cobblestone path winds its way through the Town Square, leading off towards the Blacksmith's Shop. The path is lined with colorful awnings and stalls, and the smell of smoke and hot iron wafts through the air.",
+          "label": "a cobblestone path leading to the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "blacksmith's shop_3"
         },
         "local tavern_2": {
-          "examine_desc": "A wide cobblestone path winds its way through the Town Square, leading off towards the Blacksmith's Shop. The path is lined with colorful awnings and stalls, and the smell of smoke and hot iron wafts through the air.",
-          "label": "a cobblestone path leading to the Blacksmith's Shop",
+          "examine_desc": "The cobblestone path leads away from the bustling Town Square, winding its way towards the old tavern in the distance. The path is well-worn and lined with small houses, the occasional shop, and the sounds of people enjoying life in the city.",
+          "label": "a cobblestone path leading towards the tavern",
           "locked_edge": null,
           "target_id": "local tavern_2"
         },

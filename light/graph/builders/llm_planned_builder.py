@@ -356,6 +356,9 @@ def link_main_areas(
         for area2 in areas[idx + 1 :]:
             area_pairs[(area1, area2)] = None
 
+    if len(area_pairs) == 0:
+        return area_pairs
+
     seen_edges = []
 
     seen_edge_text = "None"
@@ -939,7 +942,7 @@ def fill_edge_information(
             name += " (outside)"
         neighbor_list = curr_area["neighbors"]
 
-        edge_list = []
+        edge_map = {}
         seen_edges = set()
         pending_neighbors = list(neighbor_list)
         max_fails = len(pending_neighbors)
@@ -960,9 +963,9 @@ def fill_edge_information(
                     pending_neighbors.append(n)
                     continue
             seen_edges.add(edge_info[0])
-            edge_list.append(edge_info)
+            edge_map[n["name"]] = edge_info
 
-        curr_area["edges"] = edge_list
+        curr_area["edges"] = edge_map
 
         if len(curr_area["subareas"]) > 0:
             all_subareas += list(curr_area["subareas"].values())
@@ -975,7 +978,7 @@ def fill_edge_information(
 LOCATION_ANNOTATION = """Given setting context, a location name and description, label the characters, objects, and nearby locations *currently* present within the location according to the description. If none are in a category, write "- None"
 Some rules for characters:
 - Be creative, rather than listing groups, generate names for a few members like '<name> the villager' rather than 'villagers', choosing an actual name rather than using <name>.
-- Choose names, NEVER USE <name> anywhere in the list!
+- Come up with your own names, NEVER USE <name> anywhere in the list!
 - Never number an entry like "warrior 3".
 - Don't list characters just by their relationship (like "<name>'s husband"), but feel free to note relationships to other characters in parantheticals, like "<name> the baker (farmer <name>'s husband)".
 
@@ -1130,7 +1133,7 @@ ROOM_CHARACTER_ANNOTATION = """I'm writing a fantasy story with the following co
 
 Given a medieval fantasy story setting description and a character name, provide the following details for the singular form of the character. Follow the provided template:
 Setting: The setting to use as context
-Character Name: The name of the character to provide answers on. May include paranthetical hints, these should be removed in the singular and plural names.
+Character Name: The name of the character to provide answers on. May include paranthetical hints, these should be removed in the singular names.
 Singular Form: singular form of the provided character, retaining titles and non-parenthetical details (removing capitalization unless a proper noun or name).
 Singular Persona: A set of defining goal, characteristics, or backstory for this character, written in *first person* perspective.
 Singular Physical Description: An appropriate physical description for the character in third person, such that it could be used in narration to someone not present.
@@ -1680,7 +1683,8 @@ class LLMPlannedGraphBuilder(GraphBuilder):
         while len(all_subareas) > 0:
             curr_area = all_subareas.pop(0)
 
-            for (n, (label, desc)) in zip(curr_area["neighbors"], curr_area["edges"]):
+            for n in curr_area["neighbors"]:
+                label, desc = curr_area["edges"][n["name"]]
                 curr_area["node"].add_neighbor(n["node"], label, None, desc)
 
             if len(curr_area["subareas"]) > 0:

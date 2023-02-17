@@ -298,14 +298,14 @@
       "names": ["Apple Orchard"],
       "neighbors": {
         "grape vineyard_18": {
-          "examine_desc": "The winding path is lined with tall grass, and the smell of ripe peaches can be detected in the air. As you make your way along the path, the trees become thicker and the air becomes sweeter, until eventually you reach the Peach Orchard.",
-          "label": "a winding path leading to Peach Orchard",
+          "examine_desc": "A beaten dirt path, lined with the occasional apple tree, leads away from the Apple Orchard and into the distance towards the Grape Vineyard. The path meanders gently, and its edges are lined with tall grasses and wildflowers.",
+          "label": "a winding path leading to the Grape Vineyard",
           "locked_edge": null,
           "target_id": "grape vineyard_18"
         },
         "peach orchard_17": {
-          "examine_desc": "A beaten dirt path, lined with the occasional apple tree, leads away from the Apple Orchard and into the distance towards the Grape Vineyard. The path meanders gently, and its edges are lined with tall grasses and wildflowers.",
-          "label": "a winding path leading to the Grape Vineyard",
+          "examine_desc": "The winding path is lined with tall grass, and the smell of ripe peaches can be detected in the air. As you make your way along the path, the trees become thicker and the air becomes sweeter, until eventually you reach the Peach Orchard.",
+          "label": "a winding path leading to Peach Orchard",
           "locked_edge": null,
           "target_id": "peach orchard_17"
         }
@@ -795,14 +795,14 @@
           "target_id": "cornfield_11"
         },
         "farmhouse_9": {
-          "examine_desc": "An old wooden doorway leads into the stables, with a path of worn dirt leading away from it. The walls of the barn are made of rough-hewn wood and the doorframe is weathered and aged.",
-          "label": "an old doorway leading to the stables",
+          "examine_desc": "An old wooden door, worn with age, leads through a small archway into the farmhouse beyond.",
+          "label": "a wooden door leading to the farmhouse",
           "locked_edge": null,
           "target_id": "farmhouse_9"
         },
         "stables_12": {
-          "examine_desc": "An old wooden door, worn with age, leads through a small archway into the farmhouse beyond.",
-          "label": "a wooden door leading to the farmhouse",
+          "examine_desc": "An old wooden doorway leads into the stables, with a path of worn dirt leading away from it. The walls of the barn are made of rough-hewn wood and the doorframe is weathered and aged.",
+          "label": "an old doorway leading to the stables",
           "locked_edge": null,
           "target_id": "stables_12"
         }
@@ -2351,14 +2351,14 @@
           "target_id": "clearing_21"
         },
         "forest path_19": {
-          "examine_desc": "The path winds through the forest, leading to a small stream that can be heard nearby. The sound of trickling water and birdsong fills the air, and the path seems to be well-trodden.",
-          "label": "a winding path leading to a stream",
+          "examine_desc": "The path is overgrown and winding, leading out of the cave entrance and into the trees of the forest beyond. Sunlight streams in from the outside, giving a feeling of hope as the adventurers prepare to face whatever dangers lie ahead.",
+          "label": "a winding forest path leading outside",
           "locked_edge": null,
           "target_id": "forest path_19"
         },
         "stream_22": {
-          "examine_desc": "The path is overgrown and winding, leading out of the cave entrance and into the trees of the forest beyond. Sunlight streams in from the outside, giving a feeling of hope as the adventurers prepare to face whatever dangers lie ahead.",
-          "label": "a winding forest path leading outside",
+          "examine_desc": "The path winds through the forest, leading to a small stream that can be heard nearby. The sound of trickling water and birdsong fills the air, and the path seems to be well-trodden.",
+          "label": "a winding path leading to a stream",
           "locked_edge": null,
           "target_id": "stream_22"
         }
@@ -2533,14 +2533,14 @@
       "names": ["Clearing"],
       "neighbors": {
         "cave entrance_20": {
-          "examine_desc": "A narrow stream runs out of the clearing, winding its way through the dense undergrowth and around the large rocks. The water is crystal clear, bubbling over small stones as it flows onward.",
-          "label": "a small stream flowing out of the clearing",
+          "examine_desc": "The path is winding, overgrown, and barely visible, but it appears to lead towards a dark entrance in the side of the mountain. A faint glow emits from the entrance, and the sound of running water can be heard coming from within.",
+          "label": "a winding path leading to the Cave Entrance",
           "locked_edge": null,
           "target_id": "cave entrance_20"
         },
         "stream_22": {
-          "examine_desc": "The path is winding, overgrown, and barely visible, but it appears to lead towards a dark entrance in the side of the mountain. A faint glow emits from the entrance, and the sound of running water can be heard coming from within.",
-          "label": "a winding path leading to the Cave Entrance",
+          "examine_desc": "A narrow stream runs out of the clearing, winding its way through the dense undergrowth and around the large rocks. The water is crystal clear, bubbling over small stones as it flows onward.",
+          "label": "a small stream flowing out of the clearing",
           "locked_edge": null,
           "target_id": "stream_22"
         }
@@ -2590,14 +2590,14 @@
       "names": ["Common Room"],
       "neighbors": {
         "kitchen_7": {
-          "examine_desc": "A wide hallway stretches away from the Common Room, lined with torches that flicker in the dim light. The hallway leads to the Sleeping Quarters, where the adventurers can rest and recover.",
-          "label": "a wide hallway leading to the Sleeping Quarters",
+          "examine_desc": "The wooden door is well-worn and leads to the Kitchen, which is just beyond the threshold. A chill breeze is coming from the direction of the Kitchen, carrying the smell of freshly-prepared dishes.",
+          "label": "a well-worn wooden door leading to the Kitchen",
           "locked_edge": null,
           "target_id": "kitchen_7"
         },
         "sleeping quarters_8": {
-          "examine_desc": "The wooden door is well-worn and leads to the Kitchen, which is just beyond the threshold. A chill breeze is coming from the direction of the Kitchen, carrying the smell of freshly-prepared dishes.",
-          "label": "a well-worn wooden door leading to the Kitchen",
+          "examine_desc": "A wide hallway stretches away from the Common Room, lined with torches that flicker in the dim light. The hallway leads to the Sleeping Quarters, where the adventurers can rest and recover.",
+          "label": "a wide hallway leading to the Sleeping Quarters",
           "locked_edge": null,
           "target_id": "sleeping quarters_8"
         },
@@ -2738,14 +2738,14 @@
       "names": ["Cornfield"],
       "neighbors": {
         "barn_10": {
-          "examine_desc": "A narrow path runs through the cornfield, winding its way through the tall stalks of corn. The path is well-worn, leading towards the distant sound of birds singing in the Vineyards and Orchards beyond.",
-          "label": "a worn path leading to the Vineyards and Orchards",
+          "examine_desc": "A narrow path winds through the tall stalks of corn, leading towards the large Barn in the distance. The path is covered in dirt and straw, giving it a rustic quality. At the end, the Barn looms, beckoning those who brave the path.",
+          "label": "a small path leading towards the Barn",
           "locked_edge": null,
           "target_id": "barn_10"
         },
         "farmhouse_9": {
-          "examine_desc": "A winding path of dried mud leads through the tall stalks of corn, eventually opening up to the Tool Shed in the distance.",
-          "label": "a narrow path leading to the tool shed",
+          "examine_desc": "The dirt path winds through the stalks of corn, leading towards the Johnson Farmhouse in the distance. The path is overgrown with weeds and grass, but it still looks like it is well trodden.",
+          "label": "a dirt path leading to the farmhouse",
           "locked_edge": null,
           "target_id": "farmhouse_9"
         },
@@ -2756,14 +2756,14 @@
           "target_id": "stables_12"
         },
         "tool shed_13": {
-          "examine_desc": "The dirt path winds through the stalks of corn, leading towards the Johnson Farmhouse in the distance. The path is overgrown with weeds and grass, but it still looks like it is well trodden.",
-          "label": "a dirt path leading to the farmhouse",
+          "examine_desc": "A winding path of dried mud leads through the tall stalks of corn, eventually opening up to the Tool Shed in the distance.",
+          "label": "a narrow path leading to the tool shed",
           "locked_edge": null,
           "target_id": "tool shed_13"
         },
         "vineyards and orchards_14": {
-          "examine_desc": "A narrow path winds through the tall stalks of corn, leading towards the large Barn in the distance. The path is covered in dirt and straw, giving it a rustic quality. At the end, the Barn looms, beckoning those who brave the path.",
-          "label": "a small path leading towards the Barn",
+          "examine_desc": "A narrow path runs through the cornfield, winding its way through the tall stalks of corn. The path is well-worn, leading towards the distant sound of birds singing in the Vineyards and Orchards beyond.",
+          "label": "a worn path leading to the Vineyards and Orchards",
           "locked_edge": null,
           "target_id": "vineyards and orchards_14"
         }
@@ -3406,14 +3406,14 @@
       "names": ["Farm Road"],
       "neighbors": {
         "town inn_4": {
-          "examine_desc": "The path is dotted with tufts of grass and patches of wildflowers, leading off into the distance towards an area of dense trees and shrubs. The air smells of fresh pine and the rustling of leaves can be heard in the distance.",
-          "label": "a winding path leading towards the Wooded Areas",
+          "examine_desc": "The path is lined with tall trees, and leads down a gentle slope towards the town in the distance. There is a faint smell of wood smoke in the air, as if a fire was recently lit nearby.",
+          "label": "a winding dirt path leading to Town Inn",
           "locked_edge": null,
           "target_id": "town inn_4"
         },
         "wooded areas_15": {
-          "examine_desc": "The path is lined with tall trees, and leads down a gentle slope towards the town in the distance. There is a faint smell of wood smoke in the air, as if a fire was recently lit nearby.",
-          "label": "a winding dirt path leading to Town Inn",
+          "examine_desc": "The path is dotted with tufts of grass and patches of wildflowers, leading off into the distance towards an area of dense trees and shrubs. The air smells of fresh pine and the rustling of leaves can be heard in the distance.",
+          "label": "a winding path leading towards the Wooded Areas",
           "locked_edge": null,
           "target_id": "wooded areas_15"
         }
@@ -4329,26 +4329,26 @@
       "names": ["Farmhouse"],
       "neighbors": {
         "barn_10": {
-          "examine_desc": "A winding path leads away from the Farmhouse, ending at a small wooden building tucked away between the stables and the cornfield - the Tool Shed.",
-          "label": "a winding path leading to the Tool Shed",
+          "examine_desc": "A well-trodden path leads away from the farmhouse, winding its way through the cornfields and towards the distant barn, its wooden slats peeking through the endless sea of stalks.",
+          "label": "a worn path leading to the Barn",
           "locked_edge": null,
           "target_id": "barn_10"
         },
         "cornfield_11": {
-          "examine_desc": "A narrow dirt path winds through the cornfield, eventually leading to the stables. The path is worn and well-trodden, with a few tufts of grass poking up through the dirt.",
-          "label": "a dirt path leading to the stables",
+          "examine_desc": "A winding path leads away from the Farmhouse, ending at a small wooden building tucked away between the stables and the cornfield - the Tool Shed.",
+          "label": "a winding path leading to the Tool Shed",
           "locked_edge": null,
           "target_id": "cornfield_11"
         },
         "stables_12": {
-          "examine_desc": "The path leads away from the farmhouse, winding through the tall stalks of corn and leading to the Cornfield beyond. The dirt is dusty and compact, showing signs of recent foot traffic.",
-          "label": "a dirt path leading to the Cornfield",
+          "examine_desc": "A narrow dirt path winds through the cornfield, eventually leading to the stables. The path is worn and well-trodden, with a few tufts of grass poking up through the dirt.",
+          "label": "a dirt path leading to the stables",
           "locked_edge": null,
           "target_id": "stables_12"
         },
         "tool shed_13": {
-          "examine_desc": "A well-trodden path leads away from the farmhouse, winding its way through the cornfields and towards the distant barn, its wooden slats peeking through the endless sea of stalks.",
-          "label": "a worn path leading to the Barn",
+          "examine_desc": "The path leads away from the farmhouse, winding through the tall stalks of corn and leading to the Cornfield beyond. The dirt is dusty and compact, showing signs of recent foot traffic.",
+          "label": "a dirt path leading to the Cornfield",
           "locked_edge": null,
           "target_id": "tool shed_13"
         }
@@ -4633,14 +4633,14 @@
       "names": ["Forest Path"],
       "neighbors": {
         "cave entrance_20": {
-          "examine_desc": "The path winds through the dark trees, leading off into the distance. Fallen leaves and branches make it difficult to traverse, but it is the only route to the Wooded Areas.",
-          "label": "a winding path leading through the trees",
+          "examine_desc": "An old, winding path leads off into the darkness of the forest. It is overgrown with vines and branches, and the ground is littered with fallen leaves. The trees seem to close in around the path, creating a feeling of isolation and danger. The path looks like it may lead to some unknown destination.",
+          "label": "a dark, winding path leading into the depths of the forest",
           "locked_edge": null,
           "target_id": "cave entrance_20"
         },
         "wooded areas_15": {
-          "examine_desc": "An old, winding path leads off into the darkness of the forest. It is overgrown with vines and branches, and the ground is littered with fallen leaves. The trees seem to close in around the path, creating a feeling of isolation and danger. The path looks like it may lead to some unknown destination.",
-          "label": "a dark, winding path leading into the depths of the forest",
+          "examine_desc": "The path winds through the dark trees, leading off into the distance. Fallen leaves and branches make it difficult to traverse, but it is the only route to the Wooded Areas.",
+          "label": "a winding path leading through the trees",
           "locked_edge": null,
           "target_id": "wooded areas_15"
         }
@@ -5060,8 +5060,8 @@
       "names": ["Grape Vineyard"],
       "neighbors": {
         "apple orchard_16": {
-          "examine_desc": "The pathway winds through the grape vineyard, lined with lush vines and fragrant blooms. It leads out into the open, where the rolling vineyards and orchards in the distance can be seen.",
-          "label": "a pathway leading out to the vineyards and orchards",
+          "examine_desc": "A winding path stretches out before you, leading into the distance and towards the Apple Orchard. The path is lined with trees, their leaves rustling in the wind. The sun is shining, and the air is filled with the smell of ripe grapes and fresh apples.",
+          "label": "a winding path leading to the Apple Orchard",
           "locked_edge": null,
           "target_id": "apple orchard_16"
         },
@@ -5072,8 +5072,8 @@
           "target_id": "peach orchard_17"
         },
         "vineyards and orchards_14": {
-          "examine_desc": "A winding path stretches out before you, leading into the distance and towards the Apple Orchard. The path is lined with trees, their leaves rustling in the wind. The sun is shining, and the air is filled with the smell of ripe grapes and fresh apples.",
-          "label": "a winding path leading to the Apple Orchard",
+          "examine_desc": "The pathway winds through the grape vineyard, lined with lush vines and fragrant blooms. It leads out into the open, where the rolling vineyards and orchards in the distance can be seen.",
+          "label": "a pathway leading out to the vineyards and orchards",
           "locked_edge": null,
           "target_id": "vineyards and orchards_14"
         }
@@ -9002,14 +9002,14 @@
       "names": ["Peach Orchard"],
       "neighbors": {
         "apple orchard_16": {
-          "examine_desc": "A path winds its way through the orchard, leading towards a distant cluster of grape vines. The sun glints off the mottled green and brown of the trees, and the air is heavy with the scent of ripe peaches. As you look further along the path, you can make out the distant sight of the vineyard.",
-          "label": "a winding path leading to the Grape Vineyard",
+          "examine_desc": "A winding path winds through the Peach Orchard, filled with the sweet smell of ripe fruit. It winds its way through the trees, eventually leading to the Apple Orchard in the distance.",
+          "label": "a winding path leading to the Apple Orchard",
           "locked_edge": null,
           "target_id": "apple orchard_16"
         },
         "grape vineyard_18": {
-          "examine_desc": "A winding path winds through the Peach Orchard, filled with the sweet smell of ripe fruit. It winds its way through the trees, eventually leading to the Apple Orchard in the distance.",
-          "label": "a winding path leading to the Apple Orchard",
+          "examine_desc": "A path winds its way through the orchard, leading towards a distant cluster of grape vines. The sun glints off the mottled green and brown of the trees, and the air is heavy with the scent of ripe peaches. As you look further along the path, you can make out the distant sight of the vineyard.",
+          "label": "a winding path leading to the Grape Vineyard",
           "locked_edge": null,
           "target_id": "grape vineyard_18"
         }
@@ -11425,14 +11425,14 @@
           "target_id": "barn_10"
         },
         "cornfield_11": {
-          "examine_desc": "A narrow, winding dirt path leads away from the stables, eventually leading up to the farmhouse in the distance. A few trees line the path, providing some shade in the summer months.",
-          "label": "a dirt path leading to the farmhouse",
+          "examine_desc": "A worn dirt path runs from the stables to the edge of the cornfield, with tall stalks of corn swaying gently in the breeze.",
+          "label": "a path leading to the cornfield",
           "locked_edge": null,
           "target_id": "cornfield_11"
         },
         "farmhouse_9": {
-          "examine_desc": "A worn dirt path runs from the stables to the edge of the cornfield, with tall stalks of corn swaying gently in the breeze.",
-          "label": "a path leading to the cornfield",
+          "examine_desc": "A narrow, winding dirt path leads away from the stables, eventually leading up to the farmhouse in the distance. A few trees line the path, providing some shade in the summer months.",
+          "label": "a dirt path leading to the farmhouse",
           "locked_edge": null,
           "target_id": "farmhouse_9"
         }
@@ -11755,14 +11755,14 @@
       "names": ["Stream"],
       "neighbors": {
         "cave entrance_20": {
-          "examine_desc": "A narrow path winds through the forest, leading away from the stream and towards a clearing up ahead. The path is lined with trees and shrubs, with the occasional patch of wildflowers scattered throughout. The sun filters through the branches, providing a peaceful and serene atmosphere.",
-          "label": "a narrow path leading through the forest",
+          "examine_desc": "The path winds away from the stream, snaking its way into the darkness of the nearby cave entrance. The entrance is shrouded in shadows, and the path is lined with tall grass and moss-covered rocks. The air is cold and still, and the only sound is the gentle trickle of the stream behind you.",
+          "label": "a winding path leading into the darkness",
           "locked_edge": null,
           "target_id": "cave entrance_20"
         },
         "clearing_21": {
-          "examine_desc": "The path winds away from the stream, snaking its way into the darkness of the nearby cave entrance. The entrance is shrouded in shadows, and the path is lined with tall grass and moss-covered rocks. The air is cold and still, and the only sound is the gentle trickle of the stream behind you.",
-          "label": "a winding path leading into the darkness",
+          "examine_desc": "A narrow path winds through the forest, leading away from the stream and towards a clearing up ahead. The path is lined with trees and shrubs, with the occasional patch of wildflowers scattered throughout. The sun filters through the branches, providing a peaceful and serene atmosphere.",
+          "label": "a narrow path leading through the forest",
           "locked_edge": null,
           "target_id": "clearing_21"
         }
@@ -12517,14 +12517,14 @@
       "names": ["Tool Shed"],
       "neighbors": {
         "cornfield_11": {
-          "examine_desc": "A beaten and well-trodden path winds its way through the tall, swaying cornstalks, leading all the way to the farmhouse in the distance.",
-          "label": "a path leading to the farmhouse",
+          "examine_desc": "From the tool shed, an old pathway winds its way through the grass, leading directly towards the distant cornfield.",
+          "label": "an old pathway leading to the cornfield",
           "locked_edge": null,
           "target_id": "cornfield_11"
         },
         "farmhouse_9": {
-          "examine_desc": "From the tool shed, an old pathway winds its way through the grass, leading directly towards the distant cornfield.",
-          "label": "an old pathway leading to the cornfield",
+          "examine_desc": "A beaten and well-trodden path winds its way through the tall, swaying cornstalks, leading all the way to the farmhouse in the distance.",
+          "label": "a path leading to the farmhouse",
           "locked_edge": null,
           "target_id": "farmhouse_9"
         }
@@ -12934,14 +12934,14 @@
       "names": ["Town Square"],
       "neighbors": {
         "blacksmith's shop_2": {
-          "examine_desc": "The cobblestone path leads away from the Town Square, winding up the hill until it reaches Town Hall. The building looms in the distance, its grand facade illuminated by the sun.",
-          "label": "a cobblestone path leading to Town Hall",
+          "examine_desc": "From the Town Square, a winding cobblestone street stretches out, lined with shops and stalls. Further down, the street opens up to reveal a large building with a large, smoldering forge at its center - the Blacksmith's Shop.",
+          "label": "a winding cobblestone street leading to the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "blacksmith's shop_2"
         },
         "common room_6": {
-          "examine_desc": "A winding cobblestone street stretches out from the Town Square, leading off into the distance towards the Town Inn. The street is lined with buildings, many of them with their doors and windows shut tight, and the occasional passerby going about their business.",
-          "label": "a winding cobblestone street",
+          "examine_desc": "A cobblestone path snakes its way around the Town Square, leading inwards towards the Common Room. The path is lined with colorful flowers and the occasional street vendor, and the air is filled with the sound of excited chatter.",
+          "label": "a winding cobblestone path",
           "locked_edge": null,
           "target_id": "common room_6"
         },
@@ -12952,14 +12952,14 @@
           "target_id": "general store_3"
         },
         "town hall_1": {
-          "examine_desc": "From the Town Square, a winding cobblestone street stretches out, lined with shops and stalls. Further down, the street opens up to reveal a large building with a large, smoldering forge at its center - the Blacksmith's Shop.",
-          "label": "a winding cobblestone street leading to the Blacksmith's Shop",
+          "examine_desc": "The cobblestone path leads away from the Town Square, winding up the hill until it reaches Town Hall. The building looms in the distance, its grand facade illuminated by the sun.",
+          "label": "a cobblestone path leading to Town Hall",
           "locked_edge": null,
           "target_id": "town hall_1"
         },
         "town inn_4": {
-          "examine_desc": "A cobblestone path snakes its way around the Town Square, leading inwards towards the Common Room. The path is lined with colorful flowers and the occasional street vendor, and the air is filled with the sound of excited chatter.",
-          "label": "a winding cobblestone path",
+          "examine_desc": "A winding cobblestone street stretches out from the Town Square, leading off into the distance towards the Town Inn. The street is lined with buildings, many of them with their doors and windows shut tight, and the occasional passerby going about their business.",
+          "label": "a winding cobblestone street",
           "locked_edge": null,
           "target_id": "town inn_4"
         }
@@ -13307,14 +13307,14 @@
           "target_id": "cornfield_11"
         },
         "grape vineyard_18": {
-          "examine_desc": "A winding trail of packed dirt, lined with tall trees, leads away from the vineyards and orchards, leading further into the wilds. A light mist hangs in the air, and the tall grass rustles in the breeze.",
-          "label": "a winding trail leading into the woods",
+          "examine_desc": "A small path winds its way through the vineyards and orchards, leading towards a cluster of grape vines in the distance. The path is lined with wildflowers, and the sweet scent of ripening grapes fills the air.",
+          "label": "a narrow path leading to the Grape Vineyard",
           "locked_edge": null,
           "target_id": "grape vineyard_18"
         },
         "wooded areas_15": {
-          "examine_desc": "A small path winds its way through the vineyards and orchards, leading towards a cluster of grape vines in the distance. The path is lined with wildflowers, and the sweet scent of ripening grapes fills the air.",
-          "label": "a narrow path leading to the Grape Vineyard",
+          "examine_desc": "A winding trail of packed dirt, lined with tall trees, leads away from the vineyards and orchards, leading further into the wilds. A light mist hangs in the air, and the tall grass rustles in the breeze.",
+          "label": "a winding trail leading into the woods",
           "locked_edge": null,
           "target_id": "wooded areas_15"
         }
@@ -14172,14 +14172,14 @@
           "target_id": "farm road_5"
         },
         "forest path_19": {
-          "examine_desc": "A narrow path winds through the trees, leading down to the vineyards and orchards. The path is lined with wildflowers and trees, and the air is filled with the sweet smell of the nearby vineyards.",
-          "label": "a winding path leading to the vineyards and orchards",
+          "examine_desc": "A narrow path leads away from the clearing, winding through the trees and undergrowth. The trail is overgrown and faintly worn, with no obvious signs of recent use.",
+          "label": "a narrow path winding through the trees",
           "locked_edge": null,
           "target_id": "forest path_19"
         },
         "vineyards and orchards_14": {
-          "examine_desc": "A narrow path leads away from the clearing, winding through the trees and undergrowth. The trail is overgrown and faintly worn, with no obvious signs of recent use.",
-          "label": "a narrow path winding through the trees",
+          "examine_desc": "A narrow path winds through the trees, leading down to the vineyards and orchards. The path is lined with wildflowers and trees, and the air is filled with the sweet smell of the nearby vineyards.",
+          "label": "a winding path leading to the vineyards and orchards",
           "locked_edge": null,
           "target_id": "vineyards and orchards_14"
         }

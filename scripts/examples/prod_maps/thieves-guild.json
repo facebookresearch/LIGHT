@@ -99,17 +99,17 @@
       "name_prefix": "the",
       "names": ["Abandoned Mineshaft"],
       "neighbors": {
-        "hidden vault_7": {
+        "ruins of the castle_8": {
           "examine_desc": "The path is lined by tall walls of rock, leading towards the distant ruins of a castle. The path is slightly overgrown, with patches of moss and ivy intertwining with the stones. The air is still, and a chill winds through the mineshaft.",
           "label": "an old pathway leading to the ruins",
           "locked_edge": null,
-          "target_id": "hidden vault_7"
+          "target_id": "ruins of the castle_8"
         },
-        "ruins of the castle_8": {
+        "hidden vault_7": {
           "examine_desc": "A narrow passageway, barely illuminated by flickering torches, leads off into the darkness. The walls are rough and jagged, and the air is still and heavy. The faint sound of rushing water can be heard coming from the depths of the tunnel, beckoning the player onward to explore the Hidden Vault.",
           "label": "a narrow passageway leading to the Hidden Vault",
           "locked_edge": null,
-          "target_id": "ruins of the castle_8"
+          "target_id": "hidden vault_7"
         },
         "secret cave_6": {
           "examine_desc": "An old, winding path leads away from the Abandoned Mineshaft, snaking through the darkness until it eventually reaches a mysterious cave.",
@@ -319,14 +319,14 @@
       "names": ["Apothecary"],
       "neighbors": {
         "library_12": {
-          "examine_desc": "A narrow alleyway leads away from the Apothecary, winding its way through the streets until eventually opening up into the bustling Market Square.",
-          "label": "a narrow alleyway",
+          "examine_desc": "A worn wooden door stands at the rear corner of the Apothecary, leading into a shadowy hallway that is said to lead to the Library.",
+          "label": "an ancient wooden door leading to the Library",
           "locked_edge": null,
           "target_id": "library_12"
         },
         "market square_9": {
-          "examine_desc": "A worn wooden door stands at the rear corner of the Apothecary, leading into a shadowy hallway that is said to lead to the Library.",
-          "label": "an ancient wooden door leading to the Library",
+          "examine_desc": "A narrow alleyway leads away from the Apothecary, winding its way through the streets until eventually opening up into the bustling Market Square.",
+          "label": "a narrow alleyway",
           "locked_edge": null,
           "target_id": "market square_9"
         }
@@ -832,14 +832,14 @@
       "names": ["Armory"],
       "neighbors": {
         "council hall_1": {
-          "examine_desc": "A winding stone path, lined with torches, leads from the Armory to the Golden Quarter. It winds through a small courtyard, and the air is filled with the clatter of armor and weapons being readied for battle.",
-          "label": "a winding stone path",
+          "examine_desc": "An imposing archway of ancient stone stands before you, its intricate carvings depicting a solemn procession of warriors. The archway leads into a long hallway, from where the Council Hall can be seen at the end.",
+          "label": "an ornate archway leading towards the Council Hall",
           "locked_edge": null,
           "target_id": "council hall_1"
         },
         "golden quarter_4": {
-          "examine_desc": "An imposing archway of ancient stone stands before you, its intricate carvings depicting a solemn procession of warriors. The archway leads into a long hallway, from where the Council Hall can be seen at the end.",
-          "label": "an ornate archway leading towards the Council Hall",
+          "examine_desc": "A winding stone path, lined with torches, leads from the Armory to the Golden Quarter. It winds through a small courtyard, and the air is filled with the clatter of armor and weapons being readied for battle.",
+          "label": "a winding stone path",
           "locked_edge": null,
           "target_id": "golden quarter_4"
         }
@@ -1006,14 +1006,14 @@
       "names": ["Barracks"],
       "neighbors": {
         "council hall_1": {
-          "examine_desc": "A narrow tunnel stretches out into the darkness, leading to what appears to be the entrance to the Thieves' Guild's Dungeon. The walls seem to be damp and a chill can be felt in the air. The only sound is the echo of dripping water from somewhere far away.",
-          "label": "an ominous tunnel leading to the Dungeon",
+          "examine_desc": "The wide corridor is lined with torches and banners, leading to a large set of double doors at the end. The walls are adorned with ancient murals depicting great battles and heroic deeds. The air is thick with a sense of anticipation as the corridor leads towards the Council Hall.",
+          "label": "a wide corridor leading to the Council Hall",
           "locked_edge": null,
           "target_id": "council hall_1"
         },
         "dungeon_2": {
-          "examine_desc": "The wide corridor is lined with torches and banners, leading to a large set of double doors at the end. The walls are adorned with ancient murals depicting great battles and heroic deeds. The air is thick with a sense of anticipation as the corridor leads towards the Council Hall.",
-          "label": "a wide corridor leading to the Council Hall",
+          "examine_desc": "A narrow tunnel stretches out into the darkness, leading to what appears to be the entrance to the Thieves' Guild's Dungeon. The walls seem to be damp and a chill can be felt in the air. The only sound is the echo of dripping water from somewhere far away.",
+          "label": "an ominous tunnel leading to the Dungeon",
           "locked_edge": null,
           "target_id": "dungeon_2"
         }
@@ -1412,14 +1412,14 @@
       "names": ["Blacksmith"],
       "neighbors": {
         "inn_14": {
-          "examine_desc": "A wide cobblestone road stretches out from the Blacksmith, winding its way through the streets of the city before reaching the bustling Market Square.",
-          "label": "a cobblestone road leading to the Market Square",
+          "examine_desc": "A dirt path leads away from the Blacksmith, weaving through the village and eventually reaching the Inn at the other end.",
+          "label": "a winding path leading to the Inn",
           "locked_edge": null,
           "target_id": "inn_14"
         },
         "market square_9": {
-          "examine_desc": "A dirt path leads away from the Blacksmith, weaving through the village and eventually reaching the Inn at the other end.",
-          "label": "a winding path leading to the Inn",
+          "examine_desc": "A wide cobblestone road stretches out from the Blacksmith, winding its way through the streets of the city before reaching the bustling Market Square.",
+          "label": "a cobblestone road leading to the Market Square",
           "locked_edge": null,
           "target_id": "market square_9"
         }
@@ -2462,26 +2462,26 @@
       "names": ["Council Hall"],
       "neighbors": {
         "armory_3": {
-          "examine_desc": "An ancient stone bridge stretches across the river towards the distant Golden Quarter. The bridge is worn, but still sturdy enough to support the weight of a few travelers.",
-          "label": "an ancient stone bridge leading towards Golden Quarter",
+          "examine_desc": "A large stone archway leads from the Council Hall, the edges of the arch carved with intricate designs and symbols. A doorway, just beyond the archway, leads to the Armory, the faint sound of clanging metal and shouts of battle echoing from within.",
+          "label": "a stone archway leading to the Armory",
           "locked_edge": null,
           "target_id": "armory_3"
         },
         "barracks_0": {
-          "examine_desc": "A worn stone pathway leads from the Council Hall down a dark and winding corridor, disappearing into the depths of the dungeon below.",
-          "label": "a dark corridor leading down",
+          "examine_desc": "A wide corridor stretches out from the Council Hall, its walls lined with ancient stone and lit by torches. The corridor gradually slopes downward, eventually leading to the entrance of the Barracks.",
+          "label": "a wide corridor leading to the Barracks",
           "locked_edge": null,
           "target_id": "barracks_0"
         },
         "dungeon_2": {
-          "examine_desc": "A wide corridor stretches out from the Council Hall, its walls lined with ancient stone and lit by torches. The corridor gradually slopes downward, eventually leading to the entrance of the Barracks.",
-          "label": "a wide corridor leading to the Barracks",
+          "examine_desc": "A worn stone pathway leads from the Council Hall down a dark and winding corridor, disappearing into the depths of the dungeon below.",
+          "label": "a dark corridor leading down",
           "locked_edge": null,
           "target_id": "dungeon_2"
         },
         "golden quarter_4": {
-          "examine_desc": "A large stone archway leads from the Council Hall, the edges of the arch carved with intricate designs and symbols. A doorway, just beyond the archway, leads to the Armory, the faint sound of clanging metal and shouts of battle echoing from within.",
-          "label": "a stone archway leading to the Armory",
+          "examine_desc": "An ancient stone bridge stretches across the river towards the distant Golden Quarter. The bridge is worn, but still sturdy enough to support the weight of a few travelers.",
+          "label": "an ancient stone bridge leading towards Golden Quarter",
           "locked_edge": null,
           "target_id": "golden quarter_4"
         }
@@ -3889,14 +3889,14 @@
       "names": ["Dungeon"],
       "neighbors": {
         "barracks_0": {
-          "examine_desc": "An old wooden door stands in the corner of the dungeon, its hinges rusty and its paint chipped. Beyond the door lies a long, dark corridor, lined with torches and leading up to the Council Hall.",
-          "label": "an old wooden door leading to the Council Hall",
+          "examine_desc": "A long, dark hallway stretches from the Dungeon, leading to the Barracks. The walls are damp and grimy, and the air is oppressive. The hallway is lit sporadically by dim torches, and the sound of prisoners' cries echoes through the walls.",
+          "label": "a dark hallway leading to the Barracks",
           "locked_edge": null,
           "target_id": "barracks_0"
         },
         "council hall_1": {
-          "examine_desc": "A long, dark hallway stretches from the Dungeon, leading to the Barracks. The walls are damp and grimy, and the air is oppressive. The hallway is lit sporadically by dim torches, and the sound of prisoners' cries echoes through the walls.",
-          "label": "a dark hallway leading to the Barracks",
+          "examine_desc": "An old wooden door stands in the corner of the dungeon, its hinges rusty and its paint chipped. Beyond the door lies a long, dark corridor, lined with torches and leading up to the Council Hall.",
+          "label": "an old wooden door leading to the Council Hall",
           "locked_edge": null,
           "target_id": "council hall_1"
         }
@@ -4808,8 +4808,8 @@
       "names": ["Golden Quarter"],
       "neighbors": {
         "armory_3": {
-          "examine_desc": "A narrow stone pathway winds its way through the streets of the Golden Quarter, leading towards the Ruins of the Castle in the distance. The pathway is flanked by tall stone walls, and is guarded by members of the Thieves Guild.",
-          "label": "a narrow pathway leading to the Ruins of the Castle",
+          "examine_desc": "A large, imposing iron gate stands at the edge of the Golden Quarter, leading to a cobblestone path that winds its way towards the Armory.",
+          "label": "an iron gate leading to Armory",
           "locked_edge": null,
           "target_id": "armory_3"
         },
@@ -4820,8 +4820,8 @@
           "target_id": "council hall_1"
         },
         "ruins of the castle_8": {
-          "examine_desc": "A large, imposing iron gate stands at the edge of the Golden Quarter, leading to a cobblestone path that winds its way towards the Armory.",
-          "label": "an iron gate leading to Armory",
+          "examine_desc": "A narrow stone pathway winds its way through the streets of the Golden Quarter, leading towards the Ruins of the Castle in the distance. The pathway is flanked by tall stone walls, and is guarded by members of the Thieves Guild.",
+          "label": "a narrow pathway leading to the Ruins of the Castle",
           "locked_edge": null,
           "target_id": "ruins of the castle_8"
         }
@@ -5598,14 +5598,14 @@
       "names": ["Hidden Vault"],
       "neighbors": {
         "abandoned mineshaft_5": {
-          "examine_desc": "A dark, winding corridor leads deeper into the ruins of the castle. The walls are lined with ancient runes, and the air is filled with an eerie energy. The path leads to an old doorway, guarded by powerful magical wards.",
-          "label": "a dark, winding corridor leading deeper into the ruins",
+          "examine_desc": "A narrow passageway winds its way downwards, leading to an abandoned mineshaft. Ancient runes have been carved into the walls, and the air is filled with a palpable sense of foreboding.",
+          "label": "a narrow passageway leading downwards",
           "locked_edge": null,
           "target_id": "abandoned mineshaft_5"
         },
         "ruins of the castle_8": {
-          "examine_desc": "A narrow passageway winds its way downwards, leading to an abandoned mineshaft. Ancient runes have been carved into the walls, and the air is filled with a palpable sense of foreboding.",
-          "label": "a narrow passageway leading downwards",
+          "examine_desc": "A dark, winding corridor leads deeper into the ruins of the castle. The walls are lined with ancient runes, and the air is filled with an eerie energy. The path leads to an old doorway, guarded by powerful magical wards.",
+          "label": "a dark, winding corridor leading deeper into the ruins",
           "locked_edge": null,
           "target_id": "ruins of the castle_8"
         },
@@ -6142,8 +6142,8 @@
       "names": ["Inn"],
       "neighbors": {
         "blacksmith_13": {
-          "examine_desc": "To the side of the inn, there is an old wooden door that leads out to the stables. It looks like it's seen better days, but it still appears sturdy enough.",
-          "label": "a wooden door leading to the stables",
+          "examine_desc": "The alleyway is dark and winding, with cobblestone steps leading down towards the Blacksmith's forge. The air smells of coal and iron, and there is a faint glow of firelight in the distance.",
+          "label": "a narrow alleyway leading to the Blacksmith",
           "locked_edge": null,
           "target_id": "blacksmith_13"
         },
@@ -6154,8 +6154,8 @@
           "target_id": "market square_9"
         },
         "stables_10": {
-          "examine_desc": "The alleyway is dark and winding, with cobblestone steps leading down towards the Blacksmith's forge. The air smells of coal and iron, and there is a faint glow of firelight in the distance.",
-          "label": "a narrow alleyway leading to the Blacksmith",
+          "examine_desc": "To the side of the inn, there is an old wooden door that leads out to the stables. It looks like it's seen better days, but it still appears sturdy enough.",
+          "label": "a wooden door leading to the stables",
           "locked_edge": null,
           "target_id": "stables_10"
         }
@@ -7438,14 +7438,14 @@
       "names": ["Library"],
       "neighbors": {
         "apothecary_11": {
-          "examine_desc": "An archway of intricately carved stone stands in the corner of the Library, creating an inviting entryway to the bustling Market Square beyond.",
-          "label": "an ornate archway leading to the Market Square",
+          "examine_desc": "An ancient archway stands at the back of the Library, leading to a hallway that winds further into the depths of the building. The hallway is dark and musty, with cobwebs hanging from the walls and ceiling. A faint flickering light can be seen in the distance, hinting at the Apothecary beyond.",
+          "label": "an ancient archway leading to the Apothecary",
           "locked_edge": null,
           "target_id": "apothecary_11"
         },
         "market square_9": {
-          "examine_desc": "An ancient archway stands at the back of the Library, leading to a hallway that winds further into the depths of the building. The hallway is dark and musty, with cobwebs hanging from the walls and ceiling. A faint flickering light can be seen in the distance, hinting at the Apothecary beyond.",
-          "label": "an ancient archway leading to the Apothecary",
+          "examine_desc": "An archway of intricately carved stone stands in the corner of the Library, creating an inviting entryway to the bustling Market Square beyond.",
+          "label": "an ornate archway leading to the Market Square",
           "locked_edge": null,
           "target_id": "market square_9"
         }
@@ -8417,14 +8417,14 @@
       "names": ["Market Square"],
       "neighbors": {
         "apothecary_11": {
-          "examine_desc": "A wide cobblestone path meanders out of the Market Square, heading towards a small wooden structure in the distance - the Stables. The path is lined with merchants and traders hawking their goods, and the air is filled with the sounds of horses and carts.",
-          "label": "a wide cobblestone path leading to the Stables",
+          "examine_desc": "The path winds its way past colorful stalls and vendors before opening up to a narrow cobblestone path that leads towards the Apothecary. A few scattered lanterns provide light to the otherwise dark and mysterious route.",
+          "label": "a narrow cobblestone path leading to the Apothecary",
           "locked_edge": null,
           "target_id": "apothecary_11"
         },
         "blacksmith_13": {
-          "examine_desc": "A wide cobblestone path runs from the Market Square, winding through the city and eventually leading to the imposing Library at the center of town.",
-          "label": "a cobblestone path leading to the Library",
+          "examine_desc": "The path winds through the bustling market, leading away from the stalls and carts and towards the distant sounds of clanging metal.",
+          "label": "a path leading to the Blacksmith",
           "locked_edge": null,
           "target_id": "blacksmith_13"
         },
@@ -8435,14 +8435,14 @@
           "target_id": "inn_14"
         },
         "library_12": {
-          "examine_desc": "The path winds through the bustling market, leading away from the stalls and carts and towards the distant sounds of clanging metal.",
-          "label": "a path leading to the Blacksmith",
+          "examine_desc": "A wide cobblestone path runs from the Market Square, winding through the city and eventually leading to the imposing Library at the center of town.",
+          "label": "a cobblestone path leading to the Library",
           "locked_edge": null,
           "target_id": "library_12"
         },
         "stables_10": {
-          "examine_desc": "The path winds its way past colorful stalls and vendors before opening up to a narrow cobblestone path that leads towards the Apothecary. A few scattered lanterns provide light to the otherwise dark and mysterious route.",
-          "label": "a narrow cobblestone path leading to the Apothecary",
+          "examine_desc": "A wide cobblestone path meanders out of the Market Square, heading towards a small wooden structure in the distance - the Stables. The path is lined with merchants and traders hawking their goods, and the air is filled with the sounds of horses and carts.",
+          "label": "a wide cobblestone path leading to the Stables",
           "locked_edge": null,
           "target_id": "stables_10"
         }
@@ -9790,26 +9790,26 @@
       "names": ["Ruins of the Castle"],
       "neighbors": {
         "abandoned mineshaft_5": {
-          "examine_desc": "The ruins of the castle are connected to a mysterious cave by an ancient, forgotten path. The path is made of crumbling stones and overgrown with weeds and wild vegetation, and stretches into the darkness beyond the castle walls.",
-          "label": "an ancient, forgotten path",
+          "examine_desc": "A winding, broken path leads away from the ruins of the castle, disappearing into the darkness of the Abandoned Mineshaft. A few weeds and rocks litter the trail, hinting at its age, and the silence of the night only adds to the eerie atmosphere.",
+          "label": "a broken path leading to the mineshaft",
           "locked_edge": null,
           "target_id": "abandoned mineshaft_5"
         },
         "golden quarter_4": {
-          "examine_desc": "An old doorway, tucked away in the corner of the ruins, leads inwards towards the Hidden Vault. The door is creaky, and the hinges are covered in rust. The path beyond the doorway is dark and foreboding, and the air is charged with a sense of mystery.",
-          "label": "an old doorway leading to the Hidden Vault",
+          "examine_desc": "An old stone path winds its way through the ruins, leading towards the Golden Quarter. The path is overgrown with weeds and wildflowers, and the stones are cracked and crumbling. Despite its disrepair, the path is still clearly visible, and it beckons adventurers towards the Golden Quarter.",
+          "label": "an old stone path leading to Golden Quarter",
           "locked_edge": null,
           "target_id": "golden quarter_4"
         },
         "hidden vault_7": {
-          "examine_desc": "An old stone path winds its way through the ruins, leading towards the Golden Quarter. The path is overgrown with weeds and wildflowers, and the stones are cracked and crumbling. Despite its disrepair, the path is still clearly visible, and it beckons adventurers towards the Golden Quarter.",
-          "label": "an old stone path leading to Golden Quarter",
+          "examine_desc": "An old doorway, tucked away in the corner of the ruins, leads inwards towards the Hidden Vault. The door is creaky, and the hinges are covered in rust. The path beyond the doorway is dark and foreboding, and the air is charged with a sense of mystery.",
+          "label": "an old doorway leading to the Hidden Vault",
           "locked_edge": null,
           "target_id": "hidden vault_7"
         },
         "secret cave_6": {
-          "examine_desc": "A winding, broken path leads away from the ruins of the castle, disappearing into the darkness of the Abandoned Mineshaft. A few weeds and rocks litter the trail, hinting at its age, and the silence of the night only adds to the eerie atmosphere.",
-          "label": "a broken path leading to the mineshaft",
+          "examine_desc": "The ruins of the castle are connected to a mysterious cave by an ancient, forgotten path. The path is made of crumbling stones and overgrown with weeds and wild vegetation, and stretches into the darkness beyond the castle walls.",
+          "label": "an ancient, forgotten path",
           "locked_edge": null,
           "target_id": "secret cave_6"
         }
@@ -10196,14 +10196,14 @@
           "target_id": "abandoned mineshaft_5"
         },
         "hidden vault_7": {
-          "examine_desc": "A narrow tunnel, barely illuminated by a few flickering torches, leads away from the Secret Cave. It snakes through the darkness, twisting and turning until it eventually opens up into the ruins of a castle.",
-          "label": "a dark tunnel leading to the Ruins of the Castle",
+          "examine_desc": "An ancient tunnel, carved from the wall of the cave, stretches out into the darkness. Its entrance is marked by a crudely carved doorway that leads further into the depths of the Hidden Loot Cache.",
+          "label": "an ancient tunnel leading to Hidden Vault",
           "locked_edge": null,
           "target_id": "hidden vault_7"
         },
         "ruins of the castle_8": {
-          "examine_desc": "An ancient tunnel, carved from the wall of the cave, stretches out into the darkness. Its entrance is marked by a crudely carved doorway that leads further into the depths of the Hidden Loot Cache.",
-          "label": "an ancient tunnel leading to Hidden Vault",
+          "examine_desc": "A narrow tunnel, barely illuminated by a few flickering torches, leads away from the Secret Cave. It snakes through the darkness, twisting and turning until it eventually opens up into the ruins of a castle.",
+          "label": "a dark tunnel leading to the Ruins of the Castle",
           "locked_edge": null,
           "target_id": "ruins of the castle_8"
         }
@@ -10741,14 +10741,14 @@
       "names": ["Stables"],
       "neighbors": {
         "inn_14": {
-          "examine_desc": "A wide cobblestone path leads away from the stables, winding its way towards the bustling market square in the distance.",
-          "label": "path to Market Square",
+          "examine_desc": "The cobblestone path stretches out before you, leading to the Inn in the distance. The path is lined with lanterns, and you can see the lights of the Inn twinkling in the distance.",
+          "label": "a cobblestone path leading to the Inn",
           "locked_edge": null,
           "target_id": "inn_14"
         },
         "market square_9": {
-          "examine_desc": "The cobblestone path stretches out before you, leading to the Inn in the distance. The path is lined with lanterns, and you can see the lights of the Inn twinkling in the distance.",
-          "label": "a cobblestone path leading to the Inn",
+          "examine_desc": "A wide cobblestone path leads away from the stables, winding its way towards the bustling market square in the distance.",
+          "label": "path to Market Square",
           "locked_edge": null,
           "target_id": "market square_9"
         }

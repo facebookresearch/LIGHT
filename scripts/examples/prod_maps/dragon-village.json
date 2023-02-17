@@ -972,14 +972,14 @@
       "names": ["Baker's Shop"],
       "neighbors": {
         "town hall_5": {
-          "examine_desc": "The alleyway outside the Baker's Shop is lined with cobblestone, leading away from the shop and towards the bustling Village Square. The alley is well-lit, with a few lanterns hung up along its length, and the air is filled with the smell of freshly baked goods.",
-          "label": "an alleyway leading to Village Square",
+          "examine_desc": "The cobblestone pathway leads away from the Baker's Shop, winding through the streets of Meadowbrook until it reaches the imposing Town Hall. The stones are worn but still solid, and the path is lined with trees and shrubs. The sun shines brightly overhead, and the faint sound of birdsong can be heard in the distance.",
+          "label": "a cobblestone pathway leading to Town Hall",
           "locked_edge": null,
           "target_id": "town hall_5"
         },
         "village square_7": {
-          "examine_desc": "The cobblestone pathway leads away from the Baker's Shop, winding through the streets of Meadowbrook until it reaches the imposing Town Hall. The stones are worn but still solid, and the path is lined with trees and shrubs. The sun shines brightly overhead, and the faint sound of birdsong can be heard in the distance.",
-          "label": "a cobblestone pathway leading to Town Hall",
+          "examine_desc": "The alleyway outside the Baker's Shop is lined with cobblestone, leading away from the shop and towards the bustling Village Square. The alley is well-lit, with a few lanterns hung up along its length, and the air is filled with the smell of freshly baked goods.",
+          "label": "an alleyway leading to Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -1168,14 +1168,14 @@
       "names": ["Blacksmith's Shop"],
       "neighbors": {
         "town hall_5": {
-          "examine_desc": "A narrow winding path leads from the Blacksmith's Shop to the Village Square. The path is lined with ancient stones, some of which have been worn down by years of use. The path is also illuminated by the light of the setting sun, giving the area a peaceful, almost magical, atmosphere.",
-          "label": "a narrow path leading to the Village Square",
+          "examine_desc": "A cobbled path winds its way through the village square, leading towards the Town Hall in the distance. The path is lined with cheerfully painted buildings, and the sound of laughter and clanging hammers can be heard in the distance.",
+          "label": "a cobbled path leading towards Town Hall",
           "locked_edge": null,
           "target_id": "town hall_5"
         },
         "village square_7": {
-          "examine_desc": "A cobbled path winds its way through the village square, leading towards the Town Hall in the distance. The path is lined with cheerfully painted buildings, and the sound of laughter and clanging hammers can be heard in the distance.",
-          "label": "a cobbled path leading towards Town Hall",
+          "examine_desc": "A narrow winding path leads from the Blacksmith's Shop to the Village Square. The path is lined with ancient stones, some of which have been worn down by years of use. The path is also illuminated by the light of the setting sun, giving the area a peaceful, almost magical, atmosphere.",
+          "label": "a narrow path leading to the Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -1880,14 +1880,14 @@
       "names": ["Church"],
       "neighbors": {
         "town hall_5": {
-          "examine_desc": "The old pathway leads out of the church, winding its way through the countryside and eventually leading to the village square. Along the way, you can see small patches of wildflowers and small critters scurrying around in search of food. The sun is high in the sky, casting a warm, inviting glow on the path before you.",
-          "label": "an old pathway leading to the village square",
+          "examine_desc": "The old cobblestone path winds its way through the village, lined with trees and shrubs on either side. In the distance, the Town Hall looms, its tall spire a beacon in the night sky.",
+          "label": "an old cobblestone path leading to the Town Hall",
           "locked_edge": null,
           "target_id": "town hall_5"
         },
         "village square_7": {
-          "examine_desc": "The old cobblestone path winds its way through the village, lined with trees and shrubs on either side. In the distance, the Town Hall looms, its tall spire a beacon in the night sky.",
-          "label": "an old cobblestone path leading to the Town Hall",
+          "examine_desc": "The old pathway leads out of the church, winding its way through the countryside and eventually leading to the village square. Along the way, you can see small patches of wildflowers and small critters scurrying around in search of food. The sun is high in the sky, casting a warm, inviting glow on the path before you.",
+          "label": "an old pathway leading to the village square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -2202,14 +2202,14 @@
       "names": ["Dragon's Cave"],
       "neighbors": {
         "mountain pass_2": {
-          "examine_desc": "The entrance to the Dragon's Cave is guarded by two large stone statues, and beyond them lies an old stone archway. The archway is covered in ancient runes and symbols, leading inwards into the darkness of the cave.",
-          "label": "an old stone archway leading inside",
+          "examine_desc": "The path is narrow and winding, leading up the mountain towards the distant Mountain Pass. Ancient stones line the sides of the path, and the air is thick with the smell of smoke.",
+          "label": "an old, winding path leading up the mountain",
           "locked_edge": null,
           "target_id": "mountain pass_2"
         },
         "outer chambers_14": {
-          "examine_desc": "The path is narrow and winding, leading up the mountain towards the distant Mountain Pass. Ancient stones line the sides of the path, and the air is thick with the smell of smoke.",
-          "label": "an old, winding path leading up the mountain",
+          "examine_desc": "The entrance to the Dragon's Cave is guarded by two large stone statues, and beyond them lies an old stone archway. The archway is covered in ancient runes and symbols, leading inwards into the darkness of the cave.",
+          "label": "an old stone archway leading inside",
           "locked_edge": null,
           "target_id": "outer chambers_14"
         },
@@ -2613,14 +2613,14 @@
       "names": ["Farmer's Market"],
       "neighbors": {
         "town square_12": {
-          "examine_desc": "From the Farmer's Market, a cobblestone path leads off towards the Village Square, winding through the quaint streets of Meadowbrook. The path is lined with colorful market stalls and fragrant herbs, and the sound of laughter and conversation fills the air.",
-          "label": "a cobblestone path leading to the Village Square",
+          "examine_desc": "The path is lined with cobblestones and stretches out from the Farmer's Market, winding its way through the village and towards the Town Square in the distance.",
+          "label": "a cobblestone path leading to the Town Square",
           "locked_edge": null,
           "target_id": "town square_12"
         },
         "village square_7": {
-          "examine_desc": "The path is lined with cobblestones and stretches out from the Farmer's Market, winding its way through the village and towards the Town Square in the distance.",
-          "label": "a cobblestone path leading to the Town Square",
+          "examine_desc": "From the Farmer's Market, a cobblestone path leads off towards the Village Square, winding through the quaint streets of Meadowbrook. The path is lined with colorful market stalls and fragrant herbs, and the sound of laughter and conversation fills the air.",
+          "label": "a cobblestone path leading to the Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -3713,14 +3713,14 @@
       "names": ["Inner Chambers"],
       "neighbors": {
         "dragon's lair_20": {
-          "examine_desc": "An ancient, dusty doorway in the wall of the Inner Chambers offers a way out, leading down a dark and winding tunnel towards the Outer Chambers.",
-          "label": "an old doorway leading to the Outer Chambers",
+          "examine_desc": "The adventurers could make out a faint glimmer of light coming from a passageway leading deeper into the cave. The walls were slimy and damp, and the air was heavy with the smell of death and decay.",
+          "label": "a dark passageway leading deeper into the cave",
           "locked_edge": null,
           "target_id": "dragon's lair_20"
         },
         "outer chambers_14": {
-          "examine_desc": "The adventurers could make out a faint glimmer of light coming from a passageway leading deeper into the cave. The walls were slimy and damp, and the air was heavy with the smell of death and decay.",
-          "label": "a dark passageway leading deeper into the cave",
+          "examine_desc": "An ancient, dusty doorway in the wall of the Inner Chambers offers a way out, leading down a dark and winding tunnel towards the Outer Chambers.",
+          "label": "an old doorway leading to the Outer Chambers",
           "locked_edge": null,
           "target_id": "outer chambers_14"
         }
@@ -5238,14 +5238,14 @@
       "names": ["Mountain Pass"],
       "neighbors": {
         "dragon's cave_0": {
-          "examine_desc": "A winding path leads down the mountain, surrounded by tall trees and lined with boulders. The path leads down into the valley below, and in the distance, the entrance to a dark cave can be seen.",
-          "label": "a winding path leading down into the valley",
+          "examine_desc": "A narrow, winding path winds its way through the boulders and fallen trees, leading towards a mysterious cave in the distance.",
+          "label": "a winding path leading towards Dragon's Cave",
           "locked_edge": null,
           "target_id": "dragon's cave_0"
         },
         "path to the cave_1": {
-          "examine_desc": "A narrow, winding path winds its way through the boulders and fallen trees, leading towards a mysterious cave in the distance.",
-          "label": "a winding path leading towards Dragon's Cave",
+          "examine_desc": "A winding path leads down the mountain, surrounded by tall trees and lined with boulders. The path leads down into the valley below, and in the distance, the entrance to a dark cave can be seen.",
+          "label": "a winding path leading down into the valley",
           "locked_edge": null,
           "target_id": "path to the cave_1"
         }
@@ -5533,14 +5533,14 @@
       "names": ["Oak Tree Clearing"],
       "neighbors": {
         "oak tree crown_19": {
-          "examine_desc": "A narrow path snakes its way through the grassy clearing, leading to the old oak tree at the center. The path is lined with dappled patches of sunlight, and the occasional wildflower sprouts up from the ground. The old oak tree stands tall in the distance, its branches beckoning you closer.",
-          "label": "an old, winding path leading to the old oak tree",
+          "examine_desc": "A winding path of packed earth and grass is visible, leading up a gentle slope towards the crown of the old oak tree.",
+          "label": "a winding path through the grass",
           "locked_edge": null,
           "target_id": "oak tree crown_19"
         },
         "old oak tree_13": {
-          "examine_desc": "A winding path of packed earth and grass is visible, leading up a gentle slope towards the crown of the old oak tree.",
-          "label": "a winding path through the grass",
+          "examine_desc": "A narrow path snakes its way through the grassy clearing, leading to the old oak tree at the center. The path is lined with dappled patches of sunlight, and the occasional wildflower sprouts up from the ground. The old oak tree stands tall in the distance, its branches beckoning you closer.",
+          "label": "an old, winding path leading to the old oak tree",
           "locked_edge": null,
           "target_id": "old oak tree_13"
         }
@@ -5584,14 +5584,14 @@
       "names": ["Oak Tree Crown"],
       "neighbors": {
         "oak tree clearing_16": {
-          "examine_desc": "A path winds its way through the grass, leading down towards the roots of the old oak tree. The path is worn and well-trodden, evidence that many adventurers have taken it before. As you look down, you can see the massive roots of the old oak tree, stretching deep into the earth.",
-          "label": "a winding path leading down to Oak Tree Roots",
+          "examine_desc": "A winding path leads away from the Oak Tree Crown, winding through the grass and trees before eventually leading out into the open Oak Tree Clearing.",
+          "label": "a path leading outwards",
           "locked_edge": null,
           "target_id": "oak tree clearing_16"
         },
         "oak tree roots_18": {
-          "examine_desc": "A winding path leads away from the Oak Tree Crown, winding through the grass and trees before eventually leading out into the open Oak Tree Clearing.",
-          "label": "a path leading outwards",
+          "examine_desc": "A path winds its way through the grass, leading down towards the roots of the old oak tree. The path is worn and well-trodden, evidence that many adventurers have taken it before. As you look down, you can see the massive roots of the old oak tree, stretching deep into the earth.",
+          "label": "a winding path leading down to Oak Tree Roots",
           "locked_edge": null,
           "target_id": "oak tree roots_18"
         }
@@ -5731,14 +5731,14 @@
       "names": ["Old Oak Tree"],
       "neighbors": {
         "oak tree clearing_16": {
-          "examine_desc": "A cobblestone path winds its way through the grassy area, leading towards Town Square. A few villagers mill about the path, chatting in hushed tones and pointing to the Old Oak Tree in reverence.",
-          "label": "a cobblestone path leading to Town Square",
+          "examine_desc": "A narrow, winding path can be seen leading away from the Old Oak Tree, curving around the edge of the village square before snaking into the forest in the direction of Oak Tree Clearing.",
+          "label": "a winding path leading to Oak Tree Clearing",
           "locked_edge": null,
           "target_id": "oak tree clearing_16"
         },
         "town square_12": {
-          "examine_desc": "A narrow, winding path can be seen leading away from the Old Oak Tree, curving around the edge of the village square before snaking into the forest in the direction of Oak Tree Clearing.",
-          "label": "a winding path leading to Oak Tree Clearing",
+          "examine_desc": "A cobblestone path winds its way through the grassy area, leading towards Town Square. A few villagers mill about the path, chatting in hushed tones and pointing to the Old Oak Tree in reverence.",
+          "label": "a cobblestone path leading to Town Square",
           "locked_edge": null,
           "target_id": "town square_12"
         },
@@ -5836,14 +5836,14 @@
       "names": ["Outer Chambers"],
       "neighbors": {
         "dragon's cave_0": {
-          "examine_desc": "A thick stone path winds away from the entrance of the Outer Chambers, leading further into the depths of the mountain. Ancient runes line the walls and the air is thick with power.",
-          "label": "a winding path leading inward",
+          "examine_desc": "A worn stone doorway leads into a tunnel that winds deeper into the mountain, the path illuminated by a faint light coming from within. The walls of the tunnel are covered with ancient runes and symbols, hinting at the power within the Dragon's Cave.",
+          "label": "an old doorway leading to the Dragon's Cave",
           "locked_edge": null,
           "target_id": "dragon's cave_0"
         },
         "inner chambers_17": {
-          "examine_desc": "A worn stone doorway leads into a tunnel that winds deeper into the mountain, the path illuminated by a faint light coming from within. The walls of the tunnel are covered with ancient runes and symbols, hinting at the power within the Dragon's Cave.",
-          "label": "an old doorway leading to the Dragon's Cave",
+          "examine_desc": "A thick stone path winds away from the entrance of the Outer Chambers, leading further into the depths of the mountain. Ancient runes line the walls and the air is thick with power.",
+          "label": "a winding path leading inward",
           "locked_edge": null,
           "target_id": "inner chambers_17"
         }
@@ -5881,14 +5881,14 @@
       "names": ["Path to the Cave"],
       "neighbors": {
         "mountain pass_2": {
-          "examine_desc": "A steep and winding path leads up the mountain, the summit of which can be seen in the distance. Along the path are various puzzles and obstacles that must be navigated to reach the dragon's cave.",
-          "label": "a steep and winding path leading up the mountain",
+          "examine_desc": "The path is steep and treacherous, winding its way up the mountain. In the distance, you can make out the Mountain Pass, and beyond that, the dragon's cave.",
+          "label": "a winding path leading up the mountain",
           "locked_edge": null,
           "target_id": "mountain pass_2"
         },
         "mountain summit_3": {
-          "examine_desc": "The path is steep and treacherous, winding its way up the mountain. In the distance, you can make out the Mountain Pass, and beyond that, the dragon's cave.",
-          "label": "a winding path leading up the mountain",
+          "examine_desc": "A steep and winding path leads up the mountain, the summit of which can be seen in the distance. Along the path are various puzzles and obstacles that must be navigated to reach the dragon's cave.",
+          "label": "a steep and winding path leading up the mountain",
           "locked_edge": null,
           "target_id": "mountain summit_3"
         }
@@ -8056,20 +8056,20 @@
       "names": ["Town Hall"],
       "neighbors": {
         "baker's shop_9": {
-          "examine_desc": "A small path can be seen leading away from the Town Hall, winding its way through the meadows and fields in the direction of the Blacksmith's Shop.",
-          "label": "an old path leading to the Blacksmith's Shop",
+          "examine_desc": "Stepping outside of the Town Hall, you find yourself in a small courtyard. The cobblestone path leading away from the Town Hall is lined with tall trees and hedges, providing a peaceful and inviting atmosphere. The path leads to the Baker's Shop, a small building with a thatched roof and inviting windows.",
+          "label": "a cobblestone path leading to the Baker's Shop",
           "locked_edge": null,
           "target_id": "baker's shop_9"
         },
         "blacksmith's shop_6": {
-          "examine_desc": "Stepping outside of the Town Hall, you find yourself in a small courtyard. The cobblestone path leading away from the Town Hall is lined with tall trees and hedges, providing a peaceful and inviting atmosphere. The path leads to the Baker's Shop, a small building with a thatched roof and inviting windows.",
-          "label": "a cobblestone path leading to the Baker's Shop",
+          "examine_desc": "A small path can be seen leading away from the Town Hall, winding its way through the meadows and fields in the direction of the Blacksmith's Shop.",
+          "label": "an old path leading to the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "blacksmith's shop_6"
         },
         "church_8": {
-          "examine_desc": "An arched doorway in the Town Hall's wall leads outwards, revealing a cobblestone path winding its way through the village, leading to the Village Square.",
-          "label": "an arched doorway leading to the Village Square",
+          "examine_desc": "The path is lined with tall trees, their leaves casting dappled shadows on the path. At the end of the path, the Church stands tall and imposing, its steeple reaching up to the sky.",
+          "label": "an arched stone path leading to the Church",
           "locked_edge": null,
           "target_id": "church_8"
         },
@@ -8080,8 +8080,8 @@
           "target_id": "town library_10"
         },
         "village square_7": {
-          "examine_desc": "The path is lined with tall trees, their leaves casting dappled shadows on the path. At the end of the path, the Church stands tall and imposing, its steeple reaching up to the sky.",
-          "label": "an arched stone path leading to the Church",
+          "examine_desc": "An arched doorway in the Town Hall's wall leads outwards, revealing a cobblestone path winding its way through the village, leading to the Village Square.",
+          "label": "an arched doorway leading to the Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -8134,14 +8134,14 @@
       "names": ["Town Library"],
       "neighbors": {
         "town hall_5": {
-          "examine_desc": "The cobblestone path leads away from the Town Library, winding through the small village before leading to the Village Square. Along the way, you can see the Old Oak Tree, and the bustling of the village residents going about their daily lives.",
-          "label": "a cobblestone path leading to the Village Square",
+          "examine_desc": "An ancient cobblestone path stretches away from the library towards the Town Hall, winding slowly through a grove of tall trees and past a few old buildings. The Town Hall looms in the distance, a large imposing structure at the center of the village.",
+          "label": "an ancient cobblestone path leading to Town Hall",
           "locked_edge": null,
           "target_id": "town hall_5"
         },
         "village square_7": {
-          "examine_desc": "An ancient cobblestone path stretches away from the library towards the Town Hall, winding slowly through a grove of tall trees and past a few old buildings. The Town Hall looms in the distance, a large imposing structure at the center of the village.",
-          "label": "an ancient cobblestone path leading to Town Hall",
+          "examine_desc": "The cobblestone path leads away from the Town Library, winding through the small village before leading to the Village Square. Along the way, you can see the Old Oak Tree, and the bustling of the village residents going about their daily lives.",
+          "label": "a cobblestone path leading to the Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -8176,26 +8176,26 @@
       "names": ["Town Square"],
       "neighbors": {
         "farmer's market_11": {
-          "examine_desc": "A wide cobblestone path winds its way from the Town Square to the large fountain in the center. The path is lined with lush shrubbery and trees, and the sound of trickling water from the fountain can be heard in the distance.",
-          "label": "a cobblestone path leading to the fountain",
+          "examine_desc": "A winding cobblestone path lined with trees and shrubbery leads away from the Town Square and towards the Farmer's Market. The path is illuminated by bright lanterns, casting a warm light on the surrounding area.",
+          "label": "a cobblestone path leading to the Farmer's Market",
           "locked_edge": null,
           "target_id": "farmer's market_11"
         },
         "old oak tree_13": {
-          "examine_desc": "A cobblestone path winds its way from the Town Square towards the Village Square, lined by tall trees and shrubbery on either side. As you approach the path, you can make out the faint sounds of activity from the village.",
-          "label": "a cobblestone path leading towards the Village Square",
+          "examine_desc": "A wide cobblestone path leads from the Town Square towards the Old Oak Tree, lined with shrubbery and trees on either side. As you walk along the path, you can hear the gentle murmur of the fountain in the center of the square.",
+          "label": "a cobblestone path leading to the Old Oak Tree",
           "locked_edge": null,
           "target_id": "old oak tree_13"
         },
         "town fountain_15": {
-          "examine_desc": "A winding cobblestone path lined with trees and shrubbery leads away from the Town Square and towards the Farmer's Market. The path is illuminated by bright lanterns, casting a warm light on the surrounding area.",
-          "label": "a cobblestone path leading to the Farmer's Market",
+          "examine_desc": "A wide cobblestone path winds its way from the Town Square to the large fountain in the center. The path is lined with lush shrubbery and trees, and the sound of trickling water from the fountain can be heard in the distance.",
+          "label": "a cobblestone path leading to the fountain",
           "locked_edge": null,
           "target_id": "town fountain_15"
         },
         "village square_7": {
-          "examine_desc": "A wide cobblestone path leads from the Town Square towards the Old Oak Tree, lined with shrubbery and trees on either side. As you walk along the path, you can hear the gentle murmur of the fountain in the center of the square.",
-          "label": "a cobblestone path leading to the Old Oak Tree",
+          "examine_desc": "A cobblestone path winds its way from the Town Square towards the Village Square, lined by tall trees and shrubbery on either side. As you approach the path, you can make out the faint sounds of activity from the village.",
+          "label": "a cobblestone path leading towards the Village Square",
           "locked_edge": null,
           "target_id": "village square_7"
         }
@@ -8341,14 +8341,14 @@
       "names": ["Valley"],
       "neighbors": {
         "dragon's cave_0": {
-          "examine_desc": "A narrow, winding path leads up through the Valley, snaking its way through the trees and shrubs until it reaches the foot of a large, ancient oak tree.",
-          "label": "path to Old Oak Tree (outside)",
+          "examine_desc": "A narrow path winds up the rocky cliffs, leading up to a dark cave entrance nestled at the top. It's a steep climb, but you can make out the faint sound of growling coming from within the cave.",
+          "label": "a narrow path winding up the rocky cliffs",
           "locked_edge": null,
           "target_id": "dragon's cave_0"
         },
         "old oak tree_13": {
-          "examine_desc": "A narrow path winds up the rocky cliffs, leading up to a dark cave entrance nestled at the top. It's a steep climb, but you can make out the faint sound of growling coming from within the cave.",
-          "label": "a narrow path winding up the rocky cliffs",
+          "examine_desc": "A narrow, winding path leads up through the Valley, snaking its way through the trees and shrubs until it reaches the foot of a large, ancient oak tree.",
+          "label": "path to Old Oak Tree (outside)",
           "locked_edge": null,
           "target_id": "old oak tree_13"
         }
@@ -8392,38 +8392,38 @@
       "names": ["Village Square"],
       "neighbors": {
         "blacksmith's shop_6": {
-          "examine_desc": "An ancient cobblestone path winds its way through the Square, leading to a large building on the other side - the Town Library. The path is lined with ancient stones, worn smooth by generations of foot traffic. The occasional flower bloom can be seen in the crevices between the stones, and the air is filled with the smell of fresh-baked bread from the nearby baker's shop.",
-          "label": "an ancient cobblestone path",
+          "examine_desc": "An old, wooden doorway stands at the edge of the Village Square, beckoning you to enter the Blacksmith's Shop. The doorway is flanked by two large, iron doors that have been weathered by time. The smell of smoke and burning metal wafts through the air, signaling the presence of the busy smithy.",
+          "label": "an open doorway leading to the Blacksmith's Shop",
           "locked_edge": null,
           "target_id": "blacksmith's shop_6"
         },
         "church_8": {
-          "examine_desc": "A wide cobblestone path leads away from the Village Square, winding through the streets and eventually leading to the Town Hall. The path is lined with colorful flowers and shrubs, and the Old Oak Tree stands proudly at its entrance.",
-          "label": "a cobblestone path leading to Town Hall",
+          "examine_desc": "A wide cobblestone path winds its way through the Village Square, leading towards the Church at the far end. It is lined with colorful flowers and small shrubs, providing a pleasant and peaceful atmosphere. The sound of birdsong can be heard in the air, as the path meanders through the Square and towards the Church.",
+          "label": "a cobblestone path leading to the Church",
           "locked_edge": null,
           "target_id": "church_8"
         },
         "farmer's market_11": {
-          "examine_desc": "A narrow path winds its way out of the Village Square, leading towards the Town Square beyond. The path is lined with cobblestones, and the occasional patch of wildflowers blooms in the sunlight. As you travel, you can hear the faint sounds of activity from the Town Square beyond.",
-          "label": "a narrow path leading outwards",
+          "examine_desc": "Just beyond the Old Oak Tree, a cobblestone path leads away from the Village Square, winding its way towards the Farmer's Market in the distance.",
+          "label": "a cobblestone path leading to the Farmer's Market",
           "locked_edge": null,
           "target_id": "farmer's market_11"
         },
         "town hall_5": {
-          "examine_desc": "A wide cobblestone path winds its way through the Village Square, leading towards the Church at the far end. It is lined with colorful flowers and small shrubs, providing a pleasant and peaceful atmosphere. The sound of birdsong can be heard in the air, as the path meanders through the Square and towards the Church.",
-          "label": "a cobblestone path leading to the Church",
+          "examine_desc": "A wide cobblestone path leads away from the Village Square, winding through the streets and eventually leading to the Town Hall. The path is lined with colorful flowers and shrubs, and the Old Oak Tree stands proudly at its entrance.",
+          "label": "a cobblestone path leading to Town Hall",
           "locked_edge": null,
           "target_id": "town hall_5"
         },
         "town library_10": {
-          "examine_desc": "An old, wooden doorway stands at the edge of the Village Square, beckoning you to enter the Blacksmith's Shop. The doorway is flanked by two large, iron doors that have been weathered by time. The smell of smoke and burning metal wafts through the air, signaling the presence of the busy smithy.",
-          "label": "an open doorway leading to the Blacksmith's Shop",
+          "examine_desc": "An ancient cobblestone path winds its way through the Square, leading to a large building on the other side - the Town Library. The path is lined with ancient stones, worn smooth by generations of foot traffic. The occasional flower bloom can be seen in the crevices between the stones, and the air is filled with the smell of fresh-baked bread from the nearby baker's shop.",
+          "label": "an ancient cobblestone path",
           "locked_edge": null,
           "target_id": "town library_10"
         },
         "town square_12": {
-          "examine_desc": "Just beyond the Old Oak Tree, a cobblestone path leads away from the Village Square, winding its way towards the Farmer's Market in the distance.",
-          "label": "a cobblestone path leading to the Farmer's Market",
+          "examine_desc": "A narrow path winds its way out of the Village Square, leading towards the Town Square beyond. The path is lined with cobblestones, and the occasional patch of wildflowers blooms in the sunlight. As you travel, you can hear the faint sounds of activity from the Town Square beyond.",
+          "label": "a narrow path leading outwards",
           "locked_edge": null,
           "target_id": "town square_12"
         }

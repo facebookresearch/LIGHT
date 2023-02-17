@@ -122,38 +122,38 @@
       "names": ["Arena"],
       "neighbors": {
         "jousting platform_18": {
-          "examine_desc": "An archway made of stone and adorned with flags of the kingdom stands at the entrance of the Arena, leading into the Tournament Grounds beyond.",
-          "label": "an archway leading into the Tournament Grounds",
+          "examine_desc": "A large arched gateway, flanked by two marble statues, leads into the Arena. Through the gateway, a jousting platform can be seen in the center of the arena, surrounded by cheering crowds.",
+          "label": "an arched gateway leading into the Arena",
           "locked_edge": null,
           "target_id": "jousting platform_18"
         },
         "marble statues_16": {
-          "examine_desc": "An archway of intricately carved marble and stone leads from the Arena's exterior into its depths. The cheering from inside is loud and enthusiastic, and the smell of fresh-cooked food wafts out from the entrance.",
-          "label": "an archway leading into the Arena",
+          "examine_desc": "A wide pathway made from smooth marble stones winds around the Arena, leading to the marble statues that line the perimeter of the town square.",
+          "label": "a marble pathway leading to Marble Statues (outside)",
           "locked_edge": null,
           "target_id": "marble statues_16"
         },
         "tournament grounds_11": {
-          "examine_desc": "A large arched gateway, flanked by two marble statues, leads into the Arena. Through the gateway, a jousting platform can be seen in the center of the arena, surrounded by cheering crowds.",
-          "label": "an arched gateway leading into the Arena",
+          "examine_desc": "An archway made of stone and adorned with flags of the kingdom stands at the entrance of the Arena, leading into the Tournament Grounds beyond.",
+          "label": "an archway leading into the Tournament Grounds",
           "locked_edge": null,
           "target_id": "tournament grounds_11"
         },
         "town square_8": {
-          "examine_desc": "To the side of the Arena, a bustling passageway lined with colorful banners and merchants beckons, leading towards the Vendor Stalls. The entrance is marked by a wide archway adorned with flags of the kingdom.",
-          "label": "a bustling passageway leading to the Vendor Stalls",
+          "examine_desc": "A wooden fence encircles the Arena, leading away from it and into the bustling Town Square beyond.",
+          "label": "a wooden fence leading to the town square",
           "locked_edge": null,
           "target_id": "town square_8"
         },
         "vendor stalls_14": {
-          "examine_desc": "A wooden fence encircles the Arena, leading away from it and into the bustling Town Square beyond.",
-          "label": "a wooden fence leading to the town square",
+          "examine_desc": "To the side of the Arena, a bustling passageway lined with colorful banners and merchants beckons, leading towards the Vendor Stalls. The entrance is marked by a wide archway adorned with flags of the kingdom.",
+          "label": "a bustling passageway leading to the Vendor Stalls",
           "locked_edge": null,
           "target_id": "vendor stalls_14"
         },
         "winner's circle_17": {
-          "examine_desc": "A wide pathway made from smooth marble stones winds around the Arena, leading to the marble statues that line the perimeter of the town square.",
-          "label": "a marble pathway leading to Marble Statues (outside)",
+          "examine_desc": "An archway of intricately carved marble and stone leads from the Arena's exterior into its depths. The cheering from inside is loud and enthusiastic, and the smell of fresh-cooked food wafts out from the entrance.",
+          "label": "an archway leading into the Arena",
           "locked_edge": null,
           "target_id": "winner's circle_17"
         }
@@ -754,14 +754,14 @@
       "names": ["Armoury"],
       "neighbors": {
         "castle of kaan_2": {
-          "examine_desc": "A wide archway looms at the far end of the Armoury, leading to the Throne Room. The walls of the archway are lined with banners and shields, and the floor is covered in a deep, red carpet. The air is filled with the scent of incense and the distant sound of courtly music.",
-          "label": "a wide archway leading to the Throne Room",
+          "examine_desc": "A sturdy wooden door stands in the corner of the Armoury, leading out from the castle and into the vast world beyond.",
+          "label": "a sturdy wooden door leading outside",
           "locked_edge": null,
           "target_id": "castle of kaan_2"
         },
         "throne room_0": {
-          "examine_desc": "A sturdy wooden door stands in the corner of the Armoury, leading out from the castle and into the vast world beyond.",
-          "label": "a sturdy wooden door leading outside",
+          "examine_desc": "A wide archway looms at the far end of the Armoury, leading to the Throne Room. The walls of the archway are lined with banners and shields, and the floor is covered in a deep, red carpet. The air is filled with the scent of incense and the distant sound of courtly music.",
+          "label": "a wide archway leading to the Throne Room",
           "locked_edge": null,
           "target_id": "throne room_0"
         }
@@ -869,14 +869,14 @@
       "names": ["Audience Hall"],
       "neighbors": {
         "palace of oon_6": {
-          "examine_desc": "To the side of the throne stands an ornate corridor, with a red carpet leading away into the depths of the palace. The walls are lined with gold-framed portraits and intricate tapestries, and a few gas lamps light the way.",
-          "label": "an ornate corridor leading onwards",
+          "examine_desc": "At the back of the Audience Hall, an ornate hallway stretches out, leading towards the distant Palace of Oon. The walls are covered in intricate tapestries and paintings, and the floor is made up of polished marble tiles. Splendid arches frame the doorway, and the air feels thick with anticipation.",
+          "label": "an ornate hallway leading to the Palace of Oon",
           "locked_edge": null,
           "target_id": "palace of oon_6"
         },
         "private chambers_9": {
-          "examine_desc": "At the back of the Audience Hall, an ornate hallway stretches out, leading towards the distant Palace of Oon. The walls are covered in intricate tapestries and paintings, and the floor is made up of polished marble tiles. Splendid arches frame the doorway, and the air feels thick with anticipation.",
-          "label": "an ornate hallway leading to the Palace of Oon",
+          "examine_desc": "To the side of the throne stands an ornate corridor, with a red carpet leading away into the depths of the palace. The walls are lined with gold-framed portraits and intricate tapestries, and a few gas lamps light the way.",
+          "label": "an ornate corridor leading onwards",
           "locked_edge": null,
           "target_id": "private chambers_9"
         }
@@ -1425,26 +1425,26 @@
       "names": ["Castle of Kaan"],
       "neighbors": {
         "armoury_1": {
-          "examine_desc": "The drawbridge leading to the entrance of the castle is wide enough for a large crowd, and leads to a large set of wooden doors that open into the Audience Hall.",
-          "label": "drawbridge to Audience Hall",
+          "examine_desc": "The drawbridge is a sturdy stone structure that leads across the moat to the entrance of the Armoury. It is flanked by two imposing statues, and the cobblestone path that leads across the bridge is filled with anticipation as soldiers and people alike await the start of the joust tournament.",
+          "label": "an ominous drawbridge leading to the Armoury",
           "locked_edge": null,
           "target_id": "armoury_1"
         },
         "audience hall_13": {
-          "examine_desc": "The drawbridge is a sturdy stone structure that leads across the moat to the entrance of the Armoury. It is flanked by two imposing statues, and the cobblestone path that leads across the bridge is filled with anticipation as soldiers and people alike await the start of the joust tournament.",
-          "label": "an ominous drawbridge leading to the Armoury",
+          "examine_desc": "The drawbridge leading to the entrance of the castle is wide enough for a large crowd, and leads to a large set of wooden doors that open into the Audience Hall.",
+          "label": "drawbridge to Audience Hall",
           "locked_edge": null,
           "target_id": "audience hall_13"
         },
         "private chambers_7": {
-          "examine_desc": "The drawbridge, flanked by two statues, leads directly to the entrance of the castle. Beyond it lies the Throne Room, where the joust tournament will take place.",
-          "label": "a drawbridge leading to the entrance",
+          "examine_desc": "The massive, wooden door stands imposingly in front of the drawbridge, leading into the depths of the castle. It is intricately carved with a variety of ancient symbols, and two large brass handles stand ready to be opened.",
+          "label": "a large wooden door leading to the Private Chambers",
           "locked_edge": null,
           "target_id": "private chambers_7"
         },
         "throne room_0": {
-          "examine_desc": "The massive, wooden door stands imposingly in front of the drawbridge, leading into the depths of the castle. It is intricately carved with a variety of ancient symbols, and two large brass handles stand ready to be opened.",
-          "label": "a large wooden door leading to the Private Chambers",
+          "examine_desc": "The drawbridge, flanked by two statues, leads directly to the entrance of the castle. Beyond it lies the Throne Room, where the joust tournament will take place.",
+          "label": "a drawbridge leading to the entrance",
           "locked_edge": null,
           "target_id": "throne room_0"
         },
@@ -3560,14 +3560,14 @@
       "names": ["Great Hall"],
       "neighbors": {
         "palace courtyard_5": {
-          "examine_desc": "At the far end of the Great Hall is a magnificent staircase that spirals upwards, leading to the Palace of Oon. The stairs are lined with statues of past royalty, and the walls are covered with intricate murals depicting the history of the kingdom.",
-          "label": "a grand staircase leading upwards",
+          "examine_desc": "A majestic archway is framed by two large marble pillars, leading to the Palace Courtyard beyond. The archway is draped with a thick red curtain, and inscribed with intricate carvings depicting scenes from the kingdom's history.",
+          "label": "a grand archway leading to the Palace Courtyard",
           "locked_edge": null,
           "target_id": "palace courtyard_5"
         },
         "palace of oon_6": {
-          "examine_desc": "A majestic archway is framed by two large marble pillars, leading to the Palace Courtyard beyond. The archway is draped with a thick red curtain, and inscribed with intricate carvings depicting scenes from the kingdom's history.",
-          "label": "a grand archway leading to the Palace Courtyard",
+          "examine_desc": "At the far end of the Great Hall is a magnificent staircase that spirals upwards, leading to the Palace of Oon. The stairs are lined with statues of past royalty, and the walls are covered with intricate murals depicting the history of the kingdom.",
+          "label": "a grand staircase leading upwards",
           "locked_edge": null,
           "target_id": "palace of oon_6"
         }
@@ -4046,14 +4046,14 @@
       "names": ["Jousting Platform"],
       "neighbors": {
         "arena_15": {
-          "examine_desc": "The wide staircase is grand and imposing, lined with ancient stone pillars. It curves gracefully up and away from the Jousting Platform, leading to the Winner's Circle above.",
-          "label": "a wide staircase leading to the Winner's Circle",
+          "examine_desc": "A wide staircase, lined with tall pillars, provides a grand entrance from the Jousting Platform to the Arena outside. At the bottom of the stairs, a wide archway is visible, beckoning you to the outside.",
+          "label": "a grand staircase leading outside",
           "locked_edge": null,
           "target_id": "arena_15"
         },
         "winner's circle_17": {
-          "examine_desc": "A wide staircase, lined with tall pillars, provides a grand entrance from the Jousting Platform to the Arena outside. At the bottom of the stairs, a wide archway is visible, beckoning you to the outside.",
-          "label": "a grand staircase leading outside",
+          "examine_desc": "The wide staircase is grand and imposing, lined with ancient stone pillars. It curves gracefully up and away from the Jousting Platform, leading to the Winner's Circle above.",
+          "label": "a wide staircase leading to the Winner's Circle",
           "locked_edge": null,
           "target_id": "winner's circle_17"
         }
@@ -5910,26 +5910,26 @@
       "names": ["Marble Statues"],
       "neighbors": {
         "arena_15": {
-          "examine_desc": "A cobblestone path winds its way through the marble statues, leading towards the grand Statue of King Regal at the other end of the town square. The path is lined with more statues and ancient trees, their branches rustling in the wind.",
-          "label": "a cobblestone path leading to the Statue of King Regal",
+          "examine_desc": "There is an ancient cobblestone path leading from the marble statues towards the Arena, flanked by tall trees on either side. It looks like it has been well-traveled for many years, and the stones are worn smooth from the feet of all the people who have walked this path.",
+          "label": "an ancient path leading to the Arena",
           "locked_edge": null,
           "target_id": "arena_15"
         },
         "statue of king regal_19": {
-          "examine_desc": "There is an ancient cobblestone path leading from the marble statues towards the Arena, flanked by tall trees on either side. It looks like it has been well-traveled for many years, and the stones are worn smooth from the feet of all the people who have walked this path.",
-          "label": "an ancient path leading to the Arena",
+          "examine_desc": "A cobblestone path winds its way through the marble statues, leading towards the grand Statue of King Regal at the other end of the town square. The path is lined with more statues and ancient trees, their branches rustling in the wind.",
+          "label": "a cobblestone path leading to the Statue of King Regal",
           "locked_edge": null,
           "target_id": "statue of king regal_19"
         },
         "statue of queen dalia_20": {
-          "examine_desc": "A wide cobblestone path connects the Marble Statues (outside) to the bustling Vendor Stalls, lined with market stalls and colorful banners. The path is well-travelled and well-worn, evidence of the many people who have been here before.",
-          "label": "a cobblestone path leading to Vendor Stalls",
+          "examine_desc": "A narrow path winds its way through the statues and leads to the majestic Statue of Queen Dalia in the center of the town square. The path is lined with cobblestones and is bordered by thick shrubbery.",
+          "label": "a narrow path leading to the Statue of Queen Dalia",
           "locked_edge": null,
           "target_id": "statue of queen dalia_20"
         },
         "vendor stalls_14": {
-          "examine_desc": "A narrow path winds its way through the statues and leads to the majestic Statue of Queen Dalia in the center of the town square. The path is lined with cobblestones and is bordered by thick shrubbery.",
-          "label": "a narrow path leading to the Statue of Queen Dalia",
+          "examine_desc": "A wide cobblestone path connects the Marble Statues (outside) to the bustling Vendor Stalls, lined with market stalls and colorful banners. The path is well-travelled and well-worn, evidence of the many people who have been here before.",
+          "label": "a cobblestone path leading to Vendor Stalls",
           "locked_edge": null,
           "target_id": "vendor stalls_14"
         }
@@ -6137,14 +6137,14 @@
       "names": ["Palace Courtyard"],
       "neighbors": {
         "great hall_4": {
-          "examine_desc": "Through the grand archway, one can see the entrance to the Palace of Oon, a majestic structure glimmering in the sunlight.",
-          "label": "grand archway leading to the Palace of Oon",
+          "examine_desc": "A grand archway stands at the far side of the courtyard, its intricately carved stones forming an impressive gateway. Beyond it lies the entrance to the Great Hall, where the kingdom's leaders hold court.",
+          "label": "grand archway leading to Great Hall",
           "locked_edge": null,
           "target_id": "great hall_4"
         },
         "palace of oon_6": {
-          "examine_desc": "A grand archway stands at the far side of the courtyard, its intricately carved stones forming an impressive gateway. Beyond it lies the entrance to the Great Hall, where the kingdom's leaders hold court.",
-          "label": "grand archway leading to Great Hall",
+          "examine_desc": "Through the grand archway, one can see the entrance to the Palace of Oon, a majestic structure glimmering in the sunlight.",
+          "label": "grand archway leading to the Palace of Oon",
           "locked_edge": null,
           "target_id": "palace of oon_6"
         }
@@ -6182,20 +6182,20 @@
       "names": ["Palace of Oon"],
       "neighbors": {
         "audience hall_10": {
-          "examine_desc": "A large, ornate archway of white marble leads from the Palace of Oon to the Palace Courtyard, surrounded by pillars and adorned with intricate carvings. The bright light of the stained glass windows illuminate the path, beckoning travelers to explore the grounds beyond.",
-          "label": "a grand archway leading to the Palace Courtyard",
+          "examine_desc": "A large and ornate archway of white marble stands at the far end of the chamber, leading to a grand hallway beyond.",
+          "label": "a grand archway leading to the Audience Hall",
           "locked_edge": null,
           "target_id": "audience hall_10"
         },
         "great hall_4": {
-          "examine_desc": "The grand marble path leading from the Palace of Oon is lined with ornate statues and pillars, leading to the Tournament Grounds in the distance.",
-          "label": "a grand marble path leading to the Tournament Grounds",
+          "examine_desc": "The corridor is made of richly-carved marble, with intricate floral patterns adorning the walls and a thick red carpet running along the floor. It is well-lit by torchlight and the distant sound of a celebration can be heard coming from the Great Hall at the end of the corridor.",
+          "label": "an ornate corridor connecting Palace of Oon to Great Hall",
           "locked_edge": null,
           "target_id": "great hall_4"
         },
         "palace courtyard_5": {
-          "examine_desc": "A large and ornate archway of white marble stands at the far end of the chamber, leading to a grand hallway beyond.",
-          "label": "a grand archway leading to the Audience Hall",
+          "examine_desc": "A large, ornate archway of white marble leads from the Palace of Oon to the Palace Courtyard, surrounded by pillars and adorned with intricate carvings. The bright light of the stained glass windows illuminate the path, beckoning travelers to explore the grounds beyond.",
+          "label": "a grand archway leading to the Palace Courtyard",
           "locked_edge": null,
           "target_id": "palace courtyard_5"
         },
@@ -6206,8 +6206,8 @@
           "target_id": "private chambers_9"
         },
         "tournament grounds_11": {
-          "examine_desc": "The corridor is made of richly-carved marble, with intricate floral patterns adorning the walls and a thick red carpet running along the floor. It is well-lit by torchlight and the distant sound of a celebration can be heard coming from the Great Hall at the end of the corridor.",
-          "label": "an ornate corridor connecting Palace of Oon to Great Hall",
+          "examine_desc": "The grand marble path leading from the Palace of Oon is lined with ornate statues and pillars, leading to the Tournament Grounds in the distance.",
+          "label": "a grand marble path leading to the Tournament Grounds",
           "locked_edge": null,
           "target_id": "tournament grounds_11"
         }
@@ -6604,14 +6604,14 @@
       "names": ["Private Chambers"],
       "neighbors": {
         "castle of kaan_2": {
-          "examine_desc": "A grand staircase of marble steps descends from the private chambers, leading out to the town square below. The stairs are lined with ornate banisters and illuminated by the light coming in from the window above.",
-          "label": "a grand staircase leading downwards",
+          "examine_desc": "There is a winding staircase leading down towards the Castle of Kaan (outside). The steps are made of stone, and the walls of the staircase are adorned with intricate tapestries and murals depicting battles and grand feasts.",
+          "label": "a spiral staircase leading downwards",
           "locked_edge": null,
           "target_id": "castle of kaan_2"
         },
         "town square_8": {
-          "examine_desc": "There is a winding staircase leading down towards the Castle of Kaan (outside). The steps are made of stone, and the walls of the staircase are adorned with intricate tapestries and murals depicting battles and grand feasts.",
-          "label": "a spiral staircase leading downwards",
+          "examine_desc": "A grand staircase of marble steps descends from the private chambers, leading out to the town square below. The stairs are lined with ornate banisters and illuminated by the light coming in from the window above.",
+          "label": "a grand staircase leading downwards",
           "locked_edge": null,
           "target_id": "town square_8"
         }
@@ -6658,14 +6658,14 @@
       "names": ["Private Chambers"],
       "neighbors": {
         "audience hall_10": {
-          "examine_desc": "An elegant archway stands at the opposite end of the room. Made of intricately carved stone, it leads to a grand palace beyond.",
-          "label": "a grand archway leading to the Palace of Oon",
+          "examine_desc": "An impressive archway made of ornate stone and carved with intricate designs stands between the Private Chambers and the Audience Hall. The walls around the archway are decorated with intricate tapestries and glimmering chandeliers, creating a majestic entrance.",
+          "label": "a grand archway leading to the Audience Hall",
           "locked_edge": null,
           "target_id": "audience hall_10"
         },
         "palace of oon_6": {
-          "examine_desc": "An impressive archway made of ornate stone and carved with intricate designs stands between the Private Chambers and the Audience Hall. The walls around the archway are decorated with intricate tapestries and glimmering chandeliers, creating a majestic entrance.",
-          "label": "a grand archway leading to the Audience Hall",
+          "examine_desc": "An elegant archway stands at the opposite end of the room. Made of intricately carved stone, it leads to a grand palace beyond.",
+          "label": "a grand archway leading to the Palace of Oon",
           "locked_edge": null,
           "target_id": "palace of oon_6"
         }
@@ -8554,14 +8554,14 @@
       "names": ["Statue of King Regal"],
       "neighbors": {
         "marble statues_16": {
-          "examine_desc": "A wide stone path stretches out from the Statue of King Regal, lined with smaller statues of heroes of Kaan. At the end of the path stands the Statue of Queen Dalia, her marble face looking resolute in the fading light.",
-          "label": "a path leading to Queen Dalia's Statue",
+          "examine_desc": "Surrounding the statue of King Regal is a ring of smaller marble statues depicting other heroes of Kaan, including Queen Dalia. The statues form a path that leads out of the main square and into the open air.",
+          "label": "a ring of marble statues leading outside",
           "locked_edge": null,
           "target_id": "marble statues_16"
         },
         "statue of queen dalia_20": {
-          "examine_desc": "Surrounding the statue of King Regal is a ring of smaller marble statues depicting other heroes of Kaan, including Queen Dalia. The statues form a path that leads out of the main square and into the open air.",
-          "label": "a ring of marble statues leading outside",
+          "examine_desc": "A wide stone path stretches out from the Statue of King Regal, lined with smaller statues of heroes of Kaan. At the end of the path stands the Statue of Queen Dalia, her marble face looking resolute in the fading light.",
+          "label": "a path leading to Queen Dalia's Statue",
           "locked_edge": null,
           "target_id": "statue of queen dalia_20"
         }
@@ -8608,14 +8608,14 @@
       "names": ["Statue of Queen Dalia"],
       "neighbors": {
         "marble statues_16": {
-          "examine_desc": "A grand path of polished marble stones leads away from the Statue of Queen Dalia, the stones winding through gardens of fragrant flowers and stately trees, towards the imposing silhouette of the Statue of King Regal.",
-          "label": "a grand path leading to the Statue of King Regal",
+          "examine_desc": "The grand archway is flanked by two marble statues of ancient warriors, standing guard at either side. Beyond the archway, a bright sun casts its rays onto a wide courtyard which is surrounded by marble statues.",
+          "label": "a grand archway leading outside",
           "locked_edge": null,
           "target_id": "marble statues_16"
         },
         "statue of king regal_19": {
-          "examine_desc": "The grand archway is flanked by two marble statues of ancient warriors, standing guard at either side. Beyond the archway, a bright sun casts its rays onto a wide courtyard which is surrounded by marble statues.",
-          "label": "a grand archway leading outside",
+          "examine_desc": "A grand path of polished marble stones leads away from the Statue of Queen Dalia, the stones winding through gardens of fragrant flowers and stately trees, towards the imposing silhouette of the Statue of King Regal.",
+          "label": "a grand path leading to the Statue of King Regal",
           "locked_edge": null,
           "target_id": "statue of king regal_19"
         }
@@ -9294,14 +9294,14 @@
       "names": ["Throne Room"],
       "neighbors": {
         "armoury_1": {
-          "examine_desc": "A wide entrance hall stretches out from the Throne Room, leading to the massive iron doors of the Castle of Kaan. The doors are open, allowing a glimpse of the lush countryside outside.",
-          "label": "an entrance hall leading outside",
+          "examine_desc": "A long corridor stretches out from the Throne Room, winding its way towards the Armoury. The walls are lined with various tapestries and paintings depicting scenes of past battles and glorious victories. Every few feet, a candle sconce provides a warm yet eerie light, illuminating the path ahead.",
+          "label": "a winding corridor leading to the Armoury",
           "locked_edge": null,
           "target_id": "armoury_1"
         },
         "castle of kaan_2": {
-          "examine_desc": "A long corridor stretches out from the Throne Room, winding its way towards the Armoury. The walls are lined with various tapestries and paintings depicting scenes of past battles and glorious victories. Every few feet, a candle sconce provides a warm yet eerie light, illuminating the path ahead.",
-          "label": "a winding corridor leading to the Armoury",
+          "examine_desc": "A wide entrance hall stretches out from the Throne Room, leading to the massive iron doors of the Castle of Kaan. The doors are open, allowing a glimpse of the lush countryside outside.",
+          "label": "an entrance hall leading outside",
           "locked_edge": null,
           "target_id": "castle of kaan_2"
         }
@@ -9437,14 +9437,14 @@
           "target_id": "arena_15"
         },
         "palace of oon_6": {
-          "examine_desc": "Between the marble statues, a cobblestone path leads away from the tournament grounds, winding through the lush greenery before opening up to Vendor Stalls.",
-          "label": "a cobblestone path leading to Vendor Stalls",
+          "examine_desc": "A grand marble pathway lined with statues of heroes and gods leads away from the tournament grounds, winding through the city and towards the looming Palace of Oon.",
+          "label": "\"A grand marble pathway leading to the Palace of Oon\"",
           "locked_edge": null,
           "target_id": "palace of oon_6"
         },
         "vendor stalls_14": {
-          "examine_desc": "A grand marble pathway lined with statues of heroes and gods leads away from the tournament grounds, winding through the city and towards the looming Palace of Oon.",
-          "label": "\"A grand marble pathway leading to the Palace of Oon\"",
+          "examine_desc": "Between the marble statues, a cobblestone path leads away from the tournament grounds, winding through the lush greenery before opening up to Vendor Stalls.",
+          "label": "a cobblestone path leading to Vendor Stalls",
           "locked_edge": null,
           "target_id": "vendor stalls_14"
         }
@@ -9518,14 +9518,14 @@
       "names": ["Town Square"],
       "neighbors": {
         "arena_15": {
-          "examine_desc": "A large stone archway leads away from the Town Square, leading through a long corridor towards the Private Chambers. The walls are lined with flickering lanterns, illuminating a path to the inner chambers of the castle.",
-          "label": "an archway leading to the Private Chambers",
+          "examine_desc": "The wide cobblestone path leading towards the Arena is surrounded by cheering crowds and is lined with colorful banners and flags, all representing the upcoming joust. The path leads to the large Arena entrance, the grand stone archway beckoning all those who have come to watch the spectacle.",
+          "label": "a wide cobblestone path leading towards the Arena",
           "locked_edge": null,
           "target_id": "arena_15"
         },
         "castle of kaan_2": {
-          "examine_desc": "The cobblestone path winds its way through the crowd, leading towards the Vendor Stalls. People of all nationalities and backgrounds line the path, eagerly awaiting the start of the joust. The path is lined with bright banners of Kaan's colors and the smell of the tantalizing wares from the vendors fills the air.",
-          "label": "a cobblestone path leading to the Vendor Stalls",
+          "examine_desc": "A wide cobblestone pathway winds its way towards the towering Castle of Kaan, lined with marble statues of the Kingdom's great heroes. The path is illuminated by the warm light of the setting sun, and the air is filled with the excited chatter of the onlookers.",
+          "label": "a cobblestone pathway leading towards Castle of Kaan",
           "locked_edge": null,
           "target_id": "castle of kaan_2"
         },
@@ -9536,14 +9536,14 @@
           "target_id": "grandstand_12"
         },
         "private chambers_7": {
-          "examine_desc": "The wide cobblestone path leading towards the Arena is surrounded by cheering crowds and is lined with colorful banners and flags, all representing the upcoming joust. The path leads to the large Arena entrance, the grand stone archway beckoning all those who have come to watch the spectacle.",
-          "label": "a wide cobblestone path leading towards the Arena",
+          "examine_desc": "A large stone archway leads away from the Town Square, leading through a long corridor towards the Private Chambers. The walls are lined with flickering lanterns, illuminating a path to the inner chambers of the castle.",
+          "label": "an archway leading to the Private Chambers",
           "locked_edge": null,
           "target_id": "private chambers_7"
         },
         "vendor stalls_14": {
-          "examine_desc": "A wide cobblestone pathway winds its way towards the towering Castle of Kaan, lined with marble statues of the Kingdom's great heroes. The path is illuminated by the warm light of the setting sun, and the air is filled with the excited chatter of the onlookers.",
-          "label": "a cobblestone pathway leading towards Castle of Kaan",
+          "examine_desc": "The cobblestone path winds its way through the crowd, leading towards the Vendor Stalls. People of all nationalities and backgrounds line the path, eagerly awaiting the start of the joust. The path is lined with bright banners of Kaan's colors and the smell of the tantalizing wares from the vendors fills the air.",
+          "label": "a cobblestone path leading to the Vendor Stalls",
           "locked_edge": null,
           "target_id": "vendor stalls_14"
         }
@@ -9820,26 +9820,26 @@
       "names": ["Vendor Stalls"],
       "neighbors": {
         "arena_15": {
-          "examine_desc": "A wide cobblestone path winds its way past the vendor stalls, leading towards a set of marble statues in the distance. The statues are illuminated by the setting sun, giving them an ethereal glow.",
-          "label": "a cobblestone path leading towards Marble Statues",
+          "examine_desc": "A wide cobblestone path stretches from the Vendor Stalls to the outside of the Arena. The path is lined with colorful banners and flags, waving in the breeze. The entrance to the Arena looms ahead, a grand archway beckoning those who are brave enough to enter.",
+          "label": "a wide cobblestone path leading to the Arena",
           "locked_edge": null,
           "target_id": "arena_15"
         },
         "marble statues_16": {
-          "examine_desc": "A wide cobblestone path stretches from the Vendor Stalls to the outside of the Arena. The path is lined with colorful banners and flags, waving in the breeze. The entrance to the Arena looms ahead, a grand archway beckoning those who are brave enough to enter.",
-          "label": "a wide cobblestone path leading to the Arena",
+          "examine_desc": "A wide cobblestone path winds its way past the vendor stalls, leading towards a set of marble statues in the distance. The statues are illuminated by the setting sun, giving them an ethereal glow.",
+          "label": "a cobblestone path leading towards Marble Statues",
           "locked_edge": null,
           "target_id": "marble statues_16"
         },
         "tournament grounds_11": {
-          "examine_desc": "The cobblestone path leads out of the vendor stalls and into the Town Square beyond, lined with colorful banners and flags of the Kingdoms of Kaan and Oon.",
-          "label": "a cobblestone path leading outside",
+          "examine_desc": "A wide cobblestone path stretches out from the Vendor Stalls, winding its way towards the Tournament Grounds in the distance. Lining either side of the pathway are colorful banners, fluttering in the breeze, each bearing the insignia of the two Kingdoms.",
+          "label": "a cobbled pathway leading to the Tournament Grounds",
           "locked_edge": null,
           "target_id": "tournament grounds_11"
         },
         "town square_8": {
-          "examine_desc": "A wide cobblestone path stretches out from the Vendor Stalls, winding its way towards the Tournament Grounds in the distance. Lining either side of the pathway are colorful banners, fluttering in the breeze, each bearing the insignia of the two Kingdoms.",
-          "label": "a cobbled pathway leading to the Tournament Grounds",
+          "examine_desc": "The cobblestone path leads out of the vendor stalls and into the Town Square beyond, lined with colorful banners and flags of the Kingdoms of Kaan and Oon.",
+          "label": "a cobblestone path leading outside",
           "locked_edge": null,
           "target_id": "town square_8"
         }
@@ -9972,14 +9972,14 @@
       "names": ["Winner's Circle"],
       "neighbors": {
         "arena_15": {
-          "examine_desc": "Beyond the fence of the Winner's Circle is a wide path, leading towards the Jousting Platform. The path is lined with cheering spectators, and at the end of the path stands the Jousting Platform, surrounded by a crowd of people eagerly awaiting the tournament.",
-          "label": "a wide path leading to the Jousting Platform",
+          "examine_desc": "A wide entrance stands before you, leading out to the Arena beyond. The entrance is surrounded by a low fence, with two chairs placed at the center for the tournament judges. The crowd is gathered around the entrance, excitedly awaiting the start of the joust.",
+          "label": "a wide entrance leading to the Arena",
           "locked_edge": null,
           "target_id": "arena_15"
         },
         "jousting platform_18": {
-          "examine_desc": "A wide entrance stands before you, leading out to the Arena beyond. The entrance is surrounded by a low fence, with two chairs placed at the center for the tournament judges. The crowd is gathered around the entrance, excitedly awaiting the start of the joust.",
-          "label": "a wide entrance leading to the Arena",
+          "examine_desc": "Beyond the fence of the Winner's Circle is a wide path, leading towards the Jousting Platform. The path is lined with cheering spectators, and at the end of the path stands the Jousting Platform, surrounded by a crowd of people eagerly awaiting the tournament.",
+          "label": "a wide path leading to the Jousting Platform",
           "locked_edge": null,
           "target_id": "jousting platform_18"
         }
