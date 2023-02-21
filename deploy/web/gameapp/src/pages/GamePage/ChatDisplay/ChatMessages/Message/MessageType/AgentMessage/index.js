@@ -220,13 +220,13 @@ const AgentMessage = ({
                 </span>
               ) : null}
               <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
-                <div className="flex flex-row">
+                <div className="flex flex-row justify-center items-center">
                   <RiReplyFill
                     className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
                     onClick={() => onReply(actor)}
                   />
                   {messageAction === "theyTell" ?
-                    <p className="text-left text-gray-600 font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
+                    <p className="text-left text-gray-600 font-bold italic opacity-50 text-xs mt-1" >Told to you</p>
                     :null
                   }
                 </div>
