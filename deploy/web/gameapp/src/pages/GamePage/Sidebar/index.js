@@ -11,7 +11,6 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
 import {
   updateSelectedTip,
-  updateInHelpMode,
 } from "../../../features/tutorials/tutorials-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";

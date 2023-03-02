@@ -39,7 +39,8 @@ import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 
 /* CONFIG */
 import CONFIG from "../../config.js";
-// import { Console } from "console";
+/*  */
+const idlenessTimoutTime = 300
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
@@ -210,7 +211,7 @@ const Chat = ({
       if (persona === null || persona.name === null) return;
       let characterEmoji = persona.emoji || defaultEmoji
       selectEmoji(characterEmoji);
-      /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
+      /* ---- INSTRUCTION MODAL---- */
       if (updatedXp <= 10) {
         //NEW Tutorial triggers
       }
@@ -284,7 +285,7 @@ const Chat = ({
     timer = setInterval(() => {
       setIdleTime((idleTime) => idleTime + 1);
     }, 1000);
-    if (idleTime === 300) {
+    if (idleTime === idlenessTimoutTime) {
       markPlayerAsIdle();
       setIdle(true);
       clearInterval(timer);
