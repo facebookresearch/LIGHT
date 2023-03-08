@@ -9,3 +9,11 @@ import os
 LIGHT_DATAPATH = os.path.join(
     os.path.abspath(os.path.dirname(os.path.dirname(__file__))), "data"
 )
+
+
+def _parlai_dir():
+    from parlai import __path__ as parlai_path_list
+    return os.path.join(parlai_path_list[0], "..")
+
+
+PARLAI_PATH = _parlai_dir()
