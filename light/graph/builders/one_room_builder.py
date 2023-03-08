@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.params import ParlaiParser
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
@@ -22,14 +23,14 @@ from light.data_model.db.environment import (
     DBEdgeType,
 )
 
-import os
 import random
 import time
-import asyncio
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING, DictConfig  # type: ignore
 from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
+
+from light.registry.model_pool import  ModelTypeName
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -123,13 +124,13 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 self.config.model_loader_config, [ModelTypeName.CONNECTIONS]
             )
         self.agents["room"] = self.model_pool.get_model(
-            ModelTypeName.CONNECTIONS, {"target_type": "room"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "room"}
         )
         self.agents["object"] = self.model_pool.get_model(
-            ModelTypeName.CONNECTIONS, {"target_type": "object"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "object"}
         )
         self.agents["character"] = self.model_pool.get_model(
-            ModelTypeName.CONNECTIONS, {"target_type": "character"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "character"}
         )
 
     def _props_from_obj(self, obj: DBObject) -> Dict[str, Any]:

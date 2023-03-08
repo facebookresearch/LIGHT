@@ -9,19 +9,10 @@ import asyncio
 import enum
 
 from light.registry.base_model_loader import ModelConfig, ModelLoader
-from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
-from light.registry.parlai_remote_model import (
-    ParlAIRemoteModelConfig,
-    ParlAIRemoteModelLoader,
-)
-from light.registry.models.acting_score_model import (
-    ParlAIPolyencoderActingScoreModelConfig,
-    ParlAIPolyencoderActingScoreModelLoader,
-)
-from light.registry.models.starspace_model import (
-    MapStarspaceModelConfig,
-    MapStarspaceModelLoader,
-)
+from light.registry.parlai_model import ParlAIModelLoader
+from light.registry.parlai_remote_model import ParlAIRemoteModelLoader
+from light.registry.models.acting_score_model import ParlAIPolyencoderActingScoreModelLoader
+from light.registry.models.starspace_model import MapStarspaceModelLoader
 
 from parlai.core.agents import Agent  # type: ignore
 from typing import List, Any, Union, Dict, Optional, Type, TYPE_CHECKING
@@ -45,6 +36,7 @@ class ModelTypeName(enum.Enum):
     """Common model names of use in LIGHT, for use in register_model"""
 
     SAFETY = "safety"  # Models used to evaluate dialog or env safety
+    MAP_CONNECTIONS = 'map_connections'  # Models to create the game world and room connections
     DIALOG = "dialog"  # Models for generating dialogue
     SCORING = "role_playing_score"  # Models to score player utterances
     ACTION = "action"  # Models used by model agents for generating actions
