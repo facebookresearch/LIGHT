@@ -4,13 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-
-from acceptability import MultiPartyChatChecker
-from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld  # type: ignore
-from parlai.core.worlds import validate  # type: ignore
-from joblib import Parallel, delayed  # type: ignore
 import time
+from joblib import Parallel, delayed
 from datetime import datetime
+
+from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
+from parlai.core.worlds import validate
+import parlai.utils.logging as logging
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.data_model.exceptions import (
     AgentReturnedError,
@@ -19,8 +19,9 @@ from mephisto.data_model.exceptions import (
     AgentShutdownError,
 )
 from mephisto.abstractions._subcomponents.agent_state import AgentState
-import parlai.utils.logging as logging
+
 import constants
+from acceptability import MultiPartyChatChecker
 
 
 SHORT_FORCED_TIMEOUT_TIME = 0.0001
@@ -77,7 +78,7 @@ class MultiAgentDialogOnboardWorld(CrowdOnboardWorld):
 
     def wait_for_response(self):
         logging.info(
-            f'[OnboardingWorld] Waiting for response from {self.get_worker_name()}.'
+            f"[OnboardingWorld] Waiting for response from {self.get_worker_name()}."
         )
         while True:
             try:
@@ -207,7 +208,7 @@ class MultiAgentDialogOnboardWorld(CrowdOnboardWorld):
             is_onboarding=True,
         )
         if acceptability_checker_results:
-            return f"ParlAI acceptability checker found violations: \"{acceptability_checker_results}\""
+            return f'ParlAI acceptability checker found violations: "{acceptability_checker_results}"'
 
         return None
 
@@ -277,8 +278,8 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         """
         available_players = list(self.graph.agents.values())
 
-        char_names_str = ' , '.join([p.name for p in available_players])
-        logging.info(f'Assigning characters ({self._world_name}): {char_names_str}')
+        char_names_str = " , ".join([p.name for p in available_players])
+        logging.info(f"Assigning characters ({self._world_name}): {char_names_str}")
 
         self.identities = [
             {
@@ -534,8 +535,8 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
                         continue
 
                     p0, p1 = [[1, 2], [2, 0], [0, 1]][idx]
-                    partner1 = self.identities[p0]['name']
-                    partner2 = self.identities[p1]['name']
+                    partner1 = self.identities[p0]["name"]
+                    partner2 = self.identities[p1]["name"]
 
                     agent.observe(
                         {
@@ -609,7 +610,7 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
 
         disqualify_reason = self.reason_to_reject(agent)
         if disqualify_reason:
-            logging.info(f"Disqualified submission detecetd: \"{disqualify_reason}\"")
+            logging.info(f'Disqualified submission detecetd: "{disqualify_reason}"')
             data["disqualify_reason"] = disqualify_reason
             self._soft_block_agent(agent)
 
@@ -640,14 +641,14 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
             violation_types=constants.ACCEPTABILITY_VIOLATIONS,
         )
         if acceptability_checker_results:
-            return f"ParlAI acceptability checker found violations: \"{acceptability_checker_results}\""
+            return f'ParlAI acceptability checker found violations: "{acceptability_checker_results}"'
 
         return None
 
     def _soft_block_agent(self, agent):
-        # worker = get_worker_from_agent(agent)
-        # logging.warning(f"Soft blocking {worker.worker_name}")
-        # worker.grant_qualification(self.soft_block_qname)
+        worker = get_worker_from_agent(agent)
+        logging.warning(f"Soft blocking {worker.worker_name}")
+        worker.grant_qualification(self.soft_block_qname)
         pass
 
     def episode_done(self):

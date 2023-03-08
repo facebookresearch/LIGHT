@@ -17,6 +17,7 @@ from mephisto.utils.qualifications import make_qualification_dict
 
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
+from light.constants import PARLAI_PATH
 from light.graph.builders.one_room_builder import OneRoomChatBuilder, OneRoomChatBuilderConfig
 from light.data_model.light_database import LIGHTDatabase
 from light.registry.model_pool import ModelPool, ModelTypeName
@@ -24,7 +25,7 @@ from light.registry.models.starspace_model import MapStarspaceModelConfig
 
 
 ALLOWLIST_QUALIFICATION = 'multiparty-allow-prod-v2'
-LIGHT_DB_PATH = "~/dev/ParlAI/data/light/merged.db"
+LIGHT_DB_PATH = os.path.join(PARLAI_PATH, "data/light/merged.db")
 
 
 @dataclass
