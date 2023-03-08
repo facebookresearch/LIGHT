@@ -13,18 +13,14 @@ from copy import deepcopy
 from typing import Optional, Dict, Any
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
-
-
-def _get_parlai_dir():
-    from parlai import __path__ as parlai_path_list
-    return os.path.join(parlai_path_list[0], "..")
+from light.constants import PARLAI_PATH
 
 
 @dataclass
 class MapStarspaceModelConfig(ParlAIModelConfig):
     _loader: str = "MapStarspaceLoader"
     resource_path: str = field(
-        default=os.path.join(_get_parlai_dir(), "data/light_maps/"),
+        default=os.path.join(PARLAI_PATH, "data/light_maps/"),
         metadata={"help": ("Path to the LIGHT maps data")},
     )
 
