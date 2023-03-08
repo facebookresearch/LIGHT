@@ -6,19 +6,25 @@
 
 
 from dataclasses import dataclass, field
-from parlai.core.agents import Agent
+from parlai.core.agents import Agent, create_agent_from_shared
 import os
+from copy import deepcopy
 
 from typing import Optional, Dict, Any
 
 from light.registry.parlai_model import ParlAIModelConfig, ParlAIModelLoader
 
 
+def _get_parlai_dir():
+    from parlai import __path__ as parlai_path_list
+    return os.path.join(parlai_path_list[0], "..")
+
+
 @dataclass
 class MapStarspaceModelConfig(ParlAIModelConfig):
     _loader: str = "MapStarspaceLoader"
     resource_path: str = field(
-        default=os.path.expanduser("~/ParlAI/data/light_maps/"),
+        default=os.path.join(_get_parlai_dir(), "data/light_maps/"),
         metadata={"help": ("Path to the LIGHT maps data")},
     )
 
@@ -44,17 +50,18 @@ class MapStarspaceModelLoader(ParlAIModelLoader):
 
         if opt["target_type"] == "room":
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/room_full_cands.txt"
+                self.config.resource_path, "room_full_cands.txt"
             )
-        elif opt["target_type"] == "agent":
+        elif opt["target_type"] in ("agent", "character"):
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/character_full_cands.txt"
+                self.config.resource_path, "character_full_cands.txt"
             )
         elif opt["target_type"] == "object":
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/object_full_cands.txt"
+                self.config.resource_path, "object_full_cands.txt"
             )
         else:
+            breakpoint()
             raise NotImplementedError(
                 f"Given starspace target type {opt['target_type']} not implemented"
             )

@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.params import ParlaiParser
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
@@ -30,15 +31,14 @@ from light.graph.builders.base_elements import (
     DBCharacter,
 )
 
-import os
 import random
-import copy
 import time
-import asyncio
 
 from dataclasses import dataclass, field
-from omegaconf import MISSING, DictConfig
+from omegaconf import DictConfig
 from typing import TYPE_CHECKING
+
+from light.registry.model_pool import  ModelTypeName
 
 if TYPE_CHECKING:
     from light.data_model.light_database import LIGHTDatabase
@@ -116,12 +116,6 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         self.graph_opt = {} if graph_opt is None else graph_opt
 
         # Setup correct path
-        self.db_path = builder_config.get("light_db_file")
-        self.dpath = os.path.expanduser("~/ParlAI/data/light_maps/")
-        model_path = opt.get("model_path")
-        if model_path is None:
-            model_path = opt.get("light_model_root")
-        self.model_path = model_path
         DBGraphBuilder.__init__(self, ldb)
         SingleSuggestionGraphBuilder.__init__(self, model_pool=model_pool)
 
@@ -147,13 +141,13 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         """Load starspace models for building the map"""
         # self.model_pool.register_model(self.config.model_loader_config, "map_starspace")
         self.agents["room"] = self.model_pool.get_model(
-            "map_starspace", {"target_type": "room"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "room"}
         )
         self.agents["object"] = self.model_pool.get_model(
-            "map_starspace", {"target_type": "object"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "object"}
         )
         self.agents["character"] = self.model_pool.get_model(
-            "map_starspace", {"target_type": "character"}
+            ModelTypeName.MAP_CONNECTIONS, {"target_type": "character"}
         )
 
     def _props_from_obj(self, obj):
