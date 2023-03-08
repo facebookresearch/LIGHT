@@ -1,18 +1,24 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: parlai_chat
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
+    onboarding_qualification: multiparty-onboarding-dev
+    block_qualification: multiparty-block-dev
+    num_conversations: 1
+    custom_source_bundle: ${task_dir}/webapp/build/bundle.js    
+    custom_source_dir: ${task_dir}/webapp/
     world_file: ${task_dir}/worlds.py
-    task_description_file: ${task_dir}/task_description.html
-    onboarding_qualification: multi-party-chat-qualification
-    custom_source_dir: ${task_dir}/frontend
-    num_conversations: 2
+    task_description_file: ${task_dir}/task_description.html 
   task:
-    task_name: light-multi-party-local
-    task_title: "Multi-Party Fantasy Chat"
+    task_name: multiparty-dev
+    task_title: "Fantasy Group Chat"
     task_description: >
-      In this task you will have a conversation with two other people
-      in a fantasy setting. You will all be given characters, and should
-      have a conversation about your assigned characters and the setting,
-      taking natural turns.
-    task_reward: 1.80
+      In this task you will have a conversation with two other people in a fantasy game setting.
+      You will all be given characters and a description of the setting of the conversation.
+      You should play your character, conversing as if you were your character in the provided setting.
+    task_reward: 2
     task_tags: "dynamic,chat,testing,fantasy,role-playing"
+    max_num_concurrent_units: 3
