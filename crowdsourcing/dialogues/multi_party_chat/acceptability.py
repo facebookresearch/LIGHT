@@ -26,14 +26,14 @@ OVERLAP_THRESHOLD = 0.3
 NUM_KEYWORD_MENTION = 2
 
 # Violations
-COPIED_PERSONA = 'copied persona description'
-COPIED_LOCATION = 'copied location description'
-COPIED_INSTRUCTION = 'copied task instructions'
-REPEATS_MESSSGE = 'repeats previous messages'
-TOO_SHORT = 'average message length too short'
-ONBOARDING_NO_MENTION_KEYWORD = 'did not mention enough keywords during onboarding'
-SPELLING = 'too many spelling errors'
-REPEATS_ONBOARDING_MESSAGE = 'repeats messages from onbaording'
+COPIED_PERSONA = "copied persona description"
+COPIED_LOCATION = "copied location description"
+COPIED_INSTRUCTION = "copied task instructions"
+REPEATS_MESSSGE = "repeats previous messages"
+TOO_SHORT = "average message length too short"
+ONBOARDING_NO_MENTION_KEYWORD = "did not mention enough keywords during onboarding"
+SPELLING = "too many spelling errors"
+REPEATS_ONBOARDING_MESSAGE = "repeats messages from onbaording"
 
 onboarding_messages = [
     constants.ONBOARDING_WELCOME_MESSAGE,
@@ -43,14 +43,14 @@ onboarding_messages = [
 ] + constants.ONBOARDING_MESSAGES
 
 
-re_stripper_alpha = re.compile('[^a-zA-Z]+')
-sent_detector = nltk.data.load('tokenizers/punkt/english.pickle')
+re_stripper_alpha = re.compile("[^a-zA-Z]+")
+sent_detector = nltk.data.load("tokenizers/punkt/english.pickle")
 
 spell = SpellChecker()
 
 
 def split_words(text):
-    return re_stripper_alpha.sub(' ', text).split()
+    return re_stripper_alpha.sub(" ", text).split()
 
 
 def num_spelling_errors(text):
@@ -83,20 +83,20 @@ def too_much_overlap(a: list, b: list, threshold) -> bool:
 
 
 def is_valid_agent_chat_message(message, agent_id):
-    return message.get('text') and message.get('id') == agent_id
+    return message.get("text") and message.get("id") == agent_id
 
 
 def is_valid_chat_message(message):
-    return message.get('text')
+    return message.get("text")
 
 
 def repeats_message(all_messages, agent_id, threshold):
     for i in range(len(all_messages)):
-        ngram = get_ngrams(all_messages[i]['text'])
+        ngram = get_ngrams(all_messages[i]["text"])
         for j in range(i + 1, len(all_messages)):
             if is_valid_agent_chat_message(all_messages[j], agent_id):
                 if too_much_overlap(
-                    ngram, get_ngrams(all_messages[j]['text']), threshold
+                    ngram, get_ngrams(all_messages[j]["text"]), threshold
                 ):
                     return True
     return False
@@ -108,7 +108,7 @@ def repeats_onboarding_message(all_messages, agent_id):
         for message in all_messages:
             if is_valid_agent_chat_message(message, agent_id):
                 if too_much_overlap(
-                    ngram, get_ngrams(message['text']), ONBOARDING_OVERLAP_THRESHOLD
+                    ngram, get_ngrams(message["text"]), ONBOARDING_OVERLAP_THRESHOLD
                 ):
                     return True
     return False
@@ -136,9 +136,7 @@ class MultiPartyChatChecker(AcceptabilityChecker):
             messages, agent_id, location_description, persona_description, threshold
         )
         if is_onboarding:
-            onboarding_violations = self.get_onboarding_violations(
-                messages, agent_id, location_description, persona_description
-            )
+            onboarding_violations = self.get_onboarding_violations(messages, agent_id)
             if onboarding_violations:
                 violations.extend(onboarding_violations)
 
@@ -148,16 +146,14 @@ class MultiPartyChatChecker(AcceptabilityChecker):
             violation_types,
         )
         if general_chat_violations:
-            violations.extend(general_chat_violations.split(','))
+            violations.extend(general_chat_violations.split(","))
 
-        return ','.join(violations)
+        return ",".join(violations)
 
-    def get_onboarding_violations(
-        self, agent_messages, agent_id, location_description, persona_description
-    ):
+    def get_onboarding_violations(self, agent_messages, agent_id):
         violations = []
         messages = self.get_messages(agent_messages, agent_id)
-        message_concat = ' '.join(messages).lower()
+        message_concat = " ".join(messages).lower()
         keyword_count = 0
         for keyword in constants.ONBOARDING_KEYWORDS:
             if keyword.lower() in message_concat:
@@ -176,7 +172,7 @@ class MultiPartyChatChecker(AcceptabilityChecker):
     ):
         violations = []
         messages = self.get_messages(agent_messages, agent_id)
-        message_concat = ' '.join(messages)
+        message_concat = " ".join(messages)
         merged_messages = self.get_merged_messages(agent_messages, agent_id)
         all_messages = self.get_all_messages(agent_messages)
 
@@ -265,12 +261,12 @@ class MultiPartyChatChecker(AcceptabilityChecker):
         message = []
         for msg in agent_messages:
             if is_valid_agent_chat_message(msg, agent_id):
-                message.append(msg['text'])
+                message.append(msg["text"])
             elif len(message) > 0:
-                messages.append(' '.join(message))
+                messages.append(" ".join(message))
                 message = []
 
         if len(message) > 0:
-            messages.append(' '.join(message))
+            messages.append(" ".join(message))
 
         return messages

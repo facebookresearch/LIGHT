@@ -19,10 +19,10 @@ SAVED_DATA_WORKER_KEY = "worker"
 
 # Violations to check in the standard AcceptabilityChecker
 ACCEPTABILITY_VIOLATIONS = (
-    'min_words',
-    'all_caps',
-    'exact_match',
-    'safety',
+    "min_words",
+    "all_caps",
+    "exact_match",
+    "safety",
 )
 
 ONBOARDING_LOCATION_DESCRIPTION = (
