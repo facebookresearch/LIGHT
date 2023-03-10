@@ -20,12 +20,14 @@ import { Dialog, Transition } from "@headlessui/react";
 import CONFIG from "../../../config.js";
 
 import { Button } from "daisyui";
-
+//
 const ReportCategories = [
   "Report Inappropriate Content",
   "Report Bug",
   "Other",
 ];
+
+//ReportMessageForm - Modal that allows users to specifically describe and report content for a variety of reasons.
 
 const ReportMessageForm = () => {
   /* REDUX DISPATCH FUNCTION */
@@ -47,8 +49,6 @@ const ReportMessageForm = () => {
   /* LOCAL STATE */
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
-
-  /*  LIFE CYCLE */
 
   /* HANDLERS */
 

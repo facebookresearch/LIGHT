@@ -296,9 +296,6 @@ const Chat = ({
 
 
   // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
-  useEffect(() => {
-    scrollToBottom();
-  }, [scrollToBottom, messages]);
 
   /* EMOJI */
   useEffect(() => {
@@ -339,7 +336,6 @@ const Chat = ({
           </div>
           <div className="_chat-container_ overflow-x-hidden w-full flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             <ChatDisplay
-              scrollToBottom={scrollToBottom}
               messages={messages}
               onSubmit={onSubmit}
               persona={persona}
