@@ -7,8 +7,6 @@ import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CharacterInfoTabBody from "./Tabs/CharacterInfoTabBody";
 import SystemTabBody from "./Tabs/SystemTabBody";
-/* ICONS */
-import { BsXLg } from "react-icons/bs";
 
 // Modal - generates modal frame with overlay
 const SideDrawer = ({ currentTab }) => {

@@ -69,17 +69,6 @@ const getDataModelAddress = () => {
   return new URL(window.location).searchParams.get("builder");
 };
 
-// TODO: consider showing different agent's dialogues in
-// different colors
-//
-// const colors = [
-//   "#edfff1", //green,
-//   "#fffded", //yellow,
-//   "#eee8ff", // purple
-//   "#e6efff", //blue
-//   "#ffe8eb" //red
-// ];
-
 //ConnectedApp - Creates socket and renders Chat Component upon successful connection to backend.
 const ConnectedApp = () => {
   const wsUrl = useMemo(

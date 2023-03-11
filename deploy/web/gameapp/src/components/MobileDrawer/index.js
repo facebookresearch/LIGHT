@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React from "react";
 /* IMAGES */
 //APP BACKGROUND IMAGE
 import StarryNight from "../../assets/images/light_starry_bg.jpg";
@@ -20,8 +20,6 @@ const MobileDrawer = ({
   closeDrawerFunction,
   children,
 }) => {
-  /*--------------- LOCAL STATE ----------------*/
-  /*--------------- LIFECYLCLE ----------------*/
 
   /*--------------- HANDLERS ----------------*/
   return (

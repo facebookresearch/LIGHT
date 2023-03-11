@@ -5,6 +5,11 @@
  */
 
 const GameCopy = {
+  reportCategories :[
+    "Report Inappropriate Content",
+    "Report Bug",
+    "Other",
+  ],
   tutorialTips: [
     {
       tipId: 0,
