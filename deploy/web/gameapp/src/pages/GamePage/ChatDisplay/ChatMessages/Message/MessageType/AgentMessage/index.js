@@ -278,10 +278,10 @@ const AgentMessage = ({
           {
             (messageAction === "theySay" ||  messageAction === "theyTell")?
           <div className="_quote-container_ relative  w-[1px] h-full">
-            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${ messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[30px] -top-[16px] z-5`} />
-            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-6" />
-            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[20px] -top-[16px] z-5`} />
-            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-6" />
+            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${ messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[30px] -top-[16px] z-20`} />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-30" />
+            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[20px] -top-[16px] z-20`} />
+            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-30" />
           </div> :
             null
           }

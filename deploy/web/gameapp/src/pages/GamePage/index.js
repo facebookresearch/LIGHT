@@ -159,7 +159,9 @@ const Chat = ({
   const dataModelHost = getDataModelAddress();
   //MOBILE DRAWER STATE
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
+  //COMMAND HELP BUTTON
+  const [showCommandHelp, setShowCommandHelp] = useState(false);
+  
   const scrollToBottom = useCallback(
     () =>
       setTimeout(() => {
@@ -186,7 +188,7 @@ const Chat = ({
   const resetIdleTimer = () => {
     setIdleTime(0);
   };
-  /*  LIFE CYCLE */
+  /* -----LIFE CYCLE---- */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     if (persona) {
@@ -301,6 +303,14 @@ const Chat = ({
     }
   }, [sessionGiftXpSpent]);
 
+  /* -----LIFE CYCLE END---- */
+
+  /* ----HANDLERS---- */
+  const commandHelpButtonClickHandler = ()=>{
+    let updatedShowCommandHelp = !showCommandHelp;
+    setShowCommandHelp(updatedShowCommandHelp);
+  }
+
   return (
     <div
       className="_game-page_ w-screen h-screen"
@@ -309,7 +319,7 @@ const Chat = ({
       <div className="_gamepage-container_ w-full h-full flex flex-row ">
         <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
-            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
+            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} commandHelpButtonClickHandler={commandHelpButtonClickHandler} showCommandHelp={showCommandHelp}/>
           </div>
           <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
             <MobileDrawer
@@ -320,6 +330,8 @@ const Chat = ({
               <Sidebar
                 dataModelHost={dataModelHost}
                 getEntityId={getEntityId}
+                commandHelpButtonClickHandler={commandHelpButtonClickHandler}
+                showCommandHelp={showCommandHelp}
               />
             </MobileDrawer>
           </div>
@@ -335,6 +347,7 @@ const Chat = ({
               idle={idle}
               resetIdleTimer={resetIdleTimer}
               chatInputRef={chatInputRef}
+              showCommandHelp={showCommandHelp}
             />
           </div>
         </div>

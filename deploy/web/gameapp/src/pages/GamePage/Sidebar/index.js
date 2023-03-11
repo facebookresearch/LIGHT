@@ -26,9 +26,8 @@ import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import TutorialPopover from "../../../components/TutorialPopover";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
-const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
+const SideBar = ({ dataModelHost, getEntityId, commandHelpButtonClickHandler, showCommandHelp, showDrawer }) => {
   /* LOCAL STATE */
-  //
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   /* ----REDUX STATE---- */
   //PERSONA
@@ -55,6 +54,13 @@ const SideBar = ({ dataModelHost, getEntityId, showDrawer }) => {
   return (
     <div className="__sidebar__  h-full">
       <SideBarHeader />
+      <div className="__sidebar-button-box__ w-full flex flex-row justify-end items-center pr-2">
+        <div className={`__command-help-button__ bg-accent p-1 rounded cursor-pointer drop-shadow-md`} onClick={commandHelpButtonClickHandler}>
+          <p className={`__command-help-button-text__ ${showCommandHelp ? "active" : ""} text-white font-bold font-xs`}>
+            COMMAND HELP
+          </p>
+        </div>
+      </div>
       <div className={`__sidebar-body__  overflow-y-scroll h-5/6`}>
         <div
           className={cx("icon", { editing: showEmojiPicker })}

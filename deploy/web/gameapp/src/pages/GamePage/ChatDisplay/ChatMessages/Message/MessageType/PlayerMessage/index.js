@@ -98,10 +98,10 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
                 {
                   action === "say" || action === "tell" ?
                 <div className="_quote-container_ relative w-[1px] h-full">
-                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[18px] -top-[18px] z-5`} />
-                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-6`} />
-                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[8px] -top-[18px] z-5`} />
-                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[4px] -top-[14px] z-6`} />
+                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[18px] -top-[18px] z-20`} />
+                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-30`} />
+                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[8px] -top-[18px] z-20`} />
+                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[4px] -top-[14px] z-30`} />
                 </div>
                 :
                 null

@@ -80,7 +80,7 @@ export function ChatBubble({
         {align === "left" && <CharacterName name={actor} align={align} action={action} mobile={false}/>}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
-          className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden 
+          className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden  z-10
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
@@ -103,7 +103,7 @@ export function ChatBubble({
             "text",
             action
           )}
-        rounded-md`}
+        rounded-md z-10`}
         >
           <div className="_mobile-chatbubble-body_ w-full">
             <div

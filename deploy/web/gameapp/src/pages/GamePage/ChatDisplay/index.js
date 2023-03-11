@@ -28,6 +28,7 @@ const ChatDisplay = ({
   idle,
   resetIdleTimer,
   chatInputRef,
+  showCommandHelp
 }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
@@ -117,6 +118,14 @@ const ChatDisplay = ({
   const { presentAgents } = getLocationState(messages);
   return (
     <div className="_chatdisplay-container_ w-full h-full flex flex-col ">
+      {showCommandHelp ? 
+        <div className = "w-full border-2 border-accent border-solid" >
+          <p className={"text-white font-bold"}>
+            HELP COMMAND LOGIC GOES HERE
+          </p>
+        </div>
+      :null
+    }
       {nonPlayerAgents.length ? (
         <div className="_actionbar-container_ flex-0 pt-4 mb-4">
           <ActionBar
