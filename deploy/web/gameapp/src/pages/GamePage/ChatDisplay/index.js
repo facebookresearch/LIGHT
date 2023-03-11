@@ -119,10 +119,32 @@ const ChatDisplay = ({
   return (
     <div className="_chatdisplay-container_ w-full h-full flex flex-col ">
       {showCommandHelp ? 
-        <div className = "w-full border-2 border-accent border-solid" >
-          <p className={"text-white font-bold"}>
-            HELP COMMAND LOGIC GOES HERE
-          </p>
+        <div className = "w-full h-24 border-2 border-accent border-solid flex flex-col items-center overflow-y-scroll text-white font-bold mt-4" >
+          <h5>COMMANDS</h5>
+          <p>quest/goal/mission </p>
+          <p>stats/status/health</p>
+          <p>inventory (i or inv, for short) </p>
+          <p>{'say/shout "<thing you want to say>; or use quotes only for short " '}</p>
+          <p>{'tell/whisper <player> "<something>" '}</p>
+          <p>{'look (l, for short) '}</p>
+          <p>{'go <somewhere>, e.g. "go doorway to the tavern", or "go doorway" for short '}</p>
+          <p>{'examine <thing> (ex, for short) '}</p>
+          <p>{'get/drop <object> '}</p>
+          <p>{'eat/drink <object>'}</p>
+          <p>{'wear/remove <object> '}</p>
+          <p>{'wield/unwield <object>'}</p>
+          <p>{'use <object> with <object> '}</p>
+          <p>{'follow <player> '}</p>
+          <p>{'hit <player> '}</p>
+          <p>{'put <object> in <container> '}</p>
+          <p>{'get <object> from <container> '}</p>
+          <p>{'give <object> to <player> '}</p>
+          <p>{'point to <object>, e.g. good for trading'}</p>
+          <p>{'steal <object> from <player> '}</p>
+          <p>{'emotes: laugh, cry, smile, ponder, blush, shrug, sigh, '}</p>
+          <p>{'wink, yawn, wave, stare, scream, pout, nudge, nod, '}</p>
+          <p>{''}</p>
+          <p>{'growl, groan, grin, gasp, frown, dance, applaud`'}</p>
         </div>
       :null
     }
