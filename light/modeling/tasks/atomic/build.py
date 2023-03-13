@@ -5,13 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-from glob import glob
 from parlai.utils.misc import msg_to_str
 import random
-import itertools
 import pandas as pd
 import json
-import time
 import shutil
 import light.modeling.tasks.utils as utils
 from light.data_model.light_database import LIGHTDatabase
@@ -23,7 +20,6 @@ import json
 import random
 import math
 import torch
-import numpy as np
 
 from tqdm import tqdm
 import torch.nn as nn
