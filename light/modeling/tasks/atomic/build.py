@@ -26,9 +26,15 @@ import torch
 import numpy as np
 
 from tqdm import tqdm
-from fitbert import FitBert
 import torch.nn as nn
 import string
+
+IMPORTED_FITBERT = False
+try:
+    from fitbert import FitBert
+    IMPORTED_FITBERT = True
+except ImportError:
+    pass
 
 RESOURCES = [
     DownloadableFile(
@@ -436,6 +442,7 @@ def build_atomic(dpath, odpath, opt):
         # TODO finetune a BERT for LIGHT
         # BLM = pytorch_pretrained_bert.BertForMaskedLM.from_pretrained(model_name)
         # fitbert = FitBert(model=BLM)
+        assert IMPORTED_FITBERT, "You need to have FitBert installed manually to use this task."
         fitbert = FitBert()
         fitbert.bert = nn.DataParallel(fitbert.bert)
 
