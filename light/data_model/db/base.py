@@ -228,7 +228,7 @@ class BaseDB(ABC):
                 else:
                     return target_file.read()
         elif self.backend in ["aws-postgres"]:
-            data = self.bucket.Object(filename).get()["Body"]
+            data = self.bucket.Object(filename).get()["Body"].read()
             if json_encoded:
                 return json.loads(data)
             else:

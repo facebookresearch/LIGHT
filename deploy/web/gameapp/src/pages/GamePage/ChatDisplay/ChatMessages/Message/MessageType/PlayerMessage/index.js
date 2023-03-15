@@ -23,14 +23,21 @@ import { ImQuotesRight } from "react-icons/im";
 import { RiSingleQuotesL } from "react-icons/ri";
 
 //PlayerMessage - Renders message sent by player to chat with custom styling and displays any xp awarded to message
-const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction }) => {
+const PlayerMessage = ({
+  isSelected,
+  text,
+  caller,
+  actor,
+  xp,
+  onClickFunction,
+}) => {
   //TUTORIAL
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
   /* ----LOCAL STATE---- */
   const [formattedMessage, setFormattedMessage] = useState("");
-  const [tellTarget, setTellTarget] = useState(null)
-  const [messageXp, setMessageXp] = useState(0)
+  const [tellTarget, setTellTarget] = useState(null);
+  const [messageXp, setMessageXp] = useState(0);
 
   const [action, setAction] = useState("");
   /*---------------LIFECYCLE----------------*/
@@ -45,36 +52,35 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
     console.log("FIRST 4:", firstFourTextCharacters);
     if (firstTextCharacter === '"' && lastTextCharacter === '"') {
       setAction("say");
-      formattedText = text.slice(1,text.length-1)
-      if(updatedMessageXp >= 2){
-        updatedMessageXp = updatedMessageXp-1;
-      }else {
-        updatedMessageXp =1;
+      formattedText = text.slice(1, text.length - 1);
+      if (updatedMessageXp >= 2) {
+        updatedMessageXp = updatedMessageXp - 1;
+      } else {
+        updatedMessageXp = 1;
       }
     } else if (firstFourTextCharacters === "tell") {
       setAction("tell");
-      let quoteIndex = text.indexOf('"')
-      formattedTellTarget = text.slice(5, quoteIndex-1)
-      formattedText = text.slice(quoteIndex+1, text.length-1)
+      let quoteIndex = text.indexOf('"');
+      formattedTellTarget = text.slice(5, quoteIndex - 1);
+      formattedText = text.slice(quoteIndex + 1, text.length - 1);
     } else {
       setAction("do");
     }
     setFormattedMessage(formattedText);
-    setMessageXp(updatedMessageXp)
+    setMessageXp(updatedMessageXp);
     setTellTarget(formattedTellTarget);
   }, [text, xp]);
 
   /*---------------HANDLERS----------------*/
-  const clickHandler = ()=>{
-    onClickFunction()
-  }
+  const clickHandler = () => {
+    onClickFunction();
+  };
   return (
     <div
       className={`_player-message-row_  flex w-full h-full mb-4
       ${inHelpMode && isSelected ? "active" : ""}`}
       onClick={clickHandler}
     >
-
       <div className="_player-message-container_ flex flex-col w-full">
         <TutorialPopover
           tipNumber={17}
@@ -82,47 +88,68 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
           position="top"
         >
           <div className="w-full h-full flex flex-row justify-end items-center">
-          <div className="w-full h-full flex flex-row justify-end items-center">
-            {messageXp > 1 ? (
-                    <Tooltip
-                      title={
-                        messageXp > 1 ? `${messageXp} Experience Points Earned For Roleplaying` : null
-                      }
-                    >
-                      <AwardStar 
-                        xp={messageXp}
-                      />
-                    </Tooltip>
-                ) : null
-                }
-                {
-                  action === "say" || action === "tell" ?
+            <div className="w-full h-full flex flex-row justify-end items-center">
+              {messageXp > 1 ? (
+                <Tooltip
+                  title={
+                    messageXp > 1
+                      ? `${messageXp} Experience Points Earned For Roleplaying`
+                      : null
+                  }
+                >
+                  <AwardStar xp={messageXp} />
+                </Tooltip>
+              ) : null}
+              {action === "say" || action === "tell" ? (
                 <div className="_quote-container_ relative w-[1px] h-full">
-                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[18px] -top-[18px] z-38`} />
-                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-40`} />
-                  <RiSingleQuotesL size={38} className={`_quote-icon-stroke_ absolute ${action === "tell" ? "text-info": "text-accent"} -left-[8px] -top-[18px] z-38`} />
-                  <RiSingleQuotesL size={30} className={`_quote-icon_ absolute text-white -left-[4px] -top-[14px] z-40`} />
+                  <RiSingleQuotesL
+                    size={38}
+                    className={`_quote-icon-stroke_ absolute ${
+                      action === "tell" ? "text-info" : "text-accent"
+                    } -left-[18px] -top-[18px] z-38`}
+                  />
+                  <RiSingleQuotesL
+                    size={30}
+                    className={`_quote-icon_ absolute text-white -left-[14px] -top-[14px] z-40`}
+                  />
+                  <RiSingleQuotesL
+                    size={38}
+                    className={`_quote-icon-stroke_ absolute ${
+                      action === "tell" ? "text-info" : "text-accent"
+                    } -left-[8px] -top-[18px] z-38`}
+                  />
+                  <RiSingleQuotesL
+                    size={30}
+                    className={`_quote-icon_ absolute text-white -left-[4px] -top-[14px] z-40`}
+                  />
                 </div>
-                :
-                null
-                }
-              </div>
+              ) : null}
+            </div>
             <div className="_chatbubble-container_ max-w-[80%]">
               <ChatBubble action={action} actor="YOU" align="right">
                 <div className="w-full flex flex-row justify-between items-between ">
-                 <div className="flex flex-col w-[100%]">
-                  <p className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${formattedMessage.length < 10 ? "text-center" : "text-right"} ${action!=="default" ? "text-white" : "text-black"}`}>{formattedMessage}</p>
-                  {tellTarget?
-                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to {" " + tellTarget}</p>
-                  :null
-                  }
+                  <div className="flex flex-col w-[100%]">
+                    <p
+                      className={`_player-message-bubble-text_ w-full min-w-[50px]  break-words text-left text-md ${
+                        formattedMessage.length < 10
+                          ? "text-center"
+                          : "text-right"
+                      } ${action !== "default" ? "text-white" : "text-black"}`}
+                    >
+                      {formattedMessage}
+                    </p>
+                    {tellTarget ? (
+                      <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1">
+                        Told to {" " + tellTarget}
+                      </p>
+                    ) : null}
+                  </div>
+                  <div className="relative">
+                    <div className="absolute bg-emerald-500"></div>
+                  </div>
                 </div>
-                <div className="relative">
-                <div className="absolute bg-emerald-500"></div>
+              </ChatBubble>
             </div>
-            </div>
-          </ChatBubble>
-          </div>
           </div>
         </TutorialPopover>
       </div>

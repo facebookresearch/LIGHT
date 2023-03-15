@@ -819,7 +819,7 @@ class World(object):
             self.send_msg(
                 actor, "Strange magic is afoot. This failed for some reason..."
             )
-            with open('/home/ubuntu/light_errors.txt', 'a') as logfile:
+            with open("/home/ubuntu/light_errors.txt", "a") as logfile:
                 logfile.write(str(e))
                 logfile.write(traceback.format_exc())
             return False, "FailedParseExec"
@@ -866,6 +866,7 @@ class World(object):
         """Try to parse and execute the given event"""
         orig_inst = inst
         # basic replacements
+        orig_inst = inst
         inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
             "e": "go east",

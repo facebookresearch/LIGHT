@@ -97,20 +97,22 @@ const ConnectedApp = () => {
     markPlayerAsIdle,
     isIdle,
   } = useWSDataSource(wsUrl);
-//ERROR PAGE
+  //ERROR PAGE
   if (isErrored && !isIdle)
     return (
       <div className="_connectionerror-container_ h-screen w-screen flex justify-center items-center">
         <div className="_connectionerror-text-container_  justify-center items-center">
-          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">Could not connect to the server</h1>
+          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">
+            Could not connect to the server
+          </h1>
         </div>
       </div>
     );
-//LOADING PAGE
+  //LOADING PAGE
   if (messages.length === 0) {
     return <LoadingPage isFull={isFull} />;
   }
-//GAME PAGE
+  //GAME PAGE
   return (
     <Chat
       messages={messages}
@@ -202,13 +204,12 @@ const Chat = ({
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
-      console.log("PERSONA XP:  ", updatedXp)
       /* ----PLAYER INFO---- */
       dispatch(updatePersona(persona));
       dispatch(updateGiftXp(updatedGiftXp));
-      let defaultEmoji = "\u2753"
+      let defaultEmoji = "\u2753";
       if (persona === null || persona.name === null) return;
-      let characterEmoji = persona.emoji || defaultEmoji
+      let characterEmoji = persona.emoji || defaultEmoji;
       selectEmoji(characterEmoji);
       /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
       if (updatedXp <= 10) {
@@ -216,33 +217,32 @@ const Chat = ({
       }
     }
   }, [persona]);
-  
+
   useEffect(() => {
     /* ----SESSION INFO---- */
     /* SESSION XP */
     let sessionXpUpdate = 0;
     let totalXp = -1;
     messages.map((message) => {
-      if(message.caller === "SoulSpawnEvent"){
-        let {actor}= message;
+      if (message.caller === "SoulSpawnEvent") {
+        let { actor } = message;
         let initialXp = actor.xp;
-        if(totalXp == -1){
+        if (totalXp == -1) {
           totalXp = initialXp;
         }
-      }
-      else if (message.is_self && message.xp > 0 || message.questComplete)  {
+      } else if ((message.is_self && message.xp > 0) || message.questComplete) {
         sessionXpUpdate += message.xp;
-      }else if (message.is_self && message.caller=== "SayEvent") {
+      } else if (message.is_self && message.caller === "SayEvent") {
         sessionXpUpdate += 1;
       }
     });
-    console.log("SESSION XP UPDATES:  ", sessionXpUpdate)
+    console.log("SESSION XP UPDATES:  ", sessionXpUpdate);
     let newSessionXp = sessionXpUpdate;
-    console.log("newSessionXp:  ", sessionXpUpdate)
+    console.log("newSessionXp:  ", sessionXpUpdate);
     let newGiftXp = newSessionXp / 4;
     if (newSessionXp > 0) {
       let updatedSessionXp = sessionXpUpdate;
-      console.log("updatedSessionXp:  ", updatedSessionXp)
+      console.log("updatedSessionXp:  ", updatedSessionXp);
       dispatch(updateSessionXp(updatedSessionXp));
     }
     if (newGiftXp >= 1) {
@@ -251,7 +251,7 @@ const Chat = ({
     }
     /* Total XP */
     totalXp += sessionXpUpdate;
-    dispatch(updateXp(totalXp))
+    dispatch(updateXp(totalXp));
   }, [messages]);
 
   /* UPDATE PLAYER XP */
@@ -291,7 +291,6 @@ const Chat = ({
     return () => clearInterval(timer);
   }, [idleTime]);
 
-
   // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
   useEffect(() => {
     scrollToBottom();
@@ -299,9 +298,9 @@ const Chat = ({
 
   /* EMOJI */
   useEffect(() => {
-    let defaultEmoji = "\u2753"
+    let defaultEmoji = "\u2753";
     if (persona === null || persona.name === null) return;
-    let characterEmoji = persona.emoji || defaultEmoji
+    let characterEmoji = persona.emoji || defaultEmoji;
     selectEmoji(characterEmoji);
   }, [persona]);
 
@@ -313,10 +312,7 @@ const Chat = ({
   }, [sessionGiftXpSpent]);
 
   return (
-    <div
-      className="_game-page_ w-screen h-screen"
-      onMouseMove={resetIdleTimer}
-    >
+    <div className="_game-page_ w-screen h-screen" onMouseMove={resetIdleTimer}>
       <div className="_gamepage-container_ w-full h-full flex flex-row ">
         <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
