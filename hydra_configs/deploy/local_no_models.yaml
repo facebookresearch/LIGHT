@@ -2,8 +2,8 @@
 
 defaults:
   - /light/model_pool: base
-  - /schema/light/db: local
-  - /light/db: local
+  - /schema/light/db: test
+  - /light/db: test
 
 hostname: localhost
 port: 35494

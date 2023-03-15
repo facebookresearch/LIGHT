@@ -19,7 +19,7 @@ import { Dialog, Transition } from "@headlessui/react";
 /* CONFIG */
 import CONFIG from "../../../config.js";
 
-import {Button} from "daisyui";
+import { Button } from "daisyui";
 
 const ReportCategories = [
   "Report Inappropriate Content",
@@ -79,7 +79,7 @@ const ReportMessageForm = () => {
 
     window.parent.postMessage(
       JSON.stringify({
-        caller: 'report',
+        caller: "report",
         category: reportCategory,
         message: reportModalMessage,
         reason: reportReason,
@@ -109,7 +109,7 @@ const ReportMessageForm = () => {
     <Transition.Root show={showReportModal} as={Fragment}>
       <Dialog
         as="div"
-        className="_report-message-modal_ relative z-10"
+        className="_report-message-modal_ relative  z-10"
         onClose={setReportModalHandler}
       >
         <div className="fixed z-10 inset-0 overflow-y-auto">
@@ -135,13 +135,17 @@ const ReportMessageForm = () => {
                     <div className=" text-base-content w-[100px] flex-none opacity-70">
                       Character
                     </div>
-                    <div className=" text-base-content font-medium">{reportModalActor}</div>
+                    <div className=" text-base-content font-medium">
+                      {reportModalActor}
+                    </div>
                   </div>
                   <div className="w-full flex flex-row mb-4">
                     <div className=" text-base-content w-[100px] flex-none opacity-70">
                       Message
                     </div>
-                    <div className=" text-base-content font-medium max-w-lg">{reportModalMessage}</div>
+                    <div className=" text-base-content font-medium max-w-lg">
+                      {reportModalMessage}
+                    </div>
                   </div>
                   <div className="w-full flex flex-row mb-4">
                     <label className=" text-base-content w-[100px] flex-none opacity-70 pt-2">
@@ -156,7 +160,9 @@ const ReportMessageForm = () => {
                         onChange={categorySelectionHandler}
                         value={reportCategory}
                       >
-                        <option value={""} id={""}>Select...</option>
+                        <option value={""} id={""}>
+                          Select...
+                        </option>
                         {ReportCategories.map((category, index) => (
                           <option key={category} id={index} value={category}>
                             {category}

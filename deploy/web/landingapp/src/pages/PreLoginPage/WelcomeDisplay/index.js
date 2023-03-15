@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 /* REACT */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 /* CUSTOM COMPONENTS */
 import TerminalEntry from "./TerminalEntry";
@@ -46,10 +46,13 @@ const WelcomeDisplay = ({
   };
 
   return (
-    <div className="flex flex-col sm:items-center sm:pl-4 sm:w-1/3 sm:overflow-y-hidden sm:h-32 md:h-full md:items-start md:justify-center md:ml-16 md:w-1/2 font-mono md:text-2xl">
-      <h1 className="text-white font-mono">Landing in LIGHT</h1>
+    <div className="flex flex-col items-start justify-center pl-2 w-4/5 sm:w-2/3 sm:h-32 md:h-full md:ml-16 md:w-2/3 font-mono md:text-2xl lg:text-2xl xl:text-3xl 2xl:text-4xl">
+      <h1 className="text-white font-bold font-mono text-s md:text-base lg:text-2xl xl:text-3xl 2xl:text-4xl">
+        Landing in LIGHT
+      </h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry
+          key={index}
           text={entry.text}
           isButton={entry.highlighted}
           textStep={entry.step}

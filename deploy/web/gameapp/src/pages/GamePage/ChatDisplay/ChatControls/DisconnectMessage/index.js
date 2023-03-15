@@ -6,20 +6,18 @@
 
 /* REACT */
 import React from "react";
-/* STYLES */
-import "./styles.css";
 
 // DisconnectMessage - Renders Disconnect messagee and reload link upon player being idle for too long
 const DisconnectMessage = () => {
   return (
-    <div className="disconnect-container">
-      <h2 className="disconnect-text">
+    <div className="_disconnect-container_ flex w-full flex-col justify-center items-center">
+      <h2 className=" _disconnect-text_ text-xl text-blue-100">
         You have been disconnected due to inactivity.
       </h2>
       <h2
         onClick={() => window.location.reload()}
         style={{ textDecoration: "underline" }}
-        className="disconnect-text__reload"
+        className="_disconnect-text__reload_ text-xl text-white underline"
       >
         Click Here to re-enter world.
       </h2>

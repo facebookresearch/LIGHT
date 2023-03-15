@@ -24,10 +24,8 @@ import { Tooltip } from "react-tippy";
 import TutorialPopover from "../../../../../../components/TutorialPopover";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
-const ChatInput = ({ onSubmit, resetIdleTimer }) => {
+const ChatInput = ({ onSubmit, resetIdleTimer, chatInputRef }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
@@ -74,6 +72,7 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
         position="top"
       >
         <input
+          ref={chatInputRef}
           autoFocus
           name="chat"
           id="chat"
@@ -82,7 +81,9 @@ const ChatInput = ({ onSubmit, resetIdleTimer }) => {
           className={`chatbox-input ${
             inHelpMode ? "active" : ""
           } text-base-100 w-full bg-transparent border-b-[1px] border-b-transparent px-0 py-2 mx-4 font-sans`}
-          placeholder="Something..."
+          placeholder={`${
+            isSaying || tellTarget ? "Say Something" : "Do Something"
+          }`}
           value={chatText}
           onClick={(e) => {
             e.preventDefault();

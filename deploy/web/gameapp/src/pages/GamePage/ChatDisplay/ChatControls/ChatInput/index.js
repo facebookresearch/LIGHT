@@ -24,8 +24,6 @@ import TutorialPopover from "../../../../../components/TutorialPopover";
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);
@@ -87,9 +85,6 @@ const ChatInput = ({ onSubmit, scrollToBottom, resetIdleTimer }) => {
     let formattedTellTargetName = str.toUpperCase();
     if (str.length > 7) {
       formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 7)}...`;
-      if (isMobile) {
-        formattedTellTargetName = ` ${formattedTellTargetName.slice(0, 4)}...`;
-      }
     }
     return formattedTellTargetName;
   };

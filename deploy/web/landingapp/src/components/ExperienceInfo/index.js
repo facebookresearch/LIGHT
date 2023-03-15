@@ -8,8 +8,6 @@
 import React, { useState, useEffect } from "react";
 /* REDUX */
 import { useAppSelector } from "../../app/hooks";
-//TOOLTIP
-import { Tooltip } from "react-tippy";
 //STYLES
 import "./styles.css";
 //CUSTOM COMPONENTS

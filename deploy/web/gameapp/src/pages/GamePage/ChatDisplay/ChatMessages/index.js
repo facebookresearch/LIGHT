@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useState} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -13,10 +13,10 @@ import { updateTellTarget } from "../../../../features/chatInput/chatinput-slice
 /* STYLES */
 import "./styles.css";
 /* CUSTOM COMPONENTS */
-import Entry from "./Entry";
+import Message from "./Message";
 
 //ChatMessages - Renders messages in chat display by iterating through message reducer returning Entry components
-const ChatMessages = ({ messages, scrollToBottom }) => {
+const ChatMessages = ({ messages, scrollToBottom, chatInputRef }) => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
   /* ------ REDUX STATE ------ */
@@ -24,16 +24,25 @@ const ChatMessages = ({ messages, scrollToBottom }) => {
   const agents = useAppSelector((state) => state.agents);
   //PERSONA STATE
   const persona = useAppSelector((state) => state.persona);
-
+  /* ------ LOCAL STATE ------ */
+  const [selectedMessage, setSelectedMessage] = useState(null)
+  /* ------ HANDLERS ------ */
+  const messageSelectHandler = (msgId)=>{
+    setSelectedMessage(msgId)
+  }
   return (
     <>
       {messages.map((msg, idx) => (
-        <div className="_chat-message_" key={msg.event_id}>
-          <Entry
+        <div className="_chat-message_ " key={msg.event_id}>
+          <Message
+            messageId={msg.event_id}
+            selectedMessage={selectedMessage}
             msg={msg}
             agents={agents}
+            selectMessage={messageSelectHandler}
             onReply={(agent) => {
               dispatch(updateTellTarget(agent));
+              chatInputRef.current.focus();
             }}
             selfId={persona.id}
             scrollToBottom={scrollToBottom}

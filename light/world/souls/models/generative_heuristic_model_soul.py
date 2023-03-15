@@ -193,8 +193,8 @@ class GenerativeHeuristicModelSoul(OnEventSoul):
             scores[act["text_candidates"][i]] = float(act["sorted_scores"][i])
         # Heuristic modifiers to make it more reasonable:  dialog*0.9, act*1.0, emote*1.1
         scores["dialog"] *= 0.9
-        scores["emote"] *= 1.1
-        scores["act"] *= 1.04
+        scores["emote"] *= 0.6
+        scores["act"] *= 0.8
         best_score = -1000
         best_type = "dialog"
         for k, v in scores.items():

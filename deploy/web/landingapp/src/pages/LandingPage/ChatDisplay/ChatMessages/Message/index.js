@@ -26,6 +26,7 @@ const Message = ({
         <AgentMessage
           introStep={introStep}
           text={msg.text}
+          action={msg.action}
           actor={msg.actor}
           ratingStepHandler={ratingStepHandler}
           scrollToBottom={scrollToBottom}

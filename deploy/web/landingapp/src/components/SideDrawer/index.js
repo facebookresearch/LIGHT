@@ -6,20 +6,51 @@
 
 /* REACT */
 import React, { useState, useEffect } from "react";
+/* IMAGES */
+//APP BACKGROUND IMAGE
+import StarryNight from "../../assets/images/light_starry_bg.jpg";
+/* ICONS */
+import { BiLeftArrow } from "react-icons/bi";
+import { BiRightArrow } from "react-icons/bi";
 
 // SideDrawer - Hides and renders children with side orientation
-const SideDrawer = ({ children }) => {
-  /*--------------- LOCAL STATE ----------------*/
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+const SideDrawer = ({
+  isDrawerOpen,
+  openDrawerFunction,
+  closeDrawerFunction,
+  children,
+}) => {
   /*--------------- LIFECYLCLE ----------------*/
 
   /*--------------- HANDLERS ----------------*/
   return (
-    <div
-      className={`top-0 right-0 w-[100vw] bg-blue-600 z-30 p-10 pl-20 text-white fixed h-full `}
-    >
-      {children}
-    </div>
+    <>
+      <>
+        <div
+          style={{
+            backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
+          }}
+          className={`__mobiledrawer-container__ fixed w-full top-0 left-0 overflow-scroll z-10 bg-gray-900 bg-opacity-25 inset-0
+            ${
+              isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+            } ease-in-out duration-300`}
+        >
+          <div className="__mobiledrawer-body__ flex flex-row w-screen h-screen">
+            <div className="__mobiledrawer_content__ flex">{children}</div>
+            <div className="__mobiledrawer-closebutton__ h-full flex justify-center items-center">
+              <BiLeftArrow
+                color="yellow"
+                size={30}
+                onClick={closeDrawerFunction}
+              />
+            </div>
+          </div>
+        </div>
+        <div className=" w-30 h-full flex items-center justify-center">
+          <BiRightArrow onClick={openDrawerFunction} color="yellow" size={30} />
+        </div>
+      </>
+    </>
   );
 };
 

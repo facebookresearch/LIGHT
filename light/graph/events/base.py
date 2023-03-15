@@ -103,6 +103,11 @@ class GraphEvent(object):
             ]
         self.text_content = text_content
         self.event_id = event_id
+        self.entered_text = None
+
+    def set_entered_text(self, entered_text):
+        """Set the text tentered for this event to be loaded later"""
+        self.entered_text = entered_text
 
     def execute(self, world: "World") -> List["GraphEvent"]:
         """
@@ -301,11 +306,6 @@ class ErrorEvent(GraphEvent):
         self.display_text = display_text
         self.__failed_event = failed_event
         self.__failed_constraint = failed_constraint
-        self.entered_text = None
-
-    def set_entered_text(self, entered_text):
-        """Set the text tentered for this event to be loaded later"""
-        self.entered_text = entered_text
 
     def execute(self):
         """

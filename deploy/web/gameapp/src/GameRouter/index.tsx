@@ -14,11 +14,13 @@ import GamePage from "../pages/GamePage";
 // GameRouter - manages routes of react app
 const GameRouter = () => {
   return (
-    <BrowserRouter>
-      <Switch>
-        <Route path="/play" component={GamePage} exact />
-      </Switch>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Switch>
+          <Route path="/play" component={GamePage} exact />
+        </Switch>
+      </BrowserRouter>
+    </>
   );
 };
 

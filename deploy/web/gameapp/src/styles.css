@@ -56,7 +56,9 @@ div {
   color: #fff;
   animation: pulse 1s ease-in-out infinite alternate;
 }
-
+._logo-header_ {
+  animation: pulse 1s infinite alternate;
+}
 /* ANIMATION EFFECTS*/
 
 @keyframes glow {

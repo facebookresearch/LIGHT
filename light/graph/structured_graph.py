@@ -456,7 +456,7 @@ class OOGraph(object):
             (node, name) for (node, name_list) in node_names for name in name_list
         ]
         valid_nodes_2 = [
-            (node, name) for (node, name) in all_pairs if query in name + "s"
+            (node, name) for (node, name) in all_pairs if query in name.lower() + "s"
         ]
 
         valid_nodes_1.sort(key=lambda x: len(x[1]))

@@ -6,18 +6,18 @@
 
 /* REACT */
 import React from "react";
-/* STYLING */
+/* THEME */
 import { getActionThemeColor } from "../../app/theme";
 
-//Checks alignment, actor name, and action type.
 interface Props {
   align: "left" | "right";
   action: string;
   actor: string;
+  mobile: boolean;
   children: React.ReactNode;
 }
 
-//ChatBubbleTail - orients chat bubble tail to correct side.
+// ChatBubbleTail - Renders chat bubble tail aligned properly
 function ChatBubbleTail({
   align,
   action,
@@ -29,7 +29,11 @@ function ChatBubbleTail({
     align === "left" ? "100 0, 100 100, 20 50" : "0 0, 0 100, 80 50";
 
   return (
-    <div className={`w-3 h-3 ${align === "left" ? "ml-2" : "mr-2"}`}>
+    <div
+      className={`_chat-tail-container_ w-3 h-3 ${
+        align === "left" ? "ml-2" : "mr-2"
+      }`}
+    >
       <svg id="triangle" viewBox="0 0 100 100">
         <polygon
           points={polygon}
@@ -40,16 +44,38 @@ function ChatBubbleTail({
   );
 }
 
-//CharacterName - Character name plate
-function CharacterName({ name }: { name: string }) {
+// CharacterName - Renders character name plate styled and oriented based on source
+function CharacterName({
+  action,
+  align,
+  name,
+  mobile,
+}: {
+  action: string;
+  mobile: boolean;
+  name: string;
+  align: "left" | "right";
+}) {
   return (
-    <div className="break-words text-xs font-semibold text-base-100 whitespace-pre">
-      {name}
+    <div
+      className={`_nameplate-container_ flex ${
+        align === "left" ? "justify-start" : "justify-end"
+      }`}
+    >
+      <p
+        className={`_nameplate-text_ text-md font-semibold break-words truncate ${
+          !mobile || action === "say" || action === "do"
+            ? "text-white"
+            : "text-black"
+        }`}
+      >
+        {name}
+      </p>
     </div>
   );
 }
 
-//ChatBubble - Chat bubble that agent and user messages appear in.  User message to the right agent messages to the left.  Color of messages is determined by action
+// ChatBubble - renders chatbubble component with children prop as bubble content
 export function ChatBubble({
   align = "left",
   action = "default",
@@ -58,36 +84,71 @@ export function ChatBubble({
 }: Props) {
   return (
     <>
-      <div className="hidden sm:hidden md:flex flex-row items-center">
-        {align === "left" && <CharacterName name={actor} />}
+      <div
+        className={`_chatbubble-container_ ${
+          align === "left" ? "justify-start" : "justify-end"
+        } hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center `}
+      >
+        {align === "left" && (
+          <CharacterName
+            name={actor}
+            align={align}
+            action={action}
+            mobile={false}
+          />
+        )}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
-          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
-          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
+          className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden
+        ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
           )}
-          rounded-md flex justify-center items-center`}
+        rounded-md flex justify-center items-center`}
         >
-          <div>{children}</div>
+          <div className="_chatbubble-body_ w-full ">{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} />}
+        {align === "right" && (
+          <CharacterName
+            name={actor}
+            align={align}
+            action={action}
+            mobile={false}
+          />
+        )}
       </div>
-      <div className="flex sm:flex flex-col items-center md:hidden lg:hidden">
-        {align === "left" && <CharacterName name={actor} />}
+      <div
+        className={`_mobile-chatbubble-row_ flex flex-row items-center ${
+          align === "left" ? "justify-start" : "justify-end"
+        } sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden`}
+      >
         <div
-          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
-          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
-            "text",
-            action
-          )}
-          rounded-md flex justify-center items-center`}
+          className={`_mobile-chatbubble-container_ w-full overflow-hidden flex justify-center items-center p-4 min-h-[50px] font-medium
+        ${getActionThemeColor("bg", action)} rounded-md`}
         >
-          <div>{children}</div>
+          <div className="_mobile-chatbubble-body_ w-full">
+            <div
+              className={`_mobile-chatbubble-nameplate-container_ w-full flex${
+                align === "left" ? "justify-start" : "justify-end"
+              }`}
+            >
+              <CharacterName
+                name={actor}
+                align={align}
+                action={action}
+                mobile={true}
+              />
+            </div>
+            <div
+              className={`_mobile-chatbubble-body_ w-full ${
+                align === "left" ? "text-left" : "text-right"
+              }`}
+            >
+              {children}
+            </div>
+          </div>
         </div>
-        {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} />}
       </div>
     </>
   );

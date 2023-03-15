@@ -27,8 +27,6 @@ import { MdSend } from "react-icons/md";
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
 const SendButton = ({ onSubmit, scrollToBottom, resetIdleTimer, action }) => {
   /* ------ REDUX STATE ------ */
-  // VIEW STATE
-  const isMobile = useAppSelector((state) => state.view.isMobile);
   //   // CHAT STATE
   const chatText = useAppSelector((state) => state.chatInput.chatText);
   const isSaying = useAppSelector((state) => state.chatInput.isSaying);

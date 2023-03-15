@@ -27,6 +27,7 @@ const ChatDisplay = ({
   getLocationState,
   idle,
   resetIdleTimer,
+  chatInputRef,
 }) => {
   /* ----REDUX STATE---- */
   //TUTORIAL;
@@ -47,6 +48,7 @@ const ChatDisplay = ({
   const [nonPlayerAgents, setNonPlayerAgents] = useState([]);
   /*---------------REFS----------------*/
   const chatContainerRef = useRef(null);
+
   /*---------------UT----------------*/
   const getAgentName = (agent) => (agents ? agents[agent] : agent);
   const getEntityId = (agent) => agent.match(/\d+$/)[0];
@@ -77,25 +79,30 @@ const ChatDisplay = ({
 
   const { presentAgents } = getLocationState(messages);
   return (
-    <div className="h-full m-8 flex flex-col">
+    <div className="_chatdisplay-container_ w-full h-full flex flex-col ">
       {nonPlayerAgents.length ? (
-        <div className="flex-0 mb-4">
+        <div className="_actionbar-container_ flex-0 pt-4 mb-4">
           <ActionBar
             presentAgents={nonPlayerAgents}
             getAgentName={getAgentName}
             getEntityId={getEntityId}
             dataModelHost={dataModelHost}
+            chatInputRef={chatInputRef}
           />
         </div>
       ) : null}
-      <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
+      <div className=" _chatdisplay-chat-container_ w-full flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
         <div
-          className="flex-1 grow-[5] overflow-y-scroll"
+          className="_chatdisplay-message-container_ max-w-full sm:w-full md:max-w-full flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
-          <ChatMessages messages={messages} scrollToBottom={scrollToBottom} />
+          <ChatMessages
+            messages={messages}
+            scrollToBottom={scrollToBottom}
+            chatInputRef={chatInputRef}
+          />
         </div>
-        <div className="flex-none h-[120px]">
+        <div className="__chatdisplay-chatcontrols-container__  flex-none md:h-[120px]">
           <ChatControls
             onSubmit={onSubmit}
             presentAgents={presentAgents}
@@ -105,9 +112,13 @@ const ChatDisplay = ({
             scrollToBottom={scrollToBottom}
             idle={idle}
             resetIdleTimer={resetIdleTimer}
+            chatInputRef={chatInputRef}
           />
           <div className="flex justify-end">
-            <p className="text-base-100 opacity-80 mt-2 text-xs">XP earned in this scene: <strong className="text-warning">{sessionXp}</strong></p>
+            <p className="text-base-100 opacity-80 mt-2 text-xs">
+              XP earned in this scene:{" "}
+              <strong className="text-warning">{sessionXp}</strong>
+            </p>
           </div>
         </div>
       </div>

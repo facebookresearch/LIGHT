@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React from "react";
+import React, {useState, useEffect} from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../../app/hooks";
 import { updateSelectedTip } from "../../../../features/tutorials/tutorials-slice";
@@ -30,19 +30,27 @@ const ActionBar = ({
   getAgentName,
   getEntityId,
   dataModelHost,
+  chatInputRef,
 }) => {
   /* ------ REDUX STATE ------ */
   const inHelpMode = useAppSelector((state) => state.tutorials.inHelpMode);
   const selectedTip = useAppSelector((state) => state.tutorials.selectedTip);
-  const persona = useAppSelector((state) => state.persona);
   /* ----REDUX ACTIONS---- */
   // REDUX DISPATCH FUNCTION
   const dispatch = useAppDispatch();
+  // TIPS
   const setSelectedTip = (tipNumber) => {
     if (inHelpMode) {
       dispatch(updateSelectedTip(tipNumber));
     }
   };
+  /* ------ LOCAL STATE ------ */
+  const [tellButtons, setTellButtons]= useState([])
+  /* ------ LIFECYCLE ------ */
+  useEffect(()=>{
+    let updatedPresentAgents = presentAgents
+    setTellButtons(updatedPresentAgents)
+  },[presentAgents])
   return (
     <div
       className={`_action-bar_ actions flex flex-col flex-start ${
@@ -58,25 +66,25 @@ const ActionBar = ({
       ></TutorialPopover>
       {/* {location ? <span>{location.name} &mdash; </span> : null} */}
       <div className="mb-4">
-        {presentAgents.map((agent) => {
+        {tellButtons.map((agent) => {
           const agentName = getAgentName(agent);
           const agentId = getEntityId(agent);
           return (
             <div
               key={agentName}
-              className="btn btn-outline btn-sm btn-info capitalize"
+              className="btn btn-outline btn-sm btn-info capitalize m-1"
               onClick={() => {
                 if (!inHelpMode) {
                   dispatch(updateIsSaying(false));
                   dispatch(updateTellTarget(agentName));
+                  chatInputRef.current.focus();
                 }
               }}
             >
-              
               <span className="inline-flex">
                 <span className="pr-2">{`${agentName}`}</span> <RiReplyFill />
               </span>
-              
+
               {dataModelHost && (
                 <>
                   {" "}

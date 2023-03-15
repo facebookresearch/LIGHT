@@ -16,7 +16,6 @@ import "./styles.css";
 import LANDINGAPPCOPY from "../../LandingAppCopy";
 
 //LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
-//*
 const LandingPage = () => {
   const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/
@@ -34,6 +33,9 @@ const LandingPage = () => {
   const [submittedActions, setSubmittedActions] = useState([]);
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
+  //MOBILE DRAWER STATE
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   /*--------------- HANDLERS ----------------*/
   //postLoginStepIncreaseHandler - iterates through postLoginSteps which triggers different elements to render
   const postLoginStepIncreaseHandler = () => {
@@ -132,6 +134,9 @@ const LandingPage = () => {
           setMessages(updatedMessages);
         }
       }
+      if (introStep === 4) {
+        setIsDrawerOpen(true);
+      }
       if (introStep >= 5) {
         setTimeout(() => {
           const requestOptions = {
@@ -155,7 +160,7 @@ const LandingPage = () => {
   return (
     <div className="w-screen h-screen">
       {postLoginStep === 0 ? (
-        <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
+        <div className="flex w-full h-full justify-center overflow-y-scroll pt-10 pb-10">
           <LegalChecklistDisplay
             legalAgreements={legalAgreements}
             postLoginStepIncreaseHandler={postLoginStepIncreaseHandler}
@@ -164,17 +169,21 @@ const LandingPage = () => {
       ) : null}
       {postLoginStep >= 1 ? (
         <div className="w-full h-full flex flex-row">
-          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
             {introStep >= 4 ? <SideBarDisplay /> : null}
           </div>
-          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden">
+          <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden">
             {introStep >= 4 ? (
-              <SideDrawer>
+              <SideDrawer
+                isDrawerOpen={isDrawerOpen}
+                closeDrawerFunction={() => setIsDrawerOpen(false)}
+                openDrawerFunction={() => setIsDrawerOpen(true)}
+              >
                 <SideBarDisplay />
               </SideDrawer>
             ) : null}
           </div>
-          <div className="_chat-container_  sm: flex-1 md: grow-[3] h-full ">
+          <div className="_chat-container_ overflow-x-hidden flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}

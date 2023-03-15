@@ -386,22 +386,22 @@ class WorldViewer(object):
                 "stats/status/health\n"
                 "inventory (i or inv, for short)\n"
                 'say/shout "<thing you want to say>; or use quotes only for short "\n'
-                'tell/whisper <agent> "<something>"\n'
+                'tell/whisper <player> "<something>"\n'
                 "look (l, for short)\n"
-                'go <direction>, e.g. "go north", or "go n" or just "n" for short\n'
+                'go <somewhere>, e.g. "go doorway to the tavern", or "go doorway" for short\n'
                 "examine <thing> (ex, for short)\n"
                 "get/drop <object>\n"
                 "eat/drink <object>\n"
                 "wear/remove <object>\n"
                 "wield/unwield <object>\n"
                 "use <object> with <object>\n"
-                "follow <agent>\n"
-                "hit <agent>\n"
+                "follow <player>\n"
+                "hit <player>\n"
                 "put <object> in <container>\n"
                 "get <object> from <container>\n"
-                "give <object> to <agent>\n"
+                "give <object> to <player>\n"
                 "point to <object>, e.g. good for trading\n"
-                "steal <object> from <agent>\n"
+                "steal <object> from <player>\n"
                 "emotes: laugh,cry,smile,ponder,blush,shrug,sigh,\n"
                 "        wink,yawn,wave,stare,scream,pout,nudge,nod,\n"
                 "        growl,groan,grin,gasp,frown,dance,applaud\n"
