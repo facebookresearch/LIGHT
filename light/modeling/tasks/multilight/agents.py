@@ -61,11 +61,11 @@ def flatten_location(location: Dict, delim="\n"):
 
 
 def get_speaker_names(utt):
-    return [p['name'] for p in utt['personas']]
+    return [p["name"] for p in utt["personas"]]
 
 
 def get_speaker_name_from_index(utt, index):
-    return utt['personas'][index]['name']
+    return utt["personas"][index]["name"]
 
 
 class BaseTeacher(DialogTeacher):
@@ -396,33 +396,33 @@ class AllSpeakersTeacher(BaseTeacher):
 @register_teacher("light:multilight:Speaker")
 class SpeakerPredictionTeacher(AllSpeakersTeacher):
     def __init__(self, opt, shared=None):
-        self.add_current_turn = opt['add_current_turn']
+        self.add_current_turn = opt["add_current_turn"]
         super().__init__(opt, shared)
-        self.id = 'SpeakerPrediction'
+        self.id = "SpeakerPrediction"
 
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        agent = parser.add_argument_group('MultiLIGHT Speaker prediction.')
+        agent = parser.add_argument_group("MultiLIGHT Speaker prediction.")
         agent.add_argument(
-            '--add-current-turn',
-            type='bool',
+            "--add-current-turn",
+            type="bool",
             default=False,
-            help='Whether to include the current turn in the text.',
+            help="Whether to include the current turn in the text.",
         )
 
     def _remove_label_speaker(self, message):
         """
         Removes the speaker when the last utterance is being added to the context.
         """
-        label = message['label']
+        label = message["label"]
         if self.include_speaker_in_label:
             label_speaker, label_text = label.split(self.speaker_token_delimiter, 1)
             assert (
-                label_speaker.strip() == message['speaker']
-            ), 'Wrong speaker in the label.'
+                label_speaker.strip() == message["speaker"]
+            ), "Wrong speaker in the label."
             label = label_text.strip()
         return label
 
@@ -430,11 +430,11 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
         for utt, _e in super().setup_data(datafile):
             msg = copy.deepcopy(utt)
             current_turn_utterance = self._remove_label_speaker(msg)
-            msg['label'] = msg['speaker']
-            msg['label_candidates'] = get_speaker_names(msg)
+            msg["label"] = msg["speaker"]
+            msg["label_candidates"] = get_speaker_names(msg)
             if self.add_current_turn:
-                msg['text'] = self.utterance_delimiter.join(
-                    [msg['text'], current_turn_utterance]
+                msg["text"] = self.utterance_delimiter.join(
+                    [msg["text"], current_turn_utterance]
                 )
             yield msg, _e
 
@@ -447,11 +447,11 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     """
 
     def __init__(self, opt, shared=None):
-        self.silence_token = opt['silence_token']
-        self.silence_token_dropout = opt['silence_token_dropout']
+        self.silence_token = opt["silence_token"]
+        self.silence_token_dropout = opt["silence_token_dropout"]
         assert (
             0 <= self.silence_token_dropout <= 1
-        ), '--silence-token-dropout must be a number in [0, 1]'
+        ), "--silence-token-dropout must be a number in [0, 1]"
         super().__init__(opt, shared)
 
     @classmethod
@@ -460,22 +460,22 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group(
-            'LIGHT Multiparty Chat Corpus Arguments (Single Speaker Teacher)'
+            "LIGHT Multiparty Chat Corpus Arguments (Single Speaker Teacher)"
         )
         agent.add_argument(
-            '--silence-token',
+            "--silence-token",
             type=str,
             default=constants.SILENCE_TOKEN,
-            help=f'The token to use to indicate the chosen speaker is silent. Defaults to {constants.SILENCE_TOKEN}',
+            help=f"The token to use to indicate the chosen speaker is silent. Defaults to {constants.SILENCE_TOKEN}",
         )
         agent.add_argument(
-            '--silence-token-dropout',
+            "--silence-token-dropout",
             type=float,
             default=0,
-            help='Dropout probability for using silence token to generate training example'
-            ' for sentences where the chosen speaker is not speaking. '
-            'When set to 0, all silence tokens will generate training examples. '
-            'When set to 1, no silence tokens will generate training examples.',
+            help="Dropout probability for using silence token to generate training example"
+            " for sentences where the chosen speaker is not speaking. "
+            "When set to 0, all silence tokens will generate training examples. "
+            "When set to 1, no silence tokens will generate training examples.",
         )
         return parser
 
@@ -488,23 +488,22 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     def generate_silence_label(self, speaker):
         label = self.silence_token
         if self.include_speaker_in_label:
-            label = f'{speaker}{self.speaker_token_delimiter} {label}'
+            label = f"{speaker}{self.speaker_token_delimiter} {label}"
         return label
 
     def is_this_speaker_turn(self, utt):
         return (
-            self.get_utterance_speaker_id(utt['personas'], utt['speaker'])
+            self.get_utterance_speaker_id(utt["personas"], utt["speaker"])
             == self.get_speaker_index()
         )
 
     def setup_data(self, datafile):
-
         episode_needs_reset = False
 
         for utt, new_episode in super().setup_data(datafile):
             # checking if we need to skip this round because of the speaker tier
             if (
-                utt['workers_tier'][self.get_speaker_index()]
+                utt["workers_tier"][self.get_speaker_index()]
                 not in self.speaker_quality_tiers
             ):
                 continue
@@ -532,29 +531,29 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
                 new_episode = True
 
             ret = copy.deepcopy(utt)
-            context = ret['full_context'][(last_speaker_trun + 1) :]
+            context = ret["full_context"][(last_speaker_trun + 1) :]
 
             if not context:
                 context = [self.silence_token] if turn_num > 0 else [self.start_token]
 
             if last_speaker_trun < 0:
                 # Only adding the extra context on the first episode that will get yielded
-                ret['text'] = self.utterance_delimiter.join(
+                ret["text"] = self.utterance_delimiter.join(
                     self.get_extra_context_before(ret) + context
                 )
             else:
-                ret['text'] = self.utterance_delimiter.join(context)
+                ret["text"] = self.utterance_delimiter.join(context)
 
             # Adding the prompot to the temp_history for not keeping it in the full history.
             # There is also an extra \n to make the format more alike the other teachers.
-            ret['temp_history'] = '\n'.join([''] + self.get_extra_context_after(ret))
+            ret["temp_history"] = "\n".join([""] + self.get_extra_context_after(ret))
 
             last_speaker_trun = turn_num
             # Setting the speaker to the current speaker.
             # Even if the speaker doesn't speak, the silence term is this speaker's action.
-            ret['speaker'] = get_speaker_name_from_index(utt, self.get_speaker_index())
+            ret["speaker"] = get_speaker_name_from_index(utt, self.get_speaker_index())
             if is_silence_turn:
-                ret['label'] = self.generate_silence_label(
+                ret["label"] = self.generate_silence_label(
                     get_speaker_name_from_index(utt, self.get_speaker_index())
                 )
             else:
@@ -568,29 +567,29 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
         labels: Optional[Tuple[str]],
         model_response: Message,
     ) -> None:
-        if model_response.is_padding() or (not model_response.get('text', None)):
+        if model_response.is_padding() or (not model_response.get("text", None)):
             return
 
-        model_predicted_speak = str(self.silence_token not in model_response['text'])
+        model_predicted_speak = str(self.silence_token not in model_response["text"])
         label_was_speak = str(self.silence_token not in labels[0])
         self.metrics.add(
-            'self_speaker_acc',
+            "self_speaker_acc",
             ExactMatchMetric.compute(model_predicted_speak, [label_was_speak]),
         )
         # Precited speaker confusion metrics
         precision, recall, f1 = ConfusionMatrixMetric.compute_metrics(
-            [model_predicted_speak], [label_was_speak], 'True'
+            [model_predicted_speak], [label_was_speak], "True"
         )
-        self.metrics.add('self_speaker_precision', precision[0])
-        self.metrics.add('self_speaker_recall', recall[0])
-        self.metrics.add('self_speaker_f1', f1[0])
+        self.metrics.add("self_speaker_precision", precision[0])
+        self.metrics.add("self_speaker_recall", recall[0])
+        self.metrics.add("self_speaker_f1", f1[0])
 
 
 @register_teacher("light:multilight:speaker1")
 class FirstSpeakerTeacher(SingleSpeakerTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.id = 'multilight_dialogue:first_speaker'
+        self.id = "multilight_dialogue:first_speaker"
 
     def get_speaker_index(self):
         return 0
@@ -600,7 +599,7 @@ class FirstSpeakerTeacher(SingleSpeakerTeacher):
 class SecondSpeakerTeacher(SingleSpeakerTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.id = 'multilight_dialogue:second_speaker'
+        self.id = "multilight_dialogue:second_speaker"
 
     def get_speaker_index(self):
         return 1
@@ -610,7 +609,7 @@ class SecondSpeakerTeacher(SingleSpeakerTeacher):
 class ThirdSpeakerTeacher(SingleSpeakerTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.id = 'multilight_dialogue:third_speaker'
+        self.id = "multilight_dialogue:third_speaker"
 
     def get_speaker_index(self):
         return 2
