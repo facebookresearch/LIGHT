@@ -59,6 +59,10 @@ def flatten_location(location: Dict, delim="\n"):
     return delim.join(location_str_parts)
 
 
+def get_speaker_names(utt):
+    return [p['name'] for p in utt['personas']]
+
+
 class BaseTeacher(DialogTeacher):
     """
     Base class for multi-party chat teacher.
@@ -390,3 +394,49 @@ class AllSpeakersTeacher(BaseTeacher):
                 "speech_f1",
                 F1Metric.compute(speech_text, [label_speech_text]),
             )
+
+
+@register_teacher("light:multilight:Speaker")
+class SpeakerPredictionTeacher(AllSpeakersTeacher):
+    def __init__(self, opt, shared=None):
+        self.add_current_turn = opt['add_current_turn']
+        super().__init__(opt, shared)
+        self.id = 'SpeakerPrediction'
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('MultiLIGHT Speaker prediction.')
+        agent.add_argument(
+            '--add-current-turn',
+            type='bool',
+            default=False,
+            help='Whether to include the current turn in the text.',
+        )
+
+    def _remove_label_speaker(self, message):
+        """
+        Removes the speaker when the last utterance is being added to the context.
+        """
+        label = message['label']
+        if self.include_speaker_in_label:
+            label_speaker, label_text = label.split(self.speaker_token_delimiter, 1)
+            assert (
+                label_speaker.strip() == message['speaker']
+            ), 'Wrong speaker in the label.'
+            label = label_text.strip()
+        return label
+
+    def setup_data(self, datafile):
+        for utt, _e in super().setup_data(datafile):
+            msg = copy.deepcopy(utt)
+            current_turn_utterance = self._remove_label_speaker(msg)
+            msg['label'] = msg['speaker']
+            msg['label_candidates'] = get_speaker_names(msg)
+            if self.add_current_turn:
+                msg['text'] = self.utterance_delimiter.join(
+                    [msg['text'], current_turn_utterance]
+                )
+            yield msg, _e
