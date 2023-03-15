@@ -39,22 +39,22 @@ def _format_timestep(timestamp, first_utterance_timestamp):
 
 
 def get_clean_text(message):
-    return message['text'].replace('\n', ' ')
+    return message["text"].replace("\n", " ")
 
 
-def flatten_personas(personas: Dict, delim='\n'):
+def flatten_personas(personas: Dict, delim="\n"):
     personass_str_parts = []
-    personass_str_parts.append('__personas__')
+    personass_str_parts.append("__personas__")
     personass_str_parts.extend([f"{p['name']}: {p['persona']}" for p in personas])
-    personass_str_parts.append('__end-personas__')
+    personass_str_parts.append("__end-personas__")
     return delim.join(personass_str_parts)
 
 
-def flatten_location(location: Dict, delim='\n'):
+def flatten_location(location: Dict, delim="\n"):
     location_str_parts = [
-        '__location__',
+        "__location__",
         f"{location['name']}: {location['description']}",
-        '__end-location__',
+        "__end-location__",
     ]
     return delim.join(location_str_parts)
 
@@ -68,26 +68,28 @@ class BaseTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         build(opt)
-        self.fold = DatatypeHelper.fold(opt['datatype'])
-        opt['datafile'] = os.path.join(opt['datapath'], constants.DATASET_NAME, f'{self.fold}.jsonl')
+        self.fold = DatatypeHelper.fold(opt["datatype"])
+        opt["datafile"] = os.path.join(
+            opt["datapath"], constants.DATASET_NAME, f"{self.fold}.jsonl"
+        )
 
-        self.use_start_token = opt['use_start_token']
-        self.start_token = opt['start_token']
-        self.include_speaker_in_context = opt['include_speaker_in_context']
-        self.include_speaker_in_label = opt['include_speaker_in_label']
-        self.add_speaker_to_context_end = opt['add_speaker_to_context_end']
-        self.utterance_delimiter = opt['utterance_delimiter']
-        self.speaker_token_delimiter = opt['speaker_token_delimiter']
-        self.include_timestep_in_context = opt['include_timestep_in_context']
-        self.add_current_timestep_to_context = opt['add_current_timestep_to_context']
-        self.add_personas_to_context = opt['add_personas_to_context']
-        self.add_location_to_context = opt['add_location_to_context']
-        self.id = 'light_multiparty_dialogue'
+        self.use_start_token = opt["use_start_token"]
+        self.start_token = opt["start_token"]
+        self.include_speaker_in_context = opt["include_speaker_in_context"]
+        self.include_speaker_in_label = opt["include_speaker_in_label"]
+        self.add_speaker_to_context_end = opt["add_speaker_to_context_end"]
+        self.utterance_delimiter = opt["utterance_delimiter"]
+        self.speaker_token_delimiter = opt["speaker_token_delimiter"]
+        self.include_timestep_in_context = opt["include_timestep_in_context"]
+        self.add_current_timestep_to_context = opt["add_current_timestep_to_context"]
+        self.add_personas_to_context = opt["add_personas_to_context"]
+        self.add_location_to_context = opt["add_location_to_context"]
+        self.id = "light_multiparty_dialogue"
         self.episode_quality_tiers = self._get_data_quality_tiers(
-            opt['episode_quality_tiers']
+            opt["episode_quality_tiers"]
         )
         self.speaker_quality_tiers = self._get_data_quality_tiers(
-            opt['speaker_quality_tiers']
+            opt["speaker_quality_tiers"]
         )
 
         super().__init__(opt, shared)
@@ -97,87 +99,87 @@ class BaseTeacher(DialogTeacher):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        agent = parser.add_argument_group('MultiLIGHT Corpus Arguments')
+        agent = parser.add_argument_group("MultiLIGHT Corpus Arguments")
         agent.add_argument(
-            '--episode-quality-tiers',
+            "--episode-quality-tiers",
             type=str,
-            default='1,2',
-            help='Comma seperated list of tiers of data quality for episodes to include. '
-            'The available tiers are 1 (high), 2 (low) quality.'
-            ' NOTE: only training data split has tiers. valid and test are only tier 1 data.',
+            default="1,2",
+            help="Comma seperated list of tiers of data quality for episodes to include. "
+            "The available tiers are 1 (high), 2 (low) quality."
+            " NOTE: only training data split has tiers. valid and test are only tier 1 data.",
         )
         agent.add_argument(
-            '--speaker-quality-tiers',
+            "--speaker-quality-tiers",
             type=str,
-            default='1,2',
-            help='Comma seperated list of tiers of data quality for speakers to include. '
-            'The available tiers are 1 (high), 2 (low) quality.'
-            ' NOTE: only training data split has tiers. valid and test are only tier 1 data.',
+            default="1,2",
+            help="Comma seperated list of tiers of data quality for speakers to include. "
+            "The available tiers are 1 (high), 2 (low) quality."
+            " NOTE: only training data split has tiers. valid and test are only tier 1 data.",
         )
         agent.add_argument(
-            '--utterance-delimiter',
+            "--utterance-delimiter",
             type=str,
-            default='\n',
+            default="\n",
             help="A string used to separate each utterance in the context. Defaults to newline. For example, 'A: Hello\nB: Hi there'.",
         )
         agent.add_argument(
-            '--include-speaker-in-label',
-            type='bool',
+            "--include-speaker-in-label",
+            type="bool",
             default=True,
             help="Whether to include speaker labels in the label. "
             "For example, message = { label: 'Rachel: Hi' } instead of message = { label: 'Hi' }",
         )
         agent.add_argument(
-            '--include-speaker-in-context',
-            type='bool',
+            "--include-speaker-in-context",
+            type="bool",
             default=True,
             help="Whether to include speaker labels in the context. "
             "For example, message = { text: 'Rachel: Hi' } instead of message = { text: 'Hi' }",
         )
         agent.add_argument(
-            '--add-speaker-to-context-end',
-            type='bool',
+            "--add-speaker-to-context-end",
+            type="bool",
             default=False,
-            help='Append the current speaker (who says `label`) to the end of each context. Defaults to True.',
+            help="Append the current speaker (who says `label`) to the end of each context. Defaults to True.",
         )
         agent.add_argument(
-            '--use-start-token',
-            type='bool',
+            "--use-start-token",
+            type="bool",
             default=False,
-            help='Use start token at the beginning of each conversation, and include the first sentence as a training example.',
+            help="Use start token at the beginning of each conversation, and include the first sentence as a training example.",
         )
         agent.add_argument(
-            '--start-token',
+            "--start-token",
             type=str,
             default=constants.START_TOKEN,
-            help=f'The token to use to indicate the beginning of a conversation. Defaults to {constants.START_TOKEN}',
+            help=f"The token to use to indicate the beginning of a conversation. Defaults to {constants.START_TOKEN}",
         )
         agent.add_argument(
-            '--speaker-token-delimiter',
+            "--speaker-token-delimiter",
             type=str,
-            default=':',
+            default=":",
             help="The token to use to separate the speaker label from the actual utterance in `obs['text']`.",
         )
         agent.add_argument(
-            '--include-timestep-in-context',
+            "--include-timestep-in-context",
             type=bool,
             default=False,
             help="If true, will add the timestep as part of the context for each previous utterance.",
         )
         agent.add_argument(
-            '--add-current-timestep-to-context',
+            "--add-current-timestep-to-context",
             type=bool,
             default=False,
             help="If true, will add the current timestep at the end of the context.",
         )
         agent.add_argument(
-            '--add-personas-to-context',
+            "--add-personas-to-context",
             type=bool,
             default=False,
             help="If true, will prepend the flattened persona descriptions to the context.",
         )
         agent.add_argument(
-            '--add-location-to-context',
+            "--add-location-to-context",
             type=bool,
             default=False,
             help="If true, will prepend the flattened location description to the context.",
@@ -185,71 +187,69 @@ class BaseTeacher(DialogTeacher):
         return parser
 
     def _get_data_quality_tiers(self, tiers_str):
-        tiers = set([int(t) for t in tiers_str.split(',')])
+        tiers = set([int(t) for t in tiers_str.split(",")])
         for t in tiers:
             assert t in (
                 1,
                 2,
-            ), f'Requested data tier ({t}) is invalid. Available tiers are 1 and 2 (only).'
+            ), f"Requested data tier ({t}) is invalid. Available tiers are 1 and 2 (only)."
         return tiers
 
     def get_speaker_prompt(self, utt, ts=None):
-        spkr = utt['speaker']
+        spkr = utt["speaker"]
         return (
-            f'{spkr} {ts} {self.speaker_token_delimiter}'
+            f"{spkr} {ts} {self.speaker_token_delimiter}"
             if ts and self.include_timestep_in_context
-            else f'{spkr}{self.speaker_token_delimiter}'
+            else f"{spkr}{self.speaker_token_delimiter}"
         )
 
     def get_utterance_context(self, utt, ts=None):
         text = get_clean_text(utt)
         if self.include_speaker_in_context:
-            text = f'{self.get_speaker_prompt(utt, ts)} {text}'
+            text = f"{self.get_speaker_prompt(utt, ts)} {text}"
         return text
 
     def get_utterance_label(self, utt):
         label = get_clean_text(utt)
         if self.include_speaker_in_label:
-            label = f'{self.get_speaker_prompt(utt)} {label}'
+            label = f"{self.get_speaker_prompt(utt)} {label}"
         return label
 
     def setup_data(self, datafile):
-
         with jsonlines.open(datafile) as reader:
             conversations = [dl for dl in reader]
 
-        assert conversations, 'No data was loaded by teacher.'
+        assert conversations, "No data was loaded by teacher."
 
         for conv in conversations:
-            if conv['quality_tier'] not in self.episode_quality_tiers:
+            if conv["quality_tier"] not in self.episode_quality_tiers:
                 continue
-            last_utterance_index = len(conv['messages']) - 1
+            last_utterance_index = len(conv["messages"]) - 1
 
             first_utterance_timestamp = 0
             characters_index = dict()
             personas = []
-            for i, c in enumerate(conv['characters']):
-                personas.append({'name': c['name'], 'persona': c['persona']})
-                characters_index[c['name']] = i + 1
+            for i, c in enumerate(conv["characters"]):
+                personas.append({"name": c["name"], "persona": c["persona"]})
+                characters_index[c["name"]] = i + 1
 
             location = {
-                'name': conv['location']['name'],
-                'description': conv['location']['description'],
+                "name": conv["location"]["name"],
+                "description": conv["location"]["description"],
             }
             speaker_worker_tier = [
-                wq['worker_tier'] for wq in conv['workers_quality_check']
+                wq["worker_tier"] for wq in conv["workers_quality_check"]
             ]
 
             context = []
 
-            for index, utterance in enumerate(conv['messages']):
-
-                speaker = utterance['speaker']
-                utterance['speaker_id'] = characters_index[speaker]
+            for index, utterance in enumerate(conv["messages"]):
+                speaker = utterance["speaker"]
+                utterance["speaker_id"] = characters_index[speaker]
                 if index == 0:
                     new_episode = True
                     # Setting the start time for the relative timestamps after this.
-                    first_utterance_timestamp = utterance['timestamp']
+                    first_utterance_timestamp = utterance["timestamp"]
 
                     if self.use_start_token:
                         context.append(self.start_token)
@@ -274,14 +274,14 @@ class BaseTeacher(DialogTeacher):
                     "location": location,
                     "personas": personas,
                     "speaker": speaker,
-                    "characters": [p['name'] for p in personas],
-                    "speaker_id": utterance['speaker_id'],
+                    "characters": [p["name"] for p in personas],
+                    "speaker_id": utterance["speaker_id"],
                     "full_context": context,
                     "speaker_worker_tier": speaker_worker_tier[
                         self.get_utterance_speaker_id(personas, speaker)
                     ],
                     "workers_tier": speaker_worker_tier,
-                    "quality_tier": conv['quality_tier'],
+                    "quality_tier": conv["quality_tier"],
                     "text": None,  # This is an abstract class, we will feel in the text later.
                     "label": self.get_utterance_label(utterance),
                 }, new_episode
@@ -295,7 +295,7 @@ class BaseTeacher(DialogTeacher):
 
     def get_utterance_speaker_id(self, personas, speaker):
         for idx, persona in enumerate(personas):
-            if persona['name'] == speaker:
+            if persona["name"] == speaker:
                 return idx
 
     def get_extra_context_before(self, conv):
@@ -307,13 +307,13 @@ class BaseTeacher(DialogTeacher):
         if self.add_location_to_context:
             extra_context_before.append(
                 flatten_location(
-                    conv['location'], bb3_format=self.use_bb3_context_format
+                    conv["location"], bb3_format=self.use_bb3_context_format
                 )
             )
         if self.add_personas_to_context:
             extra_context_before.append(
                 flatten_personas(
-                    conv['personas'], bb3_format=self.use_bb3_context_format
+                    conv["personas"], bb3_format=self.use_bb3_context_format
                 )
             )
         return extra_context_before
@@ -324,7 +324,7 @@ class BaseTeacher(DialogTeacher):
         """
         extra_context_after = []
         if self.add_current_timestep_to_context:
-            extra_context_after.append(conv['timestep'])
+            extra_context_after.append(conv["timestep"])
         if self.add_speaker_to_context_end:
             # Adding the speaker prompt to the end of the context
             extra_context_after.append(self.get_speaker_prompt(conv))
@@ -335,7 +335,7 @@ class BaseTeacher(DialogTeacher):
 class AllSpeakersTeacher(BaseTeacher):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.id = 'multilight_dialogue_:all_speakers'
+        self.id = "multilight_dialogue_:all_speakers"
 
     def setup_data(self, datafile):
         for utt, _ in super().setup_data(datafile):
@@ -343,10 +343,10 @@ class AllSpeakersTeacher(BaseTeacher):
             extra_context_before = self.get_extra_context_before(ret)
             extra_context_after = self.get_extra_context_after(ret)
 
-            ret['text'] = self.utterance_delimiter.join(
-                extra_context_before + ret['full_context'] + extra_context_after
+            ret["text"] = self.utterance_delimiter.join(
+                extra_context_before + ret["full_context"] + extra_context_after
             )
-            if utt['speaker_worker_tier'] in self.speaker_quality_tiers:
+            if utt["speaker_worker_tier"] in self.speaker_quality_tiers:
                 yield ret, True
 
     def custom_evaluation(
@@ -356,30 +356,30 @@ class AllSpeakersTeacher(BaseTeacher):
         model_response: Message,
     ) -> None:
         model_response = Message(model_response)
-        if model_response.is_padding() or (not model_response.get('text', None)):
+        if model_response.is_padding() or (not model_response.get("text", None)):
             return
 
         # Finding speaker label accuracy, only if it was included in the teacher labels
         if self.include_speaker_in_label:
-            resp = model_response.get('text')
+            resp = model_response.get("text")
             parts = resp.split(self.speaker_token_delimiter)
 
             # If model predicts a speaker label, there should be at leat two parts separted by ':'
             if len(parts) >= 2:
                 predited_speaker = parts[0].strip()
             else:
-                predited_speaker = '__NO_SPEAKER__'
+                predited_speaker = "__NO_SPEAKER__"
 
             # The teacher will always include the correct speaker label in the 'speaker' field
             expected_speaker = (
-                teacher_action.get('speaker_id')
+                teacher_action.get("speaker_id")
                 if self.use_bb3_context_format
-                else teacher_action.get('speaker')
+                else teacher_action.get("speaker")
             )
 
             # Predicted speaker accuracy
             self.metrics.add(
-                'speaker_acc',
+                "speaker_acc",
                 ExactMatchMetric.compute(predited_speaker, [expected_speaker]),
             )
 
@@ -387,6 +387,6 @@ class AllSpeakersTeacher(BaseTeacher):
             speech_text = parts[-1]
             label_speech_text = labels[0].split(self.speaker_token_delimiter)[-1]
             self.metrics.add(
-                'speech_f1',
+                "speech_f1",
                 F1Metric.compute(speech_text, [label_speech_text]),
             )

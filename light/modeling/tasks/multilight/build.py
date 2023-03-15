@@ -12,13 +12,14 @@ import parlai.utils.logging as logging
 
 from light.modeling.tasks.multilight import constants
 
+
 def build(opt):
-    dpath = os.path.join(opt['datapath'], constants.DATASET_NAME)
-    logging.warning('Using fake build method. Update with the final.')
-    version = '0.1'
+    dpath = os.path.join(opt["datapath"], constants.DATASET_NAME)
+    logging.warning("Using fake build method. Update with the final.")
+    version = "0.1"
     if not build_data.built(dpath, version):
         logging.info(
-            f'[building data: {dpath}]\nThis may take a while but only heppens once.'
+            f"[building data: {dpath}]\nThis may take a while but only heppens once."
         )
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
@@ -28,11 +29,13 @@ def build(opt):
         # Download the data.
         # TODO: Add the dataset files to the S3 bucket for download.
         # DATASET_FILE.download_file(dpath)
-        for f in ('train', 'valid', 'test'):
-            fname = f'{f}.jsonl'
-            srouce = os.path.join('/private/home/komeili/dev/ParlAI/data/light_multiparty/', fname)
+        for f in ("train", "valid", "test"):
+            fname = f"{f}.jsonl"
+            srouce = os.path.join(
+                "/private/home/komeili/dev/ParlAI/data/light_multiparty/", fname
+            )
             dest = os.path.join(dpath, fname)
             shutil.copyfile(srouce, dest)
-        logging.info('Finished downloading dataset files successfully.')
+        logging.info("Finished downloading dataset files successfully.")
 
         build_data.mark_done(dpath, version)

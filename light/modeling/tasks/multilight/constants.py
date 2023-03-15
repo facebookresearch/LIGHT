@@ -4,5 +4,5 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-DATASET_NAME = 'light_multiparty'
-START_TOKEN = '__START__'
+DATASET_NAME = "light_multiparty"
+START_TOKEN = "__START__"
