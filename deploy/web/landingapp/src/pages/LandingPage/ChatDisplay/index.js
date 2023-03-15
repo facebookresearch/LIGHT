@@ -5,11 +5,8 @@
  */
 
 /* REACT */
-import React, { useEffect, useState, useCallback, useRef } from "react";
-/* STYLES */
-
+import React from "react";
 /* CUSTOM COMPONENTS */
-// import ActionBar from "./ActionBar";
 import ChatMessages from "./ChatMessages";
 import ChatControls from "./ChatControls";
 
@@ -28,10 +25,10 @@ const ChatDisplay = ({
   chatContainerRef,
 }) => {
   return (
-    <div className="h-full m-8 flex flex-col">
-      <div className="flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
+    <div className="__chatdisplay-container__ h-full md:m-8 flex flex-col">
+      <div className="__chatdisplay-chat-container__ flex flex-1 flex-col h-full bg-indigo-900 bg-opacity-50 overflow-hidden p-7 rounded-t-md">
         <div
-          className="flex-1 grow-[5] overflow-y-scroll"
+          className="__chatdisplay-message-container__ sm:max-w-md md:max-w-full flex-1 grow-[5] overflow-y-scroll"
           ref={chatContainerRef}
         >
           {messages ? (
@@ -43,7 +40,7 @@ const ChatDisplay = ({
             />
           ) : null}
         </div>
-        <div className="flex-none h-[120px]">
+        <div className="__chatdisplay-chatcontrols-container__ flex-none md:h-[120px]">
           {introStep >= 1 ? (
             <ChatControls
               introStep={introStep}

@@ -308,7 +308,8 @@ class TutorialModelSoul(OnEventSoul):
 
         act_text = self.dialogue_pick_non_repeating_response(act, partner)
 
-        reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text)
+        is_safe = await self.world.safety_classifier.is_safe(act_text)
+        reply_event = TellEvent(agent, target_nodes=[partner], text_content=act_text, safe=is_safe)
         reply_event.execute(self.world)
 
     async def _possibly_get_response(self, text_content: str) -> str:

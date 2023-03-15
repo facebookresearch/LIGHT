@@ -16,7 +16,7 @@ import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
 const SideBarDisplay = () => {
   return (
-    <div className="sidebar">
+    <div className="sidebar  ">
       <SideBarHeader />
       <div className={`sidebar-body__container flex flex-col justify-center`}>
         <IconCollapsibleBox title={`You are You`}>

@@ -18,19 +18,19 @@ import Scribe from "../../../../assets/images/scribe.png";
 const SidebarHeader = () => {
   return (
     <>
-      <div className="flex flex-row justify-start items-center w-full">
-        <div className="flex flex-row justify-start items-center w-3/4 pt-2 pl-2">
+      <div className="__sidebar_header_container__ flex flex-row justify-start items-center w-full">
+        <div className="__sidebar_header_info_container__ flex flex-row justify-start items-center w-3/4 pt-2 pl-2">
           <img
             className="__scribe-avatar__  inline-block h-14 w-14 rounded-full mr-2"
             src={Scribe}
           />
-          <div className="w-full">
+          <div className="__sidebar_header_info_progressbar_container__ w-full">
             <p style={{ color: "white" }}> {`You are level 1`} </p>
             <ProgressBar />
           </div>
         </div>
-        <div className="w-1/4 flex flex-row justify-around">
-          <div className="flex flex-row justify-center items-center">
+        <div className="__sidebar_header_row_container__ w-1/4 flex flex-row justify-around">
+          <div className="__sidebar_header_button_container__ flex flex-row justify-center items-center">
             <InfoButton />
           </div>
         </div>

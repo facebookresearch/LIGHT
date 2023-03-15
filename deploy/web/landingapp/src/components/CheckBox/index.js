@@ -3,6 +3,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /* REACT */
 import React, { useState, useEffect } from "react";
 /* ICONS */
@@ -29,7 +30,15 @@ const CheckBox = ({ checkFunction, checkStatus }) => {
       onClick={clickHandler}
     >
       <div className="__check_container__ w-16 h-16 flex justify-center items-center ">
-        {isChecked ? <BsCheckLg color="white" size={50} /> : <div />}
+        {isChecked ? (
+          <BsCheckLg
+            className="__check__ animate-quick-bounce"
+            color="white"
+            size={50}
+          />
+        ) : (
+          <div />
+        )}
       </div>
     </div>
   );

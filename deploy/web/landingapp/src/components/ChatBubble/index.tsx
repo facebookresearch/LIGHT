@@ -3,8 +3,9 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
+
 /* REACT */
-import React, { useState, useEffect, useMemo } from "react";
+import React from "react";
 /* STYLING */
 import { getActionThemeColor } from "../../app/theme";
 
@@ -42,7 +43,7 @@ function ChatBubbleTail({
 //CharacterName - Character name plate
 function CharacterName({ name }: { name: string }) {
   return (
-    <div className="text-sm font-semibold text-base-100 whitespace-pre">
+    <div className="break-words text-xs font-semibold text-base-100 whitespace-pre">
       {name}
     </div>
   );
@@ -56,21 +57,38 @@ export function ChatBubble({
   children,
 }: Props) {
   return (
-    <div className="flex flex-row items-center">
-      {align === "left" && <CharacterName name={actor} />}
-      {align === "left" && <ChatBubbleTail align={align} action={action} />}
-      <div
-        className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
-        ${getActionThemeColor("bg", action)} ${getActionThemeColor(
-          "text",
-          action
-        )}
-        rounded-md flex justify-center items-center`}
-      >
-        <div>{children}</div>
+    <>
+      <div className="hidden sm:hidden md:flex flex-row items-center">
+        {align === "left" && <CharacterName name={actor} />}
+        {align === "left" && <ChatBubbleTail align={align} action={action} />}
+        <div
+          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
+          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
+            "text",
+            action
+          )}
+          rounded-md flex justify-center items-center`}
+        >
+          <div>{children}</div>
+        </div>
+        {align === "right" && <ChatBubbleTail align={align} action={action} />}
+        {align === "right" && <CharacterName name={actor} />}
       </div>
-      {align === "right" && <ChatBubbleTail align={align} action={action} />}
-      {align === "right" && <CharacterName name={actor} />}
-    </div>
+      <div className="flex sm:flex flex-col items-center md:hidden lg:hidden">
+        {align === "left" && <CharacterName name={actor} />}
+        <div
+          className={`_chat_bubble_ relative p-4 min-h-[50px] font-medium
+          ${getActionThemeColor("bg", action)} ${getActionThemeColor(
+            "text",
+            action
+          )}
+          rounded-md flex justify-center items-center`}
+        >
+          <div>{children}</div>
+        </div>
+        {align === "right" && <ChatBubbleTail align={align} action={action} />}
+        {align === "right" && <CharacterName name={actor} />}
+      </div>
+    </>
   );
 }

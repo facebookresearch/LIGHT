@@ -8,6 +8,7 @@ import React from "react";
 /* CUSTOM COMPONENTS */
 import TypewriterText from "../../../../components/TypewriterText";
 
+//TerminalEntry - Renders container component for terminal style entries both copy and interactive "buttons"
 const TerminalEntry = ({
   text,
   textStep,
@@ -15,12 +16,11 @@ const TerminalEntry = ({
   welcomeStepAdvancementHandler,
   isButton,
 }) => {
-  console.log("TEXT STEP:  ", textStep, "WELCOME STEP:  ", welcomeStep);
   return (
     <>
       {textStep <= welcomeStep ? (
         <TypewriterText
-          text={(isButton) ? "> " + text : text}
+          text={isButton ? "> " + text : text}
           textStep={textStep}
           welcomeStep={welcomeStep}
           welcomeStepAdvancementHandler={welcomeStepAdvancementHandler}

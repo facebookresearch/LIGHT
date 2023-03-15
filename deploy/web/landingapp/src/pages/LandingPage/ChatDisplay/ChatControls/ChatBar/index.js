@@ -10,7 +10,7 @@ import React, { useState, useEffect } from "react";
 import ChatButtons from "./ChatButtons";
 import ChatInput from "./ChatInput";
 import SendButton from "./SendButton";
-
+/* UTILS */
 import { getActionThemeColor } from "../../../../../app/theme";
 
 // ChatInput - Component that renders chat bar along with Say/Do buttons and send button
@@ -30,8 +30,6 @@ const ChatBar = ({
   useEffect(() => {
     setCycleMessagesPosition(submittedActions.length);
   }, [submittedActions]);
-
-  /*---------------HANDLERS----------------*/
 
   return (
     <div

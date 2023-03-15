@@ -75,7 +75,7 @@ const LandingAppCopy = {
       action: "say",
       actor: "Mysterious Figure",
       text:
-        "Great! Also important to the work here is that you can rate messages.  Try clicking on a rating.",
+        "Great! Also important to the work here is that you can rate messages.  Try clicking on a rating (thumbs up or down).",
       isSelf: false,
     },
     {

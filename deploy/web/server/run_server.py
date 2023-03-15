@@ -45,31 +45,6 @@ HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 DEFAULT_PORT = 35494
 DEFAULT_HOSTNAME = "localhost"
 
-from light import LIGHT_DIR
-
-CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
-
-from light import LIGHT_DIR
-
-CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
-
-from light import LIGHT_DIR
-
-CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
-
-from light import LIGHT_DIR
-
-CONFIG_DIR = os.path.join(LIGHT_DIR, "light/registry/models/config")
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-
-def get_path(filename):
-    """Get the path to an asset."""
-    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    return os.path.join(cwd, filename)
-
-
 @dataclass
 class WorldServerConfig(ScriptConfig):
     defaults: List[Any] = field(
@@ -99,6 +74,10 @@ class WorldServerConfig(ScriptConfig):
     facebook_api_secret: str = field(
         default=MISSING,
         metadata={"help": "FB API secret key"},
+    )
+    facebook_asid_salt: str = field(
+        default=MISSING,
+        metadata={"help": "String to salt the asid with"},
     )
     hostname: str = field(
         default=DEFAULT_HOSTNAME,
@@ -140,6 +119,8 @@ def make_app(cfg: WorldServerConfig, model_pool: ModelPool):
         tornado_settings["facebook_api_key"] = cfg.facebook_api_key
     if cfg.get("facebook_api_secret", None) is not None:
         tornado_settings["facebook_secret"] = cfg.facebook_api_secret
+    if cfg.get("facebook_asid_salt", None) is not None:
+        tornado_settings["facebook_asid_salt"] = cfg.facebook_asid_salt
 
     # TODO re-enable world builder once builder models are hydra-registered
     # worldBuilderApp = BuildApplication(get_handlers(ldb), tornado_settings)
@@ -187,6 +168,10 @@ async def _run_server(cfg: WorldServerConfig, model_pool: ModelPool):
     while True:
         await asyncio.sleep(30)
 
+def get_path(filename):
+    """Get the path to an asset."""
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    return os.path.join(cwd, filename)
 
 @hydra.main(
     config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"

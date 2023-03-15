@@ -5,15 +5,13 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
-/* CUSTOM COMPONENTS */
-
+import React from "react";
+/* UTILs */
 import { getActionThemeColor } from "../../../../../../app/theme";
-
-import { BiChevronRight } from "react-icons/bi";
+/* ICONS */
 import { FaSort } from "react-icons/fa";
 
-// ChatInput - Component that renders chat bar along with Say/Do buttons and send button
+// ChatButtons - Component that renders Say/Do buttons, color and text are determined by current input type
 const ChatButtons = ({ action, toggleAction }) => {
   return (
     <div className="_chat-button_ h-full">

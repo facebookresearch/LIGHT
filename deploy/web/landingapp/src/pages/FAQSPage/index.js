@@ -4,9 +4,12 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+/* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { Link, useHistory } from "react-router-dom";
 
+//FAQSPage - Renders FAQs Page with information and helpful links
 const FAQSPage = () => {
   let history = useHistory();
   return (
