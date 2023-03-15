@@ -5,8 +5,10 @@
  */
 /* REACT */
 import React from "react";
+/* REACT ROUTER */
 import { Link, useHistory } from "react-router-dom";
 
+//TermsPage - Renders Terms Page with information and helpful links clearly stating the terms of Light
 const TermsPage = () => {
   let history = useHistory();
   return (
@@ -18,10 +20,10 @@ const TermsPage = () => {
         Back
       </div>
       <div className="__termspage-body__ flex justify-center items-center flex-col text-white">
-        <h1 className="__faqspage-header_text__ text-white font-extrabold text-6xl">
+        <h1 className="__faqspage-header_text__ text-white font-extrabold sm:text-4xl md:text-6xl">
           Terms & Conditions
         </h1>
-        <div className="termspage-text__container justify-center items-center w-3/5 h-full text-2xl">
+        <div className="termspage-text__container justify-center items-center md:w-3/5 h-full md:text-2xl">
           <p className="mb-4">
             By using the LIGHT platform ("LIGHT"), you agree to be bound by Meta
             Platform, Inc.’s Terms of Service (available at{" "}

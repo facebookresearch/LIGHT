@@ -9,7 +9,7 @@ import React from "react";
 /* CUSTOM COMPONENTS */
 import ChatBar from "./ChatBar";
 
-//ChatControls - render container that holds both chat input and "action bar" which contains quick chat speech bubbles for each npc in vincinity
+//ChatControls - render container for chatBar component and any other tools that may be added in the future
 const ChatControls = ({
   introStep,
   submittedActions,

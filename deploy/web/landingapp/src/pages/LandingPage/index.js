@@ -9,11 +9,14 @@ import React, { useState, useCallback, useEffect, Fragment } from "react";
 import ChatDisplay from "./ChatDisplay";
 import LegalChecklistDisplay from "./LegalChecklistDisplay";
 import SideBarDisplay from "./SideBarDisplay";
+import SideDrawer from "../../components/SideDrawer";
 /* IMAGES */
 import "./styles.css";
 /* COPY */
 import LANDINGAPPCOPY from "../../LandingAppCopy";
 
+//LandingPage - Renders the Landing Page.  This page renders elements based on stepping through the postLoginSteps.
+//*
 const LandingPage = () => {
   const { legalAgreements, introDialogueSteps } = LANDINGAPPCOPY;
   /*---------------LOCAL STATE----------------*/
@@ -32,11 +35,13 @@ const LandingPage = () => {
   //CHAT DISPLAY REF
   const chatContainerRef = React.useRef(null);
   /*--------------- HANDLERS ----------------*/
+  //postLoginStepIncreaseHandler - iterates through postLoginSteps which triggers different elements to render
   const postLoginStepIncreaseHandler = () => {
     let nextStep = postLoginStep + 1;
     setPostLoginStep(nextStep);
   };
 
+  //inputActionTypeToggleHandler - toggles between say and do inputAction state
   const inputActionTypeToggleHandler = () => {
     if (inputActionType === "say") {
       setInputActionType("do");
@@ -44,11 +49,14 @@ const LandingPage = () => {
       setInputActionType("say");
     }
   };
+
+  //inputChangeHandler - sets text of chat input.
   const inputChangeHandler = (e) => {
     let updatedInputValue = e.target.value;
     setChatInputText(updatedInputValue);
   };
 
+  //ratingStepHandler - sets intro step upon completion of the rating step in the intro
   const ratingStepHandler = () => {
     setIntroStep(4);
     let updatedMessages = [
@@ -60,6 +68,8 @@ const LandingPage = () => {
     setMessages(updatedMessages);
   };
 
+  //chatSubmissionHandler - sets intro step based completion of chat submission steps
+  //as well as submits messages to chat display
   const chatSubmissionHandler = () => {
     if (introStep === 4) {
       setIntroStep(5);
@@ -89,17 +99,17 @@ const LandingPage = () => {
   );
 
   /*-------------- LIFECYCLE ----------------*/
+  //Upon render sets first messages in intro chat display
   useEffect(() => {
     console.log(messages);
     let updatedMessage = [introDialogueSteps[0]];
     setMessages(updatedMessage);
   }, []);
 
+  //Listens for proper message entries rerquired to complete currernt intro step and continue to move through intro and postlogin stepper
   useEffect(() => {
     if (messages.length) {
       let newMessage = messages[messages.length - 1];
-      console.log("NEW MESSAGE:  ", newMessage);
-      console.log("Step Logic", introStep);
       if (introStep === 0) {
         setIntroStep(1);
         let updatedMessage = introDialogueSteps[1];
@@ -143,7 +153,7 @@ const LandingPage = () => {
   }, [messages, introStep]);
 
   return (
-    <>
+    <div className="w-screen h-screen">
       {postLoginStep === 0 ? (
         <div className="flex w-full h-full justify-center  overflow-y-scroll pb-10">
           <LegalChecklistDisplay
@@ -153,11 +163,18 @@ const LandingPage = () => {
         </div>
       ) : null}
       {postLoginStep >= 1 ? (
-        <>
-          <div className="_sidebar-container_ flex-1 relative">
-            <div className="">{introStep >= 4 ? <SideBarDisplay /> : null}</div>
+        <div className="w-full h-full flex flex-row">
+          <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative">
+            {introStep >= 4 ? <SideBarDisplay /> : null}
           </div>
-          <div className="_chat-container_ flex-1 grow-[3] h-full">
+          <div className="_sidebar-container_ flex sm:flex md:hidden lg:hidden">
+            {introStep >= 4 ? (
+              <SideDrawer>
+                <SideBarDisplay />
+              </SideDrawer>
+            ) : null}
+          </div>
+          <div className="_chat-container_  sm: flex-1 md: grow-[3] h-full ">
             {messages ? (
               <ChatDisplay
                 introStep={introStep}
@@ -174,9 +191,9 @@ const LandingPage = () => {
               />
             ) : null}
           </div>
-        </>
+        </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

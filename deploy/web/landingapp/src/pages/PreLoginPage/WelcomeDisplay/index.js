@@ -11,6 +11,7 @@ import TerminalEntry from "./TerminalEntry";
 /* STYLES */
 import "./styles.css";
 
+//WelcomeDisplay - Renders WelcomeDisplay container that renders copy in classic terminal style to walking user through steps of prelogin
 const WelcomeDisplay = ({
   terminalDialogue,
   loginStepIncreaseHandler,
@@ -21,28 +22,31 @@ const WelcomeDisplay = ({
   const [welcomeStep, setWelcomeStep] = useState(0);
   const [rejectedAgreement, setRejectedAgreement] = useState(false);
   /*--------------- HANDLERS ----------------*/
+  //handles any changes to input value forr terminal steps with typed out answers
   const terminalInputChangeHandler = (e) => {
     let updatedValue = e.target.value;
     setTerminalInput(updatedValue);
   };
-
+  //handles any changes to input value forr terminal steps with typed out answers
   const terminalSubmissionHandler = () => {
     loginStepIncreaseHandler();
     setTerminalInput("");
   };
 
+  //handles user rejecting terms and makes page static with terms and faqs links still accessible
   const terminalRejectionHandler = () => {
     setRejectedAgreement(true);
     welcomeStepAdvancementHandler();
   };
 
+  //handles progressing to next step of welcomeStepper
   const welcomeStepAdvancementHandler = () => {
     let nextStep = welcomeStep + 1;
     setWelcomeStep(nextStep);
   };
 
   return (
-    <div className="ml-16 w-1/2 font-mono text-2xl flex items-start flex-col justify-start">
+    <div className="flex flex-col sm:items-center sm:pl-4 sm:w-1/3 sm:overflow-y-hidden sm:h-32 md:h-full md:items-start md:justify-center md:ml-16 md:w-1/2 font-mono md:text-2xl">
       <h1 className="text-white font-mono">Landing in LIGHT</h1>
       {terminalDialogue.map((entry, index) => (
         <TerminalEntry

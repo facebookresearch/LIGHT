@@ -9,7 +9,6 @@ import React, { useState } from "react";
 import "./styles.css";
 /* CUSTOM COMPONENTS */
 import CheckBox from "../../../components/CheckBox";
-import CONFIG from "../../../config.js";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 
@@ -23,7 +22,7 @@ const LoginDisplay = () => {
     let updateAgreement = !legalAgreement;
     setLegalAgreement(updateAgreement);
   };
-
+  //LOGIN PATHS
   const nextLoc = new URLSearchParams(window.location.search).get("next");
   var targetStr = null;
   if (CONFIG.login == "fb") {
@@ -32,15 +31,17 @@ const LoginDisplay = () => {
     targetStr = "/login";
   }
   return (
-    <div className="w-full h-full flex items-center justify-center flex-col font-mono">
-      <h1 className="text-white underline text-4xl mb-1">Login to LIGHT</h1>
-      <div className=" flex flex-row justify-center items-start w-3/4">
+    <div className=" flex-col font-mono w-full sm:h-40 sm:overflow-y-scroll sm:justify-center sm:items-center md:h-full flex md:items-center md:justify-center">
+      <h1 className="text-white underline sm:text-2xl md:text-4xl mb-1">
+        Login to LIGHT
+      </h1>
+      <div className=" flex flex-row justify-center sm:items-center sm:w-5/6 md:items-start md:w-3/4">
         <label className="cursor-pointer label flex flex-row">
           <CheckBox
             checkStatus={legalAgreement}
             checkFunction={toggleAgreement}
           />
-          <span className="text-white text-2xl">
+          <span className="text-white md:text-2xl">
             By clicking “Sign in with Facebook” below, you are agreeing to the
             LIGHT
             <a

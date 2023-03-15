@@ -65,8 +65,8 @@ const LegalChecklistDisplay = ({
   };
 
   return (
-    <div className="w-3/4 text-2xl text-mono ">
-      <h2 className="text-white text-3xl text-center">
+    <div className="sm:h-40 w-3/4 md:text-2xl text-mono ">
+      <h2 className="text-white md:text-3xl text-center">
         To get started, please acknowledge that you have read and agreed to
         every statement below by checking each box.
       </h2>

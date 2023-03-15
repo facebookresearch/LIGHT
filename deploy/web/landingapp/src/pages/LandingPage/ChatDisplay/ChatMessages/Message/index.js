@@ -18,7 +18,6 @@ const Message = ({
   scrollToBottom,
   ratingStepHandler,
 }) => {
-  console.log("ACTOR:  ", msg.actor);
   return (
     <>
       {msg.isSelf ? (
