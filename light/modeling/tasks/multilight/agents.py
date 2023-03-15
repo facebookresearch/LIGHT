@@ -8,37 +8,68 @@
 from abc import ABC, abstractclassmethod
 import copy
 import jsonlines
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
+import os
 
 from parlai.core.message import Message
 from parlai.core.metrics import ExactMatchMetric, F1Metric
 from parlai.core.opt import Opt
+from parlai.core.loader import register_teacher
 from parlai.core.teachers import DialogTeacher
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric
 from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 
-from parlai_internal.tasks.light_multiparty_dialogue.mutators import (
-    flatten_personas,
-    flatten_location,
-)
-from parlai.core.loader import register_teacher
-
 from light.modeling.tasks.multilight.build import build
+from light.modeling.tasks.multilight import constants
+
+
+def _format_timestep(timestamp, first_utterance_timestamp):
+    """
+    Outputs timestep in the format of '00:00:00' relative to `first_utterance_timestamp`
+    """
+    time_delta = float(timestamp) - float(first_utterance_timestamp)
+    hour = int(time_delta // 3600)
+    time_delta %= 3600
+    minute = int(time_delta // 60)
+    time_delta %= 60
+    second = int(time_delta)
+    return f"{hour:02d}:{minute:02d}:{second:02d}"
+
+
+def get_clean_text(message):
+    return message['text'].replace('\n', ' ')
+
+
+def flatten_personas(personas: Dict, delim='\n'):
+    personass_str_parts = []
+    personass_str_parts.append('__personas__')
+    personass_str_parts.extend([f"{p['name']}: {p['persona']}" for p in personas])
+    personass_str_parts.append('__end-personas__')
+    return delim.join(personass_str_parts)
+
+
+def flatten_location(location: Dict, delim='\n'):
+    location_str_parts = [
+        '__location__',
+        f"{location['name']}: {location['description']}",
+        '__end-location__',
+    ]
+    return delim.join(location_str_parts)
 
 
 class BaseTeacher(DialogTeacher):
     """
-    Base (Abstract) class for multi-party chat teacher.
-    (Abstract class) Do NOT use directly.
+    Base class for multi-party chat teacher.
+    The messages from this teacher are not formatted for use. Do NOT use directly!
     """
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         build(opt)
         self.fold = DatatypeHelper.fold(opt['datatype'])
-        opt['datafile'] = _path(opt, f'{self.fold}.jsonl')
+        opt['datafile'] = os.path.join(opt['datapath'], constants.DATASET_NAME, f'{self.fold}.jsonl')
 
         self.use_start_token = opt['use_start_token']
         self.start_token = opt['start_token']
@@ -51,7 +82,6 @@ class BaseTeacher(DialogTeacher):
         self.add_current_timestep_to_context = opt['add_current_timestep_to_context']
         self.add_personas_to_context = opt['add_personas_to_context']
         self.add_location_to_context = opt['add_location_to_context']
-        self.use_bb3_context_format = opt['use_bb3_context_format']
         self.id = 'light_multiparty_dialogue'
         self.episode_quality_tiers = self._get_data_quality_tiers(
             opt['episode_quality_tiers']
@@ -67,7 +97,7 @@ class BaseTeacher(DialogTeacher):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        agent = parser.add_argument_group('LIGHT Multiparty Chat Corpus Arguments')
+        agent = parser.add_argument_group('MultiLIGHT Corpus Arguments')
         agent.add_argument(
             '--episode-quality-tiers',
             type=str,
@@ -108,7 +138,7 @@ class BaseTeacher(DialogTeacher):
             '--add-speaker-to-context-end',
             type='bool',
             default=False,
-            help='Append the current speaker (who says `label` text) to the end of each context. Defaults to True.',
+            help='Append the current speaker (who says `label`) to the end of each context. Defaults to True.',
         )
         agent.add_argument(
             '--use-start-token',
@@ -119,8 +149,8 @@ class BaseTeacher(DialogTeacher):
         agent.add_argument(
             '--start-token',
             type=str,
-            default=START_TOKEN,
-            help='The token to use to indicate the beginning of a conversation. Defaults to __START__',
+            default=constants.START_TOKEN,
+            help=f'The token to use to indicate the beginning of a conversation. Defaults to {constants.START_TOKEN}',
         )
         agent.add_argument(
             '--speaker-token-delimiter',
@@ -144,19 +174,13 @@ class BaseTeacher(DialogTeacher):
             '--add-personas-to-context',
             type=bool,
             default=False,
-            help="If true, will add the flattened personas to the contet end.",
+            help="If true, will prepend the flattened persona descriptions to the context.",
         )
         agent.add_argument(
             '--add-location-to-context',
             type=bool,
             default=False,
-            help="If true, will add the flattened location to the contet end.",
-        )
-        agent.add_argument(
-            '--use-bb3-context-format',
-            type=bool,
-            default=False,
-            help="Flattens the personas and location description with the BB3 dataset format.",
+            help="If true, will prepend the flattened location description to the context.",
         )
         return parser
 
@@ -170,11 +194,7 @@ class BaseTeacher(DialogTeacher):
         return tiers
 
     def get_speaker_prompt(self, utt, ts=None):
-        spkr = (
-            f'Person {utt["speaker_id"]}'
-            if self.use_bb3_context_format
-            else utt['speaker']
-        )
+        spkr = utt['speaker']
         return (
             f'{spkr} {ts} {self.speaker_token_delimiter}'
             if ts and self.include_timestep_in_context
@@ -182,13 +202,13 @@ class BaseTeacher(DialogTeacher):
         )
 
     def get_utterance_context(self, utt, ts=None):
-        text = _get_text(utt)
+        text = get_clean_text(utt)
         if self.include_speaker_in_context:
             text = f'{self.get_speaker_prompt(utt, ts)} {text}'
         return text
 
     def get_utterance_label(self, utt):
-        label = _get_text(utt)
+        label = get_clean_text(utt)
         if self.include_speaker_in_label:
             label = f'{self.get_speaker_prompt(utt)} {label}'
         return label
@@ -211,7 +231,7 @@ class BaseTeacher(DialogTeacher):
             for i, c in enumerate(conv['characters']):
                 personas.append({'name': c['name'], 'persona': c['persona']})
                 characters_index[c['name']] = i + 1
-            _validate_personas(personas)
+
             location = {
                 'name': conv['location']['name'],
                 'description': conv['location']['description'],
@@ -280,8 +300,7 @@ class BaseTeacher(DialogTeacher):
 
     def get_extra_context_before(self, conv):
         """
-        Generates the persona and location, which goes *before* the conversation
-        context.
+        Generates the persona and location, which goes *before* the conversation context.
         """
         extra_context_before = []
 
@@ -301,8 +320,7 @@ class BaseTeacher(DialogTeacher):
 
     def get_extra_context_after(self, conv):
         """
-        Generates the timestamp and speaker prompt, which goes *after* the conversation
-        context.
+        Generates the timestep and speaker prompt, which goes *after* the conversation context.
         """
         extra_context_after = []
         if self.add_current_timestep_to_context:
@@ -316,9 +334,8 @@ class BaseTeacher(DialogTeacher):
 @register_teacher("light:multilight:AllCharactersTeacher")
 class AllSpeakersTeacher(BaseTeacher):
     def __init__(self, opt, shared=None):
-        opt['speaker'] = 'All'
         super().__init__(opt, shared)
-        self.id = 'light_multiparty_dialogue_:all_speakers'
+        self.id = 'multilight_dialogue_:all_speakers'
 
     def setup_data(self, datafile):
         for utt, _ in super().setup_data(datafile):
