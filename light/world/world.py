@@ -862,6 +862,7 @@ class World(object):
     ):
         """Try to parse and execute the given event"""
         # basic replacements
+        orig_inst = inst
         inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
             "e": "go east",
@@ -953,6 +954,7 @@ class World(object):
         parsed_event = await self.attempt_parse_event(
             EventClass, actor, arguments, event_id
         )
+        parsed_event.set_entered_text(orig_inst)
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst
