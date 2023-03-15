@@ -25,15 +25,26 @@ from light.graph.builders.one_room_builder import (
 )
 =======
 from light.constants import LIGHT_PATH, PARLAI_PATH
+<<<<<<< HEAD
 from light.graph.builders.one_room_builder import OneRoomChatBuilder, OneRoomChatBuilderConfig
 >>>>>>> 4d43e4c1 (light path)
+=======
+from light.graph.builders.one_room_builder import (
+    OneRoomChatBuilder,
+    OneRoomChatBuilderConfig,
+)
+>>>>>>> 14ae0c63 (black)
 from light.data_model.light_database import LIGHTDatabase
 from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 
 
 ALLOWLIST_QUALIFICATION = "multiparty-allow-prod-v2"
+<<<<<<< HEAD
 LIGHT_DB_PATH = os.path.join(LIGHT_PATH, "light/data_model/database.db")
+=======
+LIGHT_DB_PATH = os.path.join(PARLAI_PATH, "data/light/merged.db")
+>>>>>>> 14ae0c63 (black)
 
 
 @dataclass
@@ -67,6 +78,7 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
 
     pool = ModelPool()
 <<<<<<< HEAD
+<<<<<<< HEAD
     model_config = MapStarspaceModelConfig(
         opt_file=os.path.join(
             LIGHT_PATH, "light/registry/models/config/baseline_starspace.opt"
@@ -75,6 +87,13 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
     pool.register_model(model_config, [ModelTypeName.CONNECTIONS])
 =======
     model_config = MapStarspaceModelConfig(opt_file=os.path.join(LIGHT_PATH, "/light/registry/models/config/baseline_starspace.opt"))
+=======
+    model_config = MapStarspaceModelConfig(
+        opt_file=os.path.join(
+            LIGHT_PATH, "/light/registry/models/config/baseline_starspace.opt"
+        )
+    )
+>>>>>>> 14ae0c63 (black)
     pool.register_model(model_config, [ModelTypeName.MAP_CONNECTIONS])
 >>>>>>> 4d43e4c1 (light path)
     builder_config = OneRoomChatBuilderConfig(model_loader_config=model_config)
