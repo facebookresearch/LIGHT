@@ -22,6 +22,8 @@ import inspect
 import os
 import asyncio
 import hydra
+import random
+import time
 from dataclasses import dataclass, field
 from omegaconf import MISSING
 
@@ -45,6 +47,11 @@ HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 DEFAULT_PORT = 35494
 DEFAULT_HOSTNAME = "localhost"
 
+MAP_DIR = os.path.expanduser("~/LIGHT/scripts/examples/prod_maps")
+MAPS = [os.path.join(MAP_DIR, m) for m in os.listdir(MAP_DIR)]
+random.shuffle(MAPS)
+print(f"Loading maps from: {MAPS}")
+
 
 @dataclass
 class WorldServerConfig(ScriptConfig):
@@ -52,7 +59,9 @@ class WorldServerConfig(ScriptConfig):
         default_factory=lambda: ["_self_", {"deploy": "local_no_models"}]
     )
     builder: GraphBuilderConfig = MapJsonBuilderConfig(
-        load_map=os.path.expanduser("~/LIGHT/scripts/examples/complex_world.json")
+        load_map=MAPS[int(time.time()) % len(MAPS)],
+        # load_map=os.path.expanduser("~/LIGHT/scripts/examples/complex_world.json")
+        # load_map=os.path.expanduser("~/LIGHT/scripts/examples/three_dwarves.json")
     )
     tutorial_builder: Optional[GraphBuilderConfig] = TutorialBuilderConfig(load_map="")
     safety_classifier_path: str = field(

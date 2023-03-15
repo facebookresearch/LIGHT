@@ -167,6 +167,7 @@ export function useWSDataSource(url) {
               prefix: action.actor.name_prefix,
               xp: action.actor.xp,
               giftXp: action.actor.reward_xp,
+              emoji: action.actor.emoji,
             });
           }
           const neighbors = getNeighbors(action);
@@ -202,8 +203,9 @@ export function useWSDataSource(url) {
   const submitMessage = useCallback(
     (txt) => {
       let event_id = uuidv4();
+      let isSaying = txt[0]==='"'
       appendMessage({
-        caller: "say",
+        caller: isSaying ? "SayEvent": "EmoteEvent" ,
         text: txt,
         event_id: event_id,
         is_self: true,

@@ -58,6 +58,12 @@ SCRIPTED_RESPONSES = {
         "can chat! I warn you though, out here my mind may wander... "
         "Be sure to ask for help if you need it."
     ),
+    ("help",): (
+        "To be honest, I'm not as helpful as I wish I was. It's hard for me "
+        "to keep track of everything going on around here... You can get "
+        "some help for commands with 'help', after toggling your input to "
+        "help mode by either clicking it or the '`' key."
+    ),
     ("boots", "boot"): (
         "While you're just a soul in here, it's worthwhile to have some footwear. "
         "Take a look at those boots, they're perfectly suited for you."

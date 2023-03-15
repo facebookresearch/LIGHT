@@ -593,7 +593,7 @@ class GraphAgent(GraphNode):
         self.usually_npc = self._props.get("usually_npc", False)
         self.pacifist = self._props.get("pacifist", False)
         self.tags = self._props.get("tags", self.DEFAULT_TAGS)
-        self.emoji = self._props.get("emoji")
+        self.emoji = self._props.get("emoji", None)
 
         self.following = None
         self.followed_by = {}

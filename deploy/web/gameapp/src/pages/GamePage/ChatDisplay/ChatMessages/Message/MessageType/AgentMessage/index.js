@@ -38,7 +38,6 @@ import {
 import { ChatBubble } from "../../../../../../../components/ChatBubble";
 import GiftStar from "../../../../../../../components/Stars/GiftStar";
 
-
 //handleReward - sends award exp to owner of message and message id to backend
 function handleReward(messageId, messageOwner) {
   let base_url = window.location.protocol + "//" + CONFIG.hostname;
@@ -98,8 +97,8 @@ const AgentMessage = ({
     (state) => state.sessionSpentGiftXp.value
   );
   /* ------ LOCAL STATE ------ */
-  const [formattedText, setFormattedText] = useState("")
-  const [messageAction, setMessageAction] = useState("default")
+  const [formattedText, setFormattedText] = useState("");
+  const [messageAction, setMessageAction] = useState("default");
   const [isEditMode, setEditMode] = useState(false);
   const [isReporting, setIsReporting] = useState(false);
   const [isReported, setIsReported] = useState(false);
@@ -153,24 +152,32 @@ const AgentMessage = ({
   /*  LIFE CYCLE */
   useEffect(() => {
     let updatedMessage = text;
-    console.log("CALLER:  ", caller)
-    if(caller==="SayEvent"){
-      setMessageAction("theySay")
-      let saidIndex = updatedMessage.indexOf("said")
-      if(saidIndex>0){
-        updatedMessage = updatedMessage.slice(saidIndex+4);
+    console.log("CALLER:  ", caller);
+    if (caller === "SayEvent") {
+      setMessageAction("theySay");
+      let saidIndex = updatedMessage.indexOf("said");
+      if (saidIndex > 0) {
+        updatedMessage = updatedMessage.slice(saidIndex + 4);
       }
-      updatedMessage = updatedMessage.slice(2, updatedMessage.length-1)
+      updatedMessage = updatedMessage.slice(2, updatedMessage.length - 1);
     }
-    if(caller==="TellEvent"){
-      setMessageAction("theyTell")
-      let toldIndex = updatedMessage.indexOf("told you")
-      updatedMessage = updatedMessage.slice(toldIndex+8, updatedMessage.length-1)
+    if (caller === "TellEvent") {
+      setMessageAction("theyTell");
+      let toldIndex = updatedMessage.indexOf("told you");
+      updatedMessage = updatedMessage.slice(
+        toldIndex + 10,
+        updatedMessage.length - 1
+      );
+      console.log(updatedMessage);
     }
-    if(caller==="EmoteEvent" || caller==="ArriveEvent"){
-      setMessageAction("theyDo")
+    if (
+      caller === "EmoteEvent" ||
+      caller === "ArriveEvent" ||
+      caller === "LeaveEvent"
+    ) {
+      setMessageAction("theyDo");
     }
-    setFormattedText(updatedMessage)
+    setFormattedText(updatedMessage);
   }, [text]);
 
   useEffect(() => {
@@ -190,43 +197,55 @@ const AgentMessage = ({
   }, [isReporting]);
 
   return (
-
-      <div
-        className={`_agent-message-row_ flex w-full mb-4 
+    <div
+      className={`_agent-message-row_ flex w-full mb-4
         ${inHelpMode ? "active" : ""}`}
-        onClick={onClickFunction}
-      >
-        <div className="_agent-message-container_ flex flex-col max-w-[80%]">
+      onClick={onClickFunction}
+    >
+      <div className="_agent-message-container_ flex flex-col max-w-[80%]">
         <div className="_chatbubble-container_ flex flex-row">
-          <ChatBubble align="left" actor={actor.toUpperCase()} action={messageAction}>
+          <ChatBubble
+            align="left"
+            actor={actor.toUpperCase()}
+            action={messageAction}
+          >
             <div className="_agent-message-content_ w-full flex flex-col">
-              {messageAction==="theyTell "?
-                  <p className="text-left text-white font-bold italic opacity-50 truncate text-xs mt-1" >Told to you</p>
-                  :null
-              }
-            <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
-              <p className={`_agent-message-bubble-text_ w-full  mb-2 break-words ${messageAction=== "theySay" ? "text-black" : "text-white"}`}>{formattedText}</p>
-              {isLiked ? (
-            <>
-              <GiftStar 
-                giftXp={giftXp}
-                isLiked={isLiked}
-                isStarred={isStarred}
-                onClick={starHandler}
-              />
-            </>
-          ) : null}
-            </div>
+              <div className="_agent-message-text-container_ flex flex-row justify-between items-between">
+                <p
+                  className={`_agent-message-bubble-text_ w-full ${
+                    formattedText.length < 10 ? "text-center" : "text-left"
+                  }  mb-2 break-words text-black`}
+                >
+                  {formattedText}
+                </p>
+                {isLiked ? (
+                  <>
+                    <GiftStar
+                      giftXp={giftXp}
+                      isLiked={isLiked}
+                      isStarred={isStarred}
+                      onClick={starHandler}
+                    />
+                  </>
+                ) : null}
+              </div>
               {isReported ? (
                 <span className="text-red-400">
                   This Message Has been reported
                 </span>
               ) : null}
               <div className="_agent-message-content-footer_ flex flex-row w-full justify-between items-center">
-                <RiReplyFill
-                  className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
-                  onClick={() => onReply(actor)}
-                />
+                <div className="flex flex-row justify-center items-center">
+                  <RiReplyFill
+                    className="_agent-message-reply-icon_ cursor-pointer hover:text-info"
+                    onClick={() => onReply(actor)}
+                  />
+                  {messageAction === "theyTell" ? (
+                    <p className="text-left text-gray-600 font-bold italic opacity-50 text-xs mt-1">
+                      Told to you
+                    </p>
+                  ) : null}
+                </div>
                 <div className="_agent-message-rating-icons_ flex flex-row justify-center items-center">
                   {isDisliked ? null : (
                     <Tooltip
@@ -272,44 +291,58 @@ const AgentMessage = ({
               </div>
             </div>
           </ChatBubble>
-          {
-            (messageAction === "theySay" ||  messageAction === "theyTell")?
-          <div className="_quote-container_ relative  w-[1px] h-full">
-            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyTell" ? "text-info": messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[30px] -top-[16px] z-38`} />
-            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40" />
-            <RiSingleQuotesR size={38} className={`_quote-icon-stroke_ absolute ${messageAction === "theyTell" ? "text-info": messageAction === "theyDo" ? "text-red-100" : "text-white"} -left-[20px] -top-[16px] z-38`} />
-            <RiSingleQuotesR size={34} className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40" />
-          </div> :
-            null
-          }
-          </div>
-          <div className="w-full flex justify-start items-start">
-            {isLiked && !isStarred ? (
-              giftXp > 0 ? (
-                <div
-                  className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
-                  onClick={starHandler}
-                >
-                  Would you like to award this message a star?
-                </div>
-              ) : (
-                <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
-                  Earn gift experience by roleplaying to be able to award stars
-                </div>
-              )
-            ) : null}
-            {isDisliked && !isReported ? (
+          {messageAction === "theySay" || messageAction === "theyTell" ? (
+            <div className="_quote-container_ relative  w-[1px] h-full">
+              <RiSingleQuotesR
+                size={38}
+                className={`_quote-icon-stroke_ absolute ${
+                  messageAction === "theyDo" ? "text-red-100" : "text-white"
+                } -left-[30px] -top-[16px] z-38`}
+              />
+              <RiSingleQuotesR
+                size={34}
+                className="_quote-icon_ absolute text-black -left-[28px] -top-[14px] z-40"
+              />
+              <RiSingleQuotesR
+                size={38}
+                className={`_quote-icon-stroke_ absolute ${
+                  messageAction === "theyDo" ? "text-red-100" : "text-white"
+                } -left-[20px] -top-[16px] z-38`}
+              />
+              <RiSingleQuotesR
+                size={34}
+                className="_quote-icon_ absolute text-black -left-[18px] -top-[14px] z-40"
+              />
+            </div>
+          ) : null}
+        </div>
+        <div className="w-full flex justify-start items-start">
+          {isLiked && !isStarred ? (
+            giftXp > 0 ? (
               <div
-                className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"
-                onClick={reportingHandler}
+                className="text-right text-yellow-500 break-words text-sm mt-1 cursor-pointer"
+                onClick={starHandler}
               >
-                <BsFillFlagFill className="inline-block mr-2" />
-                <span className="inline-block">Report this message</span>
+                Would you like to award this message a star?
               </div>
-            ) : null}
-          </div>
+            ) : (
+              <div className="text-right text-base-200 opacity-50 break-words text-sm mt-1">
+                Earn gift experience by roleplaying to be able to award stars
+              </div>
+            )
+          ) : null}
+          {isDisliked && !isReported ? (
+            <div
+              className="text-right text-red-500 break-words text-sm mt-1 cursor-pointer"
+              onClick={reportingHandler}
+            >
+              <BsFillFlagFill className="inline-block mr-2" />
+              <span className="inline-block">Report this message</span>
+            </div>
+          ) : null}
         </div>
       </div>
+    </div>
   );
 };
 export default AgentMessage;
