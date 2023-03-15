@@ -6,3 +6,4 @@
 
 DATASET_NAME = "light_multiparty"
 START_TOKEN = "__START__"
+SILENCE_TOKEN = '__SILENCE__'
