@@ -812,13 +812,16 @@ class World(object):
 
         try:
             return await self.parse_exec_internal(actor, inst=inst, event_id=event_id)
-        except Exception:
+        except Exception as e:
             import traceback
 
             traceback.print_exc()
             self.send_msg(
                 actor, "Strange magic is afoot. This failed for some reason..."
             )
+            with open('/home/ubuntu/light_errors.txt', 'a') as logfile:
+                logfile.write(str(e))
+                logfile.write(traceback.format_exc())
             return False, "FailedParseExec"
 
     async def attempt_parse_event(
@@ -861,6 +864,7 @@ class World(object):
         self, actor, inst=None, event_id: Optional[str] = None
     ):
         """Try to parse and execute the given event"""
+        orig_inst = inst
         # basic replacements
         inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
@@ -870,6 +874,7 @@ class World(object):
             "s": "go south",
             "ex self": "inv",
             "examine self": "inv",
+            "go to": "go",
         }
         if inst in parse_shortcuts:
             inst = parse_shortcuts[inst]
@@ -953,6 +958,7 @@ class World(object):
         parsed_event = await self.attempt_parse_event(
             EventClass, actor, arguments, event_id
         )
+        parsed_event.set_entered_text(orig_inst)
         if isinstance(parsed_event, ErrorEvent):
             self.broadcast_to_agents(parsed_event, [actor])
             return False, inst

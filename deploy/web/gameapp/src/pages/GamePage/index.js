@@ -221,12 +221,13 @@ const Chat = ({
     /* ----SESSION INFO---- */
     /* SESSION XP */
     let sessionXpUpdate = 0;
+    let totalXp = -1;
     messages.map((message) => {
       if(message.caller === "SoulSpawnEvent"){
         let {actor}= message;
         let initialXp = actor.xp;
-        if(initialXp >0){
-          sessionXpUpdate += initialXp;
+        if(totalXp == -1){
+          totalXp = initialXp;
         }
       }
       else if (message.is_self && message.xp > 0 || message.questComplete)  {
@@ -236,7 +237,7 @@ const Chat = ({
       }
     });
     console.log("SESSION XP UPDATES:  ", sessionXpUpdate)
-    let newSessionXp = sessionXpUpdate - sessionXp;
+    let newSessionXp = sessionXpUpdate;
     console.log("newSessionXp:  ", sessionXpUpdate)
     let newGiftXp = newSessionXp / 4;
     if (newSessionXp > 0) {
@@ -248,15 +249,12 @@ const Chat = ({
       let updatedSessionGiftXpEarned = sessionEarnedGiftXp + newGiftXp;
       dispatch(updateSessionEarnedGiftXp(updatedSessionGiftXpEarned));
     }
+    /* Total XP */
+    totalXp += sessionXpUpdate;
+    dispatch(updateXp(totalXp))
   }, [messages]);
 
   /* UPDATE PLAYER XP */
-  useEffect(() => {
-
-      let updatedXP = sessionXp;
-      console.log("TOTAL XP:  ", updatedXP)
-      dispatch(updateXp(updatedXP));
-  }, [sessionXp]);
 
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {

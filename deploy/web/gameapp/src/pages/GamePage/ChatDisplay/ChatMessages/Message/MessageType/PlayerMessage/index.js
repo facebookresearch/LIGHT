@@ -46,7 +46,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
     if (firstTextCharacter === '"' && lastTextCharacter === '"') {
       setAction("say");
       formattedText = text.slice(1,text.length-1)
-      if(updatedMessageXp){
+      if(updatedMessageXp >= 2){
         updatedMessageXp = updatedMessageXp-1;
       }else {
         updatedMessageXp =1;
@@ -62,7 +62,7 @@ const PlayerMessage = ({ isSelected, text, caller, actor, xp, onClickFunction })
     setFormattedMessage(formattedText);
     setMessageXp(updatedMessageXp)
     setTellTarget(formattedTellTarget);
-  }, [text]);
+  }, [text, xp]);
 
   /*---------------HANDLERS----------------*/
   const clickHandler = ()=>{

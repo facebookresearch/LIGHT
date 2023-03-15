@@ -156,10 +156,12 @@ class ActionParser:
         txts = txt.strip().split()
         new_txts = []
         postprocess_blacklist = ["the", "a", "an"]
-        for t in txts:
-            if t not in postprocess_blacklist:
+        for idx, t in enumerate(txts):
+            if t not in postprocess_blacklist or idx > 4:
                 new_txts.append(t)
         new_txt = " ".join(new_txts)
+        for (val_old, val_new) in [("go to ", "go "), ("to the ", "to "), ("from the ", "from "), ("to a ", "to "), ("from a ", "from "), ("with the ", "with "), ("with a ", "with ")]:
+            new_txt = new_txt.replace(val_old, val_new)
 
         if new_txts[0] == "use" and "with" not in new_txts and actor is not None:
             # If no 'with' argument to 'use' is given, it is assumed to 'use' with yourself.

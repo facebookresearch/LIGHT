@@ -307,7 +307,6 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.alive_sent = True
 
     async def on_message(self, message):
-        logging.info("from web client: {}".format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
         cmd = msg.get("command")
         if self.player is None:
@@ -317,8 +316,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             await self.player.act(data["text"], data["event_id"])
         elif cmd == "hb":
             pass  # heartbeats
+            return
         else:
             logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {msg}")
+        logging.info("from web client: {}".format(message))
 
     def on_close(self):
         self.alive = False
