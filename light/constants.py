@@ -6,9 +6,10 @@
 
 import os
 
-LIGHT_DATAPATH = os.path.join(
-    os.path.abspath(os.path.dirname(os.path.dirname(__file__))), "data"
-)
+LIGHT_PATH = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+LIGHT_DATAPATH = os.path.join(LIGHT_PATH , "data")
+
+breakpoint()
 
 
 def _parlai_dir():
