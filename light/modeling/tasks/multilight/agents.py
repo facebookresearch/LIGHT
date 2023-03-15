@@ -8,19 +8,18 @@
 from abc import ABC, abstractclassmethod
 import copy
 import jsonlines
-from typing import Dict, Optional, Tuple
 import random
 import os
+from typing import Dict, Optional, Tuple
 
 from parlai.core.message import Message
 from parlai.core.metrics import ExactMatchMetric, F1Metric
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.loader import register_teacher
 from parlai.core.teachers import DialogTeacher
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric
-from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
-import parlai.utils.logging as logging
 
 from light.modeling.tasks.multilight.build import build
 from light.modeling.tasks.multilight import constants
