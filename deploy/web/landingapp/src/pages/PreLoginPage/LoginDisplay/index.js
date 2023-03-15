@@ -14,8 +14,6 @@ import { Tooltip } from "react-tippy";
 /* CONFIG */
 import CONFIG from "../../../config";
 
-
-
 //LoginDisplay - renders Login agreement and login button
 const LoginDisplay = () => {
   /*--------------- LOCAL STATE ----------------*/
@@ -27,18 +25,19 @@ const LoginDisplay = () => {
     setLegalAgreement(updateAgreement);
   };
   //HANDLERS
-  const loginSubmissionHandler = (event)=>{
+  const loginSubmissionHandler = (event) => {
     event.preventDefault();
     const nextLoc = new URLSearchParams(window.location.search).get("next");
-    let targetStr = null
+    let targetStr = null;
     if (CONFIG.login == "fb") {
-      targetStr = "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "")
+      targetStr =
+        "/auth/fblogin" + (nextLoc !== null ? "?next=" + nextLoc : "");
     } else {
       targetStr = "/login";
     }
-    console.log("TARGET STRING:  ", targetStr)
+    console.log("TARGET STRING:  ", targetStr);
     window.location.href = targetStr;
-    };
+  };
 
   return (
     <div className=" flex-col font-mono w-full overflow-y-scroll justify-center items-center h-full flex ">
