@@ -20,7 +20,6 @@ const MobileDrawer = ({
   closeDrawerFunction,
   children,
 }) => {
-
   /*--------------- HANDLERS ----------------*/
   return (
     <>

@@ -20,7 +20,15 @@ import CONFIG from "../../../config.js";
 /* COPY */
 import GameCopy from "../../../GameCopy";
 //Report Dropdown categories
-const {reportCategories} = GameCopy
+const { reportCategories } = GameCopy;
+
+import { Button } from "daisyui";
+
+const ReportCategories = [
+  "Report Inappropriate Content",
+  "Report Bug",
+  "Other",
+];
 
 //ReportMessageForm - Modal that allows users to specifically describe and report content for a variety of reasons.
 const ReportMessageForm = () => {
@@ -156,7 +164,7 @@ const ReportMessageForm = () => {
                         <option value={""} id={""}>
                           Select...
                         </option>
-                        {reportCategories.map((category, index) => (
+                        {ReportCategories.map((category, index) => (
                           <option key={category} id={index} value={category}>
                             {category}
                           </option>

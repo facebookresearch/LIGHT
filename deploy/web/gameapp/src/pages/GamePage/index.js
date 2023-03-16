@@ -40,7 +40,7 @@ import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 /* CONFIG */
 import CONFIG from "../../config.js";
 /*  */
-const idlenessTimoutTime = 300
+const idlenessTimoutTime = 300;
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
@@ -87,20 +87,22 @@ const ConnectedApp = () => {
     markPlayerAsIdle,
     isIdle,
   } = useWSDataSource(wsUrl);
-//ERROR PAGE
+  //ERROR PAGE
   if (isErrored && !isIdle)
     return (
       <div className="_connectionerror-container_ h-screen w-screen flex justify-center items-center">
         <div className="_connectionerror-text-container_  justify-center items-center">
-          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">Could not connect to the server</h1>
+          <h1 className="_connectionerror-text_ text_ text-white text-center text-2xl">
+            Could not connect to the server
+          </h1>
         </div>
       </div>
     );
-//LOADING PAGE
+  //LOADING PAGE
   if (messages.length === 0) {
     return <LoadingPage isFull={isFull} />;
   }
-//GAME PAGE
+  //GAME PAGE
   return (
     <Chat
       messages={messages}
@@ -161,7 +163,7 @@ const Chat = ({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   //COMMAND HELP BUTTON
   const [showCommandHelp, setShowCommandHelp] = useState(false);
-  
+
   const scrollToBottom = useCallback(
     () =>
       setTimeout(() => {
@@ -194,13 +196,13 @@ const Chat = ({
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
-      console.log("PERSONA XP:  ", updatedXp)
+      console.log("PERSONA XP:  ", updatedXp);
       /* ----PLAYER INFO---- */
       dispatch(updatePersona(persona));
       dispatch(updateGiftXp(updatedGiftXp));
-      let defaultEmoji = "\u2753"
+      let defaultEmoji = "\u2753";
       if (persona === null || persona.name === null) return;
-      let characterEmoji = persona.emoji || defaultEmoji
+      let characterEmoji = persona.emoji || defaultEmoji;
       selectEmoji(characterEmoji);
       /* ---- INSTRUCTION MODAL---- */
       if (updatedXp <= 10) {
@@ -208,47 +210,42 @@ const Chat = ({
       }
     }
   }, [persona]);
-  
+
   useEffect(() => {
     /* ----SESSION INFO---- */
     /* SESSION XP */
     let sessionXpUpdate = 0;
+    let totalXp = -1;
     messages.map((message) => {
-      if(message.caller === "SoulSpawnEvent"){
-        let {actor}= message;
+      if (message.caller === "SoulSpawnEvent") {
+        let { actor } = message;
         let initialXp = actor.xp;
-        if(initialXp >0){
-          sessionXpUpdate += initialXp;
+        if (totalXp == -1) {
+          totalXp = initialXp;
         }
-      }
-      else if (message.is_self && message.xp > 0 || message.questComplete)  {
+      } else if ((message.is_self && message.xp > 0) || message.questComplete) {
         sessionXpUpdate += message.xp;
-      }else if (message.is_self && message.caller=== "SayEvent") {
+      } else if (message.is_self && message.caller === "SayEvent") {
         sessionXpUpdate += 1;
       }
     });
-    console.log("SESSION XP UPDATES:  ", sessionXpUpdate)
-    let newSessionXp = sessionXpUpdate - sessionXp;
-    console.log("newSessionXp:  ", sessionXpUpdate)
+    console.log("SESSION XP UPDATES:  ", sessionXpUpdate);
+    let newSessionXp = sessionXpUpdate;
+    console.log("newSessionXp:  ", sessionXpUpdate);
     let newGiftXp = newSessionXp / 4;
     if (newSessionXp > 0) {
       let updatedSessionXp = sessionXpUpdate;
-      console.log("updatedSessionXp:  ", updatedSessionXp)
+      console.log("updatedSessionXp:  ", updatedSessionXp);
       dispatch(updateSessionXp(updatedSessionXp));
     }
     if (newGiftXp >= 1) {
       let updatedSessionGiftXpEarned = sessionEarnedGiftXp + newGiftXp;
       dispatch(updateSessionEarnedGiftXp(updatedSessionGiftXpEarned));
     }
+    /* Total XP */
+    totalXp += sessionXpUpdate;
+    dispatch(updateXp(totalXp));
   }, [messages]);
-
-  /* UPDATE PLAYER XP */
-  useEffect(() => {
-
-      let updatedXP = sessionXp;
-      console.log("TOTAL XP:  ", updatedXP)
-      dispatch(updateXp(updatedXP));
-  }, [sessionXp]);
 
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
@@ -285,14 +282,11 @@ const Chat = ({
     return () => clearInterval(timer);
   }, [idleTime]);
 
-
-  // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
-
   /* EMOJI */
   useEffect(() => {
-    let defaultEmoji = "\u2753"
+    let defaultEmoji = "\u2753";
     if (persona === null || persona.name === null) return;
-    let characterEmoji = persona.emoji || defaultEmoji
+    let characterEmoji = persona.emoji || defaultEmoji;
     selectEmoji(characterEmoji);
   }, [persona]);
 
@@ -306,20 +300,22 @@ const Chat = ({
   /* -----LIFE CYCLE END---- */
 
   /* ----HANDLERS---- */
-  const commandHelpButtonClickHandler = ()=>{
+  const commandHelpButtonClickHandler = () => {
     let updatedShowCommandHelp = !showCommandHelp;
     setShowCommandHelp(updatedShowCommandHelp);
-  }
+  };
 
   return (
-    <div
-      className="_game-page_ w-screen h-screen"
-      onMouseMove={resetIdleTimer}
-    >
+    <div className="_game-page_ w-screen h-screen" onMouseMove={resetIdleTimer}>
       <div className="_gamepage-container_ w-full h-full flex flex-row ">
         <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
-            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} commandHelpButtonClickHandler={commandHelpButtonClickHandler} showCommandHelp={showCommandHelp}/>
+            <Sidebar
+              dataModelHost={dataModelHost}
+              getEntityId={getEntityId}
+              commandHelpButtonClickHandler={commandHelpButtonClickHandler}
+              showCommandHelp={showCommandHelp}
+            />
           </div>
           <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
             <MobileDrawer

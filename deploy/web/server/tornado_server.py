@@ -307,7 +307,6 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
         self.alive_sent = True
 
     async def on_message(self, message):
-        logging.info("from web client: {}".format(message))
         msg = tornado.escape.json_decode(tornado.escape.to_basestring(message))
         cmd = msg.get("command")
         if self.player is None:
@@ -317,8 +316,10 @@ class SocketHandler(tornado.websocket.WebSocketHandler):
             await self.player.act(data["text"], data["event_id"])
         elif cmd == "hb":
             pass  # heartbeats
+            return
         else:
             logging.warning(f"THESE COMMANDS HAVE BEEN DEPRICATED: {msg}")
+        logging.info("from web client: {}".format(message))
 
     def on_close(self):
         self.alive = False
@@ -694,7 +695,7 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             client_secret=self.app.settings["facebook_secret"],
             code=self.get_argument("code"),
         )
-        salted_string = fb_user["id"] + self.app.tornado_settings['facebook_asid_salt']
+        salted_string = fb_user["id"] + self.app.tornado_settings["facebook_asid_salt"]
         return hashlib.sha256(salted_string.encode("utf-8")).hexdigest()[:30]
 
     async def get(self):
@@ -709,9 +710,9 @@ class FacebookOAuth2LoginHandler(BaseHandler, tornado.auth.FacebookGraphMixin):
             )
             self.set_current_user(user_id)
             player = self.user_db.get_player(user_id)
-            default_next = 'play'
+            default_next = "play"
             if (player.account_status) == PlayerStatus.INTRO:
-                default_next = 'intro'
+                default_next = "intro"
             next = self.get_argument("next", default_next)
             self.redirect("/" + next)
             return
@@ -761,9 +762,9 @@ class LoginHandler(BaseHandler):
             user_id = self.user_db.create_user(extern_id=name, is_preauth=False)
             self.set_current_user(user_id)
             player = self.user_db.get_player(user_id)
-            default_next = 'play'
+            default_next = "play"
             if (player.account_status) == PlayerStatus.INTRO:
-                default_next = 'intro'
+                default_next = "intro"
             next = self.get_argument("next", default_next)
             self.redirect("/" + next)
         else:
@@ -819,9 +820,12 @@ class LegalSubmitHandler(BaseHandler):
         user_id = self.get_current_user()
         assert user_id is not None, "Can only submit legal with logged in user"
         player = self.user_db.get_player(user_id)
-        assert player.account_status == PlayerStatus.INTRO, "Must be in intro to submit legal"
+        assert (
+            player.account_status == PlayerStatus.INTRO
+        ), "Must be in intro to submit legal"
         self.user_db.update_player_status(user_id, PlayerStatus.TUTORIAL)
         self.write(json.dumps({"data": "Something"}))
+
 
 class ReportHandler(BaseHandler):
     def post(self):

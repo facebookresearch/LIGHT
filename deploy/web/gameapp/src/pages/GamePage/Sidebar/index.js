@@ -9,9 +9,7 @@ import React, { useState } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { updateEmoji } from "../../../features/playerInfo/emoji-slice";
-import {
-  updateSelectedTip,
-} from "../../../features/tutorials/tutorials-slice";
+import { updateSelectedTip } from "../../../features/tutorials/tutorials-slice";
 /* TOOLTIPS */
 import { Tooltip } from "react-tippy";
 /* EMOJI PICKER AND LIBRARIES */
@@ -26,8 +24,15 @@ import IconCollapsibleBox from "../../../components/IconCollapsibleBox";
 import TutorialPopover from "../../../components/TutorialPopover";
 
 //SiderBar - renders Sidebar for application container player, location, mission, and character info as well as xp, giftxp, and progress
-const SideBar = ({ dataModelHost, getEntityId, commandHelpButtonClickHandler, showCommandHelp, showDrawer }) => {
+const SideBar = ({
+  dataModelHost,
+  getEntityId,
+  commandHelpButtonClickHandler,
+  showCommandHelp,
+  showDrawer,
+}) => {
   /* LOCAL STATE */
+  //
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   /* ----REDUX STATE---- */
   //PERSONA
@@ -55,8 +60,15 @@ const SideBar = ({ dataModelHost, getEntityId, commandHelpButtonClickHandler, sh
     <div className="__sidebar__  h-full">
       <SideBarHeader />
       <div className="__sidebar-button-box__ w-full flex flex-row justify-end items-center pr-2">
-        <div className={`__command-help-button__ bg-accent p-1 rounded cursor-pointer drop-shadow-md`} onClick={commandHelpButtonClickHandler}>
-          <p className={`__command-help-button-text__ ${showCommandHelp ? "active" : ""} text-white font-bold font-xs`}>
+        <div
+          className={`__command-help-button__ bg-accent p-1 rounded cursor-pointer drop-shadow-md`}
+          onClick={commandHelpButtonClickHandler}
+        >
+          <p
+            className={`__command-help-button-text__ ${
+              showCommandHelp ? "active" : ""
+            } text-white font-bold font-xs`}
+          >
             COMMAND HELP
           </p>
         </div>
