@@ -6,9 +6,9 @@
 
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
 from light.data_model.db.users import DBPlayer
-from omegaconf import MISSING, DictConfig
+from omegaconf import MISSING, DictConfig  # type: ignore
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
-from sqlalchemy import (
+from sqlalchemy import (  # type: ignore
     insert,
     select,
     Enum,
@@ -19,7 +19,7 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session
+from sqlalchemy.orm import declarative_base, relationship, Session  # type: ignore
 from light.graph.events.base import GraphEvent
 import time
 import enum
@@ -63,21 +63,25 @@ class DBEpisode(HasDBIDMixin, SQLBase):
 
     ID_PREFIX = "EPI"
 
-    id = Column(String(ID_STRING_LENGTH), primary_key=True)
+    id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type:ignore
     group = Column(Enum(DBGroupName), nullable=False, index=True)
     split = Column(Enum(DBSplitType), nullable=False, index=True)
     status = Column(Enum(DBStatus), nullable=False, index=True)
     actors = Column(
         String
     )  # Comma separated list of actor IDs. Cleared on release data
-    dump_file_path = Column(String(90), nullable=False)  # Path to data
+    dump_file_path: str = Column(String(90), nullable=False)  # type:ignore Path to data
     turn_count = Column(Integer, nullable=False)
     human_count = Column(Integer, nullable=False)
     action_count = Column(Integer, nullable=False)
     timestamp = Column(Float, nullable=False)
     log_type = Column(Enum(EpisodeLogType), nullable=False)
-    first_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
-    final_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
+    first_graph_id: str = Column(
+        String(ID_STRING_LENGTH), ForeignKey("graphs.id")
+    )  # type:ignore
+    final_graph_id: str = Column(
+        String(ID_STRING_LENGTH), ForeignKey("graphs.id")
+    )  # type:ignore
 
     _cached_map = None
 
@@ -97,11 +101,13 @@ class DBEpisode(HasDBIDMixin, SQLBase):
         # Import deferred as World imports loggers which import the EpisodeDB
         from light.world.world import World, WorldConfig
 
-        events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
+        events: List[Dict[str, str]] = db.read_data_from_file(
+            self.dump_file_path, json_encoded=True
+        )[
             "events"
-        ]
+        ]  # type: ignore
         graph_grouped_events: List[Tuple[str, List["GraphEvent"]]] = []
-        current_graph_events = None
+        current_graph_events = []
         curr_graph_key = None
         curr_graph = None
         tmp_world = None
@@ -110,7 +116,7 @@ class DBEpisode(HasDBIDMixin, SQLBase):
         for event_turn in events:
             # See if we've moved onto an event in a new graph
             if event_turn["graph_key"] != curr_graph_key:
-                if current_graph_events is not None:
+                if curr_graph_key is not None:
                     # There was old state, so lets push it to the list
                     graph_grouped_events.append((curr_graph_key, current_graph_events))
                 # We're on a new graph, have to reset the current graph state
@@ -120,10 +126,14 @@ class DBEpisode(HasDBIDMixin, SQLBase):
                 tmp_world = World(WorldConfig())
                 tmp_world.oo_graph = curr_graph
             # The current turn is part of the current graph's events, add
+            assert tmp_world is not None, "Must have created a world by here"
             current_graph_events.append(
                 GraphEvent.from_json(event_turn["event_json"], tmp_world)
             )
         if current_graph_events is not None:
+            assert (
+                curr_graph_key is not None
+            ), "Should not already have events without key"
             # Push the last graph's events, which weren't yet added
             graph_grouped_events.append((curr_graph_key, current_graph_events))
         return graph_grouped_events
@@ -162,11 +172,11 @@ class DBEpisodeGraph(HasDBIDMixin, SQLBase):
 
     ID_PREFIX = "EPG"
 
-    id = Column(String(ID_STRING_LENGTH), primary_key=True)
+    id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
     episode_id = Column(
         String(ID_STRING_LENGTH), ForeignKey("episodes.id"), nullable=False, index=True
     )
-    full_path = Column(String(80), nullable=False)
+    full_path: str = Column(String(80), nullable=False)  # type: ignore
     graph_key_id = Column(String(60), nullable=False, index=True)
     episode = relationship("DBEpisode", backref="graphs", foreign_keys=[episode_id])
 
@@ -175,6 +185,7 @@ class DBEpisodeGraph(HasDBIDMixin, SQLBase):
         from light.graph.structured_graph import OOGraph
 
         graph_json = db.read_data_from_file(self.full_path)
+        assert isinstance(graph_json, str)
         graph = OOGraph.from_json(graph_json)
         return graph
 
@@ -333,6 +344,7 @@ class EpisodeDB(BaseDB):
                 log_type=log_type,
             )
             first_graph = None
+            db_graph = None
             for idx, graph_info in enumerate(graphs):
                 graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
                 db_graph = DBEpisodeGraph(
@@ -343,6 +355,8 @@ class EpisodeDB(BaseDB):
                 if idx == 0:
                     first_graph = db_graph
                 episode.graphs.append(db_graph)
+
+            assert first_graph is not None and db_graph is not None
             session.add(episode)
             session.flush()
             episode.first_graph_id = first_graph.id
@@ -446,9 +460,11 @@ class EpisodeDB(BaseDB):
                 graphs = episode.graphs
                 for graph in graphs:
                     graph_data = self.read_data_from_file(graph.full_path)
+                    assert isinstance(graph_data, str)
                     anon_graph_data = replace_all_actors(graph_data)
                     self.write_data_to_file(anon_graph_data, graph.full_path)
                 event_data = self.read_data_from_file(episode.dump_file_path)
+                assert isinstance(event_data, str)
                 anon_event_data = replace_all_actors(event_data)
                 self.write_data_to_file(anon_event_data, episode.dump_file_path)
                 session.commit()
@@ -471,7 +487,7 @@ class EpisodeDB(BaseDB):
                     if len(all_data) == 0:
                         continue
                     new_conn.execute(table_obj.insert().values(all_data))
-                    new_conn.commit()
+                    new_conn.commit()  # type: ignore
 
         with Session(self.engine) as session:
             stmt = select(DBEpisode)
