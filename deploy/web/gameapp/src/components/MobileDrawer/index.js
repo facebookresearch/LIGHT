@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React from "react";
 /* IMAGES */
 //APP BACKGROUND IMAGE
 import StarryNight from "../../assets/images/light_starry_bg.jpg";
@@ -20,9 +20,6 @@ const MobileDrawer = ({
   closeDrawerFunction,
   children,
 }) => {
-  /*--------------- LOCAL STATE ----------------*/
-  /*--------------- LIFECYLCLE ----------------*/
-
   /*--------------- HANDLERS ----------------*/
   return (
     <>
@@ -30,7 +27,7 @@ const MobileDrawer = ({
         style={{
           backgroundImage: `linear-gradient(to bottom, #0f0c2999, #302b63aa, #24243ecc), url(${StarryNight})`,
         }}
-        className={`_mobiledrawer-container_ fixed w-full top-0 left-0 overflow-scroll z-10 bg-gray-900 bg-opacity-25 inset-0
+        className={`_mobiledrawer-container_ fixed w-full top-0 left-0 overflow-scroll z-50 bg-gray-900 bg-opacity-25 inset-0
             ${
               isDrawerOpen ? "translate-x-0" : "-translate-x-full"
             } ease-in-out duration-300`}

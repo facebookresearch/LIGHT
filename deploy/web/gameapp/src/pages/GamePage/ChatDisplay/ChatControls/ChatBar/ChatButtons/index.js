@@ -112,20 +112,3 @@ const ChatButtons = ({
 };
 
 export default ChatButtons;
-
-{
-  /* <div className="relative ">
-<button
-  type="button"
-  className=" w-40 absolute items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
->
-  SAY
-</button>
-<button
-  type="button"
-  className=" w-40 absolute  items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-orange-600 my-3 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
->
-  DO
-</button>
-</div> */
-}

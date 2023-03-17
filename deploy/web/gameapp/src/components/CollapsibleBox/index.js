@@ -7,8 +7,7 @@
 /* REACT */
 import React, { useState } from "react";
 /* REDUX */
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { updateSelectedTip } from "../../features/tutorials/tutorials-slice";
+import { useAppSelector } from "../../app/hooks";
 /* ICONS */
 import { BiWindow } from "react-icons/bi";
 import { FaWindowMinimize } from "react-icons/fa";

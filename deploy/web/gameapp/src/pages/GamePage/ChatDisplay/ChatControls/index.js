@@ -19,6 +19,7 @@ const ChatControls = ({
   idle,
   resetIdleTimer,
   chatInputRef,
+  autoScrollToBottom,
 }) => {
   return (
     <div className="_chat-controls_ w-full">
@@ -31,6 +32,7 @@ const ChatControls = ({
             scrollToBottom={scrollToBottom}
             resetIdleTimer={resetIdleTimer}
             chatInputRef={chatInputRef}
+            autoScrollToBottom={autoScrollToBottom}
           />
         </>
       )}

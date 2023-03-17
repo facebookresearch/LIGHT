@@ -39,7 +39,8 @@ import ReportMessageModal from "../../components/Modals/ReportMessageModal";
 
 /* CONFIG */
 import CONFIG from "../../config.js";
-// import { Console } from "console";
+/*  */
+const idlenessTimoutTime = 300;
 
 //WEBSOCKET CONNECTION FUNCTION
 const createWebSocketUrlFromBrowserUrl = (url) => {
@@ -67,17 +68,6 @@ const createWebSocketUrlFromBrowserUrl = (url) => {
 const getDataModelAddress = () => {
   return new URL(window.location).searchParams.get("builder");
 };
-
-// TODO: consider showing different agent's dialogues in
-// different colors
-//
-// const colors = [
-//   "#edfff1", //green,
-//   "#fffded", //yellow,
-//   "#eee8ff", // purple
-//   "#e6efff", //blue
-//   "#ffe8eb" //red
-// ];
 
 //ConnectedApp - Creates socket and renders Chat Component upon successful connection to backend.
 const ConnectedApp = () => {
@@ -171,6 +161,8 @@ const Chat = ({
   const dataModelHost = getDataModelAddress();
   //MOBILE DRAWER STATE
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  //COMMAND HELP BUTTON
+  const [showCommandHelp, setShowCommandHelp] = useState(false);
 
   const scrollToBottom = useCallback(
     () =>
@@ -198,12 +190,13 @@ const Chat = ({
   const resetIdleTimer = () => {
     setIdleTime(0);
   };
-  /*  LIFE CYCLE */
+  /* -----LIFE CYCLE---- */
   /* PLAYER AND SESSION INFO UPDATES TO REDUX STORE */
   useEffect(() => {
     if (persona) {
       let updatedXp = persona.xp;
       let updatedGiftXp = persona.giftXp;
+      console.log("PERSONA XP:  ", updatedXp);
       /* ----PLAYER INFO---- */
       dispatch(updatePersona(persona));
       dispatch(updateGiftXp(updatedGiftXp));
@@ -211,7 +204,7 @@ const Chat = ({
       if (persona === null || persona.name === null) return;
       let characterEmoji = persona.emoji || defaultEmoji;
       selectEmoji(characterEmoji);
-      /* ---- INSTRUCTION MODAL---- !!!!!!!!!!!!!!!!!!!!!!!!!*/
+      /* ---- INSTRUCTION MODAL---- */
       if (updatedXp <= 10) {
         //NEW Tutorial triggers
       }
@@ -254,8 +247,6 @@ const Chat = ({
     dispatch(updateXp(totalXp));
   }, [messages]);
 
-  /* UPDATE PLAYER XP */
-
   //* GIFT XP UPDATES TO REDUX STORE */
   useEffect(() => {
     if (sessionEarnedGiftXp >= 1 || sessionGiftXpSpent >= 1) {
@@ -282,7 +273,7 @@ const Chat = ({
     timer = setInterval(() => {
       setIdleTime((idleTime) => idleTime + 1);
     }, 1000);
-    if (idleTime === 300) {
+    if (idleTime === idlenessTimoutTime) {
       markPlayerAsIdle();
       setIdle(true);
       clearInterval(timer);
@@ -290,11 +281,6 @@ const Chat = ({
     }
     return () => clearInterval(timer);
   }, [idleTime]);
-
-  // SCROLL TO BOTTOM UPON RECIEVING NEW MESSAGES
-  useEffect(() => {
-    scrollToBottom();
-  }, [scrollToBottom, messages]);
 
   /* EMOJI */
   useEffect(() => {
@@ -311,12 +297,25 @@ const Chat = ({
     }
   }, [sessionGiftXpSpent]);
 
+  /* -----LIFE CYCLE END---- */
+
+  /* ----HANDLERS---- */
+  const commandHelpButtonClickHandler = () => {
+    let updatedShowCommandHelp = !showCommandHelp;
+    setShowCommandHelp(updatedShowCommandHelp);
+  };
+
   return (
     <div className="_game-page_ w-screen h-screen" onMouseMove={resetIdleTimer}>
       <div className="_gamepage-container_ w-full h-full flex flex-row ">
         <div className="_game-container_ w-full flex flex-row h-screen">
           <div className="_sidebar-container_ hidden sm:hidden md:flex md:flex-1 md:relative lg:flex-1 lg:relative xl:flex-1 xl:relative 2xl:flex-1 2xl:relative">
-            <Sidebar dataModelHost={dataModelHost} getEntityId={getEntityId} />
+            <Sidebar
+              dataModelHost={dataModelHost}
+              getEntityId={getEntityId}
+              commandHelpButtonClickHandler={commandHelpButtonClickHandler}
+              showCommandHelp={showCommandHelp}
+            />
           </div>
           <div className="_sidebar-mobile-container_ flex sm:flex md:hidden lg:hidden xl:hidden 2xl:hidden">
             <MobileDrawer
@@ -327,12 +326,13 @@ const Chat = ({
               <Sidebar
                 dataModelHost={dataModelHost}
                 getEntityId={getEntityId}
+                commandHelpButtonClickHandler={commandHelpButtonClickHandler}
+                showCommandHelp={showCommandHelp}
               />
             </MobileDrawer>
           </div>
           <div className="_chat-container_ overflow-x-hidden w-full flex-1 sm:flex-1 md:grow-[3] lg:grow-[3] xl:grow-[3] 2xl:grow-[3] h-full">
             <ChatDisplay
-              scrollToBottom={scrollToBottom}
               messages={messages}
               onSubmit={onSubmit}
               persona={persona}
@@ -343,6 +343,7 @@ const Chat = ({
               idle={idle}
               resetIdleTimer={resetIdleTimer}
               chatInputRef={chatInputRef}
+              showCommandHelp={showCommandHelp}
             />
           </div>
         </div>

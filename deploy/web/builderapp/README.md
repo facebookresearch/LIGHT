@@ -22,3 +22,8 @@ This folder contains the LIGHT project's data acquisition and management system 
   - [ ] Support Objects being placed in another Object that is a container
   - [ ] Support Objects that are wearable to be placed in a character
   - [ ] Support doors?
+
+
+
+![World Builder ReadMe Diagram](https://user-images.githubusercontent.com/80718342/224455917-3fb008ff-f40c-47b5-acc1-635a1d0fdb17.png)
+
