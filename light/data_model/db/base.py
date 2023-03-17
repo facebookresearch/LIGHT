@@ -101,7 +101,7 @@ class BaseDB(ABC):
 
     DB_TYPE: str
 
-    def __init__(self, config: "DictConfig"):
+    def __init__(self, config: LightDBConfig):
         """
         Create this database, either connecting to a remote host or local
         files and instances.

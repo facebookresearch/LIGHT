@@ -4,7 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.base import (
+    BaseDB,
+    DBStatus,
+    DBSplitType,
+    HasDBIDMixin,
+    LightDBConfig,
+)
 from light.data_model.db.users import DBPlayer
 from omegaconf import MISSING, DictConfig  # type: ignore
 from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
@@ -235,7 +241,7 @@ class EpisodeDB(BaseDB):
 
     DB_TYPE = "episode"
 
-    def _complete_init(self, config: "DictConfig"):
+    def _complete_init(self, config: LightDBConfig):
         """
         Initialize any specific episode-related paths. Populate
         the list of available splits and datasets.
@@ -470,7 +476,9 @@ class EpisodeDB(BaseDB):
                 session.commit()
         return True
 
-    def export(self, config: "DictConfig") -> "EpisodeDB":
+    def export(
+        self, config: "DictConfig", group: Optional[DBGroupName] = None
+    ) -> "EpisodeDB":
         """
         Create a scrubbed version of this database for use in releases
         """
@@ -478,19 +486,31 @@ class EpisodeDB(BaseDB):
         new_db = EpisodeDB(config)
 
         # Copy all the basic content
-        for table_name, table_obj in SQLBase.metadata.tables.items():
-            with self.engine.connect() as orig_conn:
-                with new_db.engine.connect() as new_conn:
-                    all_data = [
-                        dict(row) for row in orig_conn.execute(select(table_obj.c))
-                    ]
-                    if len(all_data) == 0:
-                        continue
-                    new_conn.execute(table_obj.insert().values(all_data))
-                    new_conn.commit()  # type: ignore
+        with self.engine.connect() as orig_conn:
+            with new_db.engine.connect() as new_conn:
+                # Write the episodes
+                episode_table = SQLBase.metadata.tables["episodes"]
+                stmt = select(DBEpisode)
+                if group is not None:
+                    stmt = stmt.where(DBEpisode.group == group)
+                episodes = orig_conn.execute(stmt)
+                episode_data = [dict(r) for r in episodes]
+                episode_ids = [d["id"] for d in episode_data]
+                new_conn.execute(episode_table.insert().values(episode_data))
+                for tbl_name in ["graphs", "quest_completions", "wild_metadata"]:
+                    tbl_obj = SQLBase.metadata.tables[tbl_name]
+                    stmt = select(tbl_obj.c).where(
+                        tbl_obj.c.episode_id.in_(episode_ids)
+                    )
+                    table_data = [dict(r) for r in orig_conn.execute(stmt)]
+                    new_conn.execute(tbl_obj.insert().values(table_data))
+                new_conn.commit()  # type: ignore
 
+        # Copy graphs over
         with Session(self.engine) as session:
             stmt = select(DBEpisode)
+            if group is not None:
+                stmt = stmt.where(DBEpisode.group == group)
             episodes = session.scalars(stmt).all()
             for episode in episodes:
                 graphs = episode.graphs
@@ -502,7 +522,53 @@ class EpisodeDB(BaseDB):
                 event_data = self.read_data_from_file(episode.dump_file_path)
                 new_db.write_data_to_file(event_data, episode.dump_file_path)
 
-        for group in DBGroupName:
+        if group is not None:
             new_db.anonymize_group(group=group)
+        else:
+            for group in DBGroupName:
+                new_db.anonymize_group(group=group)
 
         return new_db
+
+    def download_and_import_group(self, group: DBGroupName) -> None:
+        """Download the group from a hosted source, then """
+        stmt = select(DBEpisode).where(DBEpisode.group == group).limit(1)
+        with Session(self.engine) as session:
+            episodes = session.scalars(stmt).all()
+            if len(episodes) > 0:
+                print(f"You already have {group} installed")
+                return
+        assert NotImplementedError("Still need to implement the download step")
+        # data_url = light.data_utils.get_episode_group(group) or something like it
+        # download data to temporary directory
+        # unzip db and data in temporary directory
+        # create LightDBConfig pointing to this dir
+        # self.import_db(other_db)
+        # delete temporary db directory
+
+    def import_db(self, other_db: "EpisodeDB") -> None:
+        """Attempt to import the contents of the specified db to this one"""
+        # Copy all the contents from the source
+        for _, table_obj in SQLBase.metadata.tables.items():
+            with self.engine.connect() as dest_conn:
+                with other_db.engine.connect() as source_conn:
+                    all_data = [
+                        dict(row) for row in source_conn.execute(select(table_obj.c))
+                    ]
+                    if len(all_data) == 0:
+                        continue
+                    dest_conn.execute(table_obj.insert().values(all_data))
+                    dest_conn.commit()  # type: ignore
+
+        with Session(other_db.engine) as session:
+            stmt = select(DBEpisode)
+            episodes = session.scalars(stmt).all()
+            for episode in episodes:
+                graphs = episode.graphs
+                for graph in graphs:
+                    # Copy the graphs to the new DB
+                    graph_data = other_db.read_data_from_file(graph.full_path)
+                    self.write_data_to_file(graph_data, graph.full_path)
+                # Copy the events to the new DB
+                event_data = other_db.read_data_from_file(episode.dump_file_path)
+                self.write_data_to_file(event_data, episode.dump_file_path)
