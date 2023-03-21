@@ -11,9 +11,9 @@ structured configs.
 
 import os
 from os.path import abspath, dirname
-from hydra.core.config_store import ConfigStoreWithProvider
+from hydra.core.config_store import ConfigStoreWithProvider  # type: ignore
 from dataclasses import dataclass, field, fields, Field, make_dataclass
-from omegaconf import OmegaConf, MISSING, DictConfig
+from omegaconf import OmegaConf, MISSING, DictConfig  # type: ignore
 
 from light.registry.base_model_loader import ModelLoader, ModelConfig
 from light.registry.model_pool import ALL_LOADERS_LIST, ModelTypeName
@@ -29,7 +29,7 @@ LIGHT_DIR = dirname(dirname(dirname(abspath(__file__))))
 config = ConfigStoreWithProvider("light")
 
 model_type_name_default = [(x.value, ModelConfig, MISSING) for x in ModelTypeName]
-ModelPoolConfig = make_dataclass("ModelPoolConfig", model_type_name_default)
+ModelPoolConfig = make_dataclass("ModelPoolConfig", model_type_name_default)  # type: ignore
 
 
 def register_model_loader(loader: Type[ModelLoader]):
@@ -109,7 +109,7 @@ light_default_list = ["_self_", {"model_pool": "base"}]
 @dataclass
 class LightConfig:
     defaults: List[Any] = field(default_factory=lambda: light_default_list)
-    model_pool: ModelPoolConfig = ModelPoolConfig()
+    model_pool: "ModelPoolConfig" = ModelPoolConfig()  # type: ignore
     db: LightDBConfig = MISSING
     log_level: str = "info"
     model_root: str = field(

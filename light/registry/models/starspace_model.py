@@ -6,8 +6,9 @@
 
 
 from dataclasses import dataclass, field
-from parlai.core.agents import Agent
+from parlai.core.agents import Agent, create_agent_from_shared  # type: ignore
 import os
+from copy import deepcopy
 
 from typing import Optional, Dict, Any
 
@@ -41,24 +42,29 @@ class MapStarspaceModelLoader(ParlAIModelLoader):
             opt = deepcopy(use_shared["opt"])
             opt.update(overrides)
             use_shared["opt"] = opt
+        else:
+            opt = {}
+            if overrides is not None:
+                opt.update(overrides)
 
         if opt["target_type"] == "room":
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/room_full_cands.txt"
+                self.config.resource_path, "room_full_cands.txt"
             )
-        elif opt["target_type"] == "agent":
+        elif opt["target_type"] in ["agent", "character"]:
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/character_full_cands.txt"
+                self.config.resource_path, "character_full_cands.txt"
             )
         elif opt["target_type"] == "object":
             opt["fixed_candidates_file"] = os.path.join(
-                self.config.resource_path, "/object_full_cands.txt"
+                self.config.resource_path, "object_full_cands.txt"
             )
         else:
             raise NotImplementedError(
                 f"Given starspace target type {opt['target_type']} not implemented"
             )
 
+        print(self.config.resource_path, opt["fixed_candidates_file"])
         opt["override"]["fixed_candidates_file"] = opt["fixed_candidates_file"]
         model = create_agent_from_shared(use_shared)
         return self.before_return_model(model)
