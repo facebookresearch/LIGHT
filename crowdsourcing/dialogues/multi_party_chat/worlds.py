@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import asyncio
 import time
 from joblib import Parallel, delayed
 from datetime import datetime
@@ -241,12 +242,8 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         self._world_name = gen_world_name("main_world_")
         self.is_connected = [True] * len(agents)  # agent diconnected or submitted
         self.has_warned = [False] * len(agents)  # timeout warning this turn
-        self.graph, self.world = opt["builder"].get_constrained_graph(num_partners=2)
-        # `get_constrained_graph` sometimes fails
-        while not self.graph:
-            self.graph, self.world = opt["builder"].get_constrained_graph(
-                num_partners=2
-            )
+        self.graph = None
+        asyncio.run(self.create_room(opt))
         self.graph_json = self.graph.to_json()
         self.messages = []
         # how many messages each agent has sent in this turn
@@ -271,6 +268,17 @@ class MultiAgentDialogWorld(CrowdTaskWorld):
         self.checker = checker
 
         # self.soft_block_qname = opt["soft_block_qname"]
+
+    async def create_room(self, opt):
+        # `get_constrained_graph` sometimes fails
+        retries = 0
+        while not self.graph:
+            self.graph, self.world = await opt["builder"].get_constrained_graph(
+                num_partners=2
+            )
+            retries += 1
+            if retries > 1 and retries % 5 == 0:
+                logging.warning(f'The room creation failed after {retries} tries.')
 
     def assign_identities(self):
         """

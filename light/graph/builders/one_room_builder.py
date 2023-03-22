@@ -260,9 +260,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     obj.name,
                     obj.db_id,
                 )
-                contained_objs = await self.get_contained_items(
+                contained_objs = (await self.get_contained_items(
                     obj.db_id, DB_TYPE_OBJ, 3
-                )[1:]
+                ))[1:]
                 for o in contained_objs:
                     if self._name_not_in_graph(g, o.name):
                         self._add_object_to_graph(g, o, obj_node)
@@ -548,13 +548,13 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                     continue
                 obj = self.get_obj_from_id(item_id)
                 if obj is not None:
-                    self.add_object_to_graph(g, obj, room_node)
+                    await self.add_object_to_graph(g, obj, room_node)
         if "db" in set_room.in_objects:
             for item_id in set_room.in_objects["db"]:
                 obj = self.get_obj_from_id(item_id)
                 props = {}
                 if obj is not None:
-                    self.add_object_to_graph(g, obj, room_node, props)
+                    await self.add_object_to_graph(g, obj, room_node, props)
         if self.suggestion_type == "model":
             predicted_objects = await self.get_contained_items(
                 container_id=set_room.db_id, container_type=DB_TYPE_ROOM
@@ -583,7 +583,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 db_id=neighbor_room.db_id,
             )
 
-        world = World(WorldConfig(opt=self.graph_opt, graph_builder=self))
+        world = World(WorldConfig(graph_builder=self))
         world.oo_graph = g
         return g, world
 

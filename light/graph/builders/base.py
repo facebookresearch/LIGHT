@@ -242,7 +242,8 @@ class SingleSuggestionGraphBuilder(object):
         self.agents[agent_type].reset()
         msg = {"text": observation, "episode_done": True}
         self.agents[agent_type].observe(msg)
-        response = await self.agents[agent_type].act()
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, self.agents[agent_type].act)
         return response
 
     def get_description(self, txt_feat, element_type, num_results=5):
