@@ -491,7 +491,7 @@ class DBTextEdge(DBEdgeBase, SQLBase):
     )
     ID_PREFIX = "TED"
 
-    child_text = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
+    child_text: str = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)  # type: ignore
 
     def __repr__(self):
         return f"DBTextEdge({self.db_id!r}| {self.parent_id}-{self.edge_type}-{self.child_text})"

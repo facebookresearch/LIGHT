@@ -5,9 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from light.data_model.db.base import BaseDB, HasDBIDMixin
-from omegaconf import MISSING, DictConfig
+from omegaconf import MISSING, DictConfig  # type: ignore
 from typing import Optional, Union, Dict, Any, TYPE_CHECKING
-from sqlalchemy import (
+from sqlalchemy import (  # type: ignore
     insert,
     select,
     delete,
@@ -18,7 +18,7 @@ from sqlalchemy import (
     Boolean,
     ForeignKey,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session
+from sqlalchemy.orm import declarative_base, relationship, Session  # type: ignore
 import enum
 
 if TYPE_CHECKING:
@@ -41,13 +41,13 @@ class DBPlayer(HasDBIDMixin, SQLBase):
     __tablename__ = "user_accounts"
     ID_PREFIX = "USR"
 
-    db_id = Column(String(40), primary_key=True)
-    extern_id = Column(String(60), nullable=False, index=True, unique=True)
-    is_preauth = Column(Boolean, nullable=False)
-    flag_count = Column(Integer, nullable=False)
-    safety_trigger_count = Column(Integer, nullable=False)
-    total_messages = Column(Integer, nullable=False)
-    account_status = Column(Enum(PlayerStatus), nullable=False)
+    db_id: str = Column(String(40), primary_key=True)  # type: ignore
+    extern_id: str = Column(String(60), nullable=False, index=True, unique=True)  # type: ignore
+    is_preauth: bool = Column(Boolean, nullable=False)  # type: ignore
+    flag_count: int = Column(Integer, nullable=False)  # type: ignore
+    safety_trigger_count: int = Column(Integer, nullable=False)  # type: ignore
+    total_messages: int = Column(Integer, nullable=False)  # type: ignore
+    account_status: PlayerStatus = Column(Enum(PlayerStatus), nullable=False)  # type: ignore
     scores = relationship("DBScoreEntry")
 
     def __repr__(self):
@@ -101,7 +101,7 @@ class UserDB(BaseDB):
         self,
         extern_id: str,
         is_preauth: bool,
-    ) -> int:
+    ) -> str:
         """Create the specified player, idempotently"""
         try:
             user = self.get_player_by_extern_id(extern_id)
