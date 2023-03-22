@@ -21,4 +21,3 @@ mephisto:
       You should play your character, conversing as if you were your character in the provided setting.
     task_reward: 2
     task_tags: "dynamic,chat,testing,fantasy,role-playing"
-    max_num_concurrent_units: 3
