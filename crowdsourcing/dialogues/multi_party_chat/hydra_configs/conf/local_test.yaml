@@ -19,5 +19,6 @@ mephisto:
       In this task you will have a conversation with two other people in a fantasy game setting.
       You will all be given characters and a description of the setting of the conversation.
       You should play your character, conversing as if you were your character in the provided setting.
+    task_reward: 2
     task_tags: "dynamic,chat,testing,fantasy,role-playing"
     max_num_concurrent_units: 3
