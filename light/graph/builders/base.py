@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import random
+import asyncio
 from dataclasses import dataclass
 from light.data_model.db.base import DBStatus
 
@@ -226,7 +227,8 @@ class SingleSuggestionGraphBuilder(object):
         self.agents[agent_type].reset()
         msg = {"text": observation, "episode_done": True}
         self.agents[agent_type].observe(msg)
-        response = self.agents[agent_type].act()
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, self.agents[agent_type].act)
         return response
 
     def get_description(self, txt_feat, element_type, num_results=5):

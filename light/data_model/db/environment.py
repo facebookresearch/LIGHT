@@ -252,7 +252,7 @@ class DBAgent(DBElem, SQLBase):
         str = ""
         str += self.name
         if full:
-            str += f". {self.persona} "
+            str += f". {self.persona}"
         return str.rstrip()
 
     def __repr__(self):
@@ -299,7 +299,7 @@ class DBObject(DBElem, SQLBase):
         str = ""
         str += self.name
         if full:
-            str += f". {self.physical_description} "
+            str += f". {self.physical_description}"
         return str.rstrip()
 
     def __repr__(self):

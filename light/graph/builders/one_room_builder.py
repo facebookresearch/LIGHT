@@ -396,7 +396,8 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             self.agents[agent_type].reset()
             msg = {"text": txt_feats, "episode_done": True}
             self.agents[agent_type].observe(msg)
-            response = self.agents[agent_type].act()
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(None, self.agents[agent_type].act)
             ind = 0
             while ind < len(response["text_candidates"]):
                 key = response["text_candidates"][ind]
