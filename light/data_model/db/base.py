@@ -6,8 +6,8 @@
 
 
 from abc import ABC, abstractmethod
-from omegaconf import MISSING, DictConfig
-from sqlalchemy import create_engine
+from omegaconf import MISSING, DictConfig  # type: ignore
+from sqlalchemy import create_engine  # type: ignore
 from enum import Enum
 from typing import Optional, Union, Dict, Any, Type
 from uuid import uuid4
@@ -17,7 +17,7 @@ import shutil
 import os
 import json
 
-from hydra.core.config_store import ConfigStore
+from hydra.core.config_store import ConfigStore  # type: ignore
 
 DEFAULT_LOG_PATH = "".join(
     [os.path.abspath(os.path.dirname(__file__)), "/../../../logs"]
@@ -120,8 +120,8 @@ class BaseDB(ABC):
             self.engine = create_engine(f"sqlite:////{db_path}")
         elif config.backend == "aws-postgres":
             try:
-                import psycopg2
-                import boto3
+                import psycopg2  # type: ignore
+                import boto3  # type: ignore
             except ImportError:
                 print(
                     "For aws-postgres usage, you must also `pip install mysqlclient boto3 psycopg2-binary"
@@ -176,7 +176,7 @@ class BaseDB(ABC):
             full_path = os.path.join(self.file_root, file_path)
             return os.path.exists(full_path)
         elif self.backend in ["aws-postgres"]:
-            import botocore
+            import botocore  # type: ignore
 
             try:
                 self.bucket.Object(file_path).load()
@@ -205,6 +205,7 @@ class BaseDB(ABC):
                 if json_encode:
                     json.dump(data, target_file)
                 else:
+                    assert isinstance(data, str), "Must use JsonEncode for non-strings"
                     target_file.write(data)
         elif self.backend in ["aws-postgres"]:
             if json_encode:

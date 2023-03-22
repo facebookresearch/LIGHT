@@ -7,7 +7,7 @@
 from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
 from light.data_model.db.users import DBPlayer
 from light.graph.structured_graph import OOGraph
-from omegaconf import MISSING, DictConfig
+from omegaconf import MISSING, DictConfig  # type: ignore
 from typing import (
     Optional,
     List,
@@ -20,7 +20,7 @@ from typing import (
     cast,
     TYPE_CHECKING,
 )
-from sqlalchemy import (
+from sqlalchemy import (  # type: ignore
     insert,
     select,
     Enum,
@@ -32,8 +32,8 @@ from sqlalchemy import (
     Boolean,
     UniqueConstraint,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session, join
-import sqlalchemy.exc
+from sqlalchemy.orm import declarative_base, relationship, Session, join  # type: ignore
+import sqlalchemy.exc  # type: ignore
 
 import enum
 import os
@@ -70,10 +70,10 @@ class DBNameKey(HasDBIDMixin):
     id and a name
     """
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True, unique=True)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    split = Column(Enum(DBSplitType), nullable=False, index=True)
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    name: str = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True, unique=True)  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    split: DBSplitType = Column(Enum(DBSplitType), nullable=False, index=True)  # type: ignore
 
 
 class DBAgentName(DBNameKey, SQLBase):
@@ -121,12 +121,12 @@ class DBRoomName(DBNameKey, SQLBase):
 class DBElem(HasDBIDMixin):
     """Class for shared attributes for all graph model components"""
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
-    built_occurrences = Column(Integer, nullable=False, default=0)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
-    creator_id = Column(
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    name: str = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    built_occurrences: int = Column(Integer, nullable=False, default=0)  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    create_timestamp: float = Column(Float, nullable=False)  # type: ignore
+    creator_id: str = Column(  # type: ignore
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
 
@@ -226,24 +226,34 @@ class DBAgent(DBElem, SQLBase):
     )
     ID_PREFIX = "AGE"
 
-    base_id: str = Column(ForeignKey("agent_names.db_id"), nullable=False)
-    persona = Column(String(PERSONA_LENGTH_CAP), nullable=False, index=True)
-    physical_description = Column(
+    base_id: str = Column(ForeignKey("agent_names.db_id"), nullable=False)  # type: ignore
+    persona: str = Column(String(PERSONA_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    physical_description: str = Column(  # type: ignore
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
-    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
-    is_plural = Column(Boolean)
-    size = Column(Integer)
-    contain_size = Column(Integer)
-    constitution = Column(Float)
-    charisma = Column(Float)
-    strength = Column(Float)
-    dexterity = Column(Float)
-    intelligence = Column(Float)
-    wisdom = Column(Float)
-    base_name: List["DBAgent"] = relationship(
+    name_prefix: str = Column(String(NAME_PREFIX_LENGTH), nullable=False)  # type: ignore
+    is_plural: bool = Column(Boolean)  # type: ignore
+    size: int = Column(Integer)  # type: ignore
+    contain_size: int = Column(Integer)  # type: ignore
+    constitution: float = Column(Float)  # type: ignore
+    charisma: float = Column(Float)  # type: ignore
+    strength: float = Column(Float)  # type: ignore
+    dexterity: float = Column(Float)  # type: ignore
+    intelligence: float = Column(Float)  # type: ignore
+    wisdom: float = Column(Float)  # type: ignore
+    base_name: "DBAgentName" = relationship(
         "DBAgentName", backref="agents", foreign_keys=[base_id]
     )
+
+    def character_features(self, globalFull: bool, full: bool = False) -> str:
+        """Get text feature for a db agent (for model use)"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.persona}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBAgent({self.db_id!r}| {self.name})"
@@ -261,26 +271,36 @@ class DBObject(DBElem, SQLBase):
     )
     ID_PREFIX = "OBE"
 
-    base_id: str = Column(ForeignKey("object_names.db_id"), nullable=False)
+    base_id: str = Column(ForeignKey("object_names.db_id"), nullable=False)  # type: ignore
     physical_description = Column(
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
-    is_container = Column(Float)
-    is_drink = Column(Float)
-    is_food = Column(Float)
-    is_gettable = Column(Float)
-    is_surface = Column(Float)
-    is_wearable = Column(Float)
-    is_weapon = Column(Float)
-    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
-    is_plural = Column(Boolean)
-    size = Column(Integer)
-    contain_size = Column(Integer)
-    value = Column(Float)
-    rarity = Column(Float)
-    base_name: List["DBObject"] = relationship(
+    is_container: float = Column(Float)  # type: ignore
+    is_drink: float = Column(Float)  # type: ignore
+    is_food: float = Column(Float)  # type: ignore
+    is_gettable: float = Column(Float)  # type: ignore
+    is_surface: float = Column(Float)  # type: ignore
+    is_wearable: float = Column(Float)  # type: ignore
+    is_weapon: float = Column(Float)  # type: ignore
+    name_prefix: str = Column(String(NAME_PREFIX_LENGTH), nullable=False)  # type: ignore
+    is_plural: bool = Column(Boolean)  # type: ignore
+    size: int = Column(Integer)  # type: ignore
+    contain_size: int = Column(Integer)  # type: ignore
+    value: float = Column(Float)  # type: ignore
+    rarity: float = Column(Float)  # type: ignore
+    base_name: "DBObjectName" = relationship(
         "DBObjectName", backref="objects", foreign_keys=[base_id]
     )
+
+    def object_features(self, globalFull: bool, full: bool = False):
+        """Get text feature for a dbobject"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.physical_description}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBObject({self.db_id!r}| {self.name})"
@@ -313,15 +333,25 @@ class DBRoom(DBElem, SQLBase):
     )
     ID_PREFIX = "RME"
 
-    base_id: str = Column(ForeignKey("room_names.db_id"), nullable=False)
-    description = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    backstory = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    size = Column(Integer)
-    indoor_status = Column(Enum(DBRoomInsideType), nullable=False)
-    rarity = Column(Float)
-    base_name: List["DBRoom"] = relationship(
+    base_id: str = Column(ForeignKey("room_names.db_id"), nullable=False)  # type: ignore
+    description: str = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    backstory: str = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    size: int = Column(Integer)  # type: ignore
+    indoor_status: DBRoomInsideType = Column(Enum(DBRoomInsideType), nullable=False)  # type: ignore
+    rarity: float = Column(Float)  # type: ignore
+    base_name: "DBRoomName" = relationship(
         "DBRoomName", backref="rooms", foreign_keys=[base_id]
     )
+
+    def room_features(self, globalFull: bool, full: bool = False):
+        """Get text feature for a DBRoom"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.base_name}. {self.description} {self.backstory}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBRoom({self.db_id!r}| {self.name})"
@@ -340,11 +370,11 @@ class DBNodeAttribute(HasDBIDMixin, SQLBase):
     )
     ID_PREFIX = "ATT"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    attribute_name = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False, index=True)
-    attribute_value_string = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
-    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    target_id: str = Column(String(ID_STRING_LENGTH), nullable=False, index=True)  # type: ignore
+    attribute_name: str = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    attribute_value_string: str = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
     creator_id = Column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
@@ -372,13 +402,13 @@ class DBEdgeType(enum.Enum):
 class DBEdgeBase(HasDBIDMixin):
     """Base attributes for an edge as stored in the environment DB"""
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    parent_id = Column(String(ID_STRING_LENGTH), nullable=False)
-    edge_type = Column(Enum(DBEdgeType), nullable=False)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    edge_label = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
-    create_timestamp = Column(Float, nullable=False)
-    creator_id = Column(
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    parent_id: str = Column(String(ID_STRING_LENGTH), nullable=False)  # type: ignore
+    edge_type: DBEdgeType = Column(Enum(DBEdgeType), nullable=False)  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    edge_label: str = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)  # type: ignore
+    create_timestamp: float = Column(Float, nullable=False)  # type: ignore
+    creator_id: str = Column(  # type: ignore
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
 
@@ -394,8 +424,8 @@ class DBEdge(DBEdgeBase, SQLBase):
     )
     ID_PREFIX = "NED"
 
-    child_id = Column(String(ID_STRING_LENGTH), nullable=False)
-    built_occurrences = Column(Integer, nullable=False, default=0)
+    child_id: str = Column(String(ID_STRING_LENGTH), nullable=False)  # type: ignore
+    built_occurrences: int = Column(Integer, nullable=False, default=0)  # type: ignore
 
     _child: Optional[DBElem] = None
 
@@ -519,13 +549,13 @@ class DBFlag(HasDBIDMixin, SQLBase):
     __tablename__ = "flags"
     ID_PREFIX = "FLG"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    flag_type = Column(Enum(DBFlagTargetType), nullable=False)
-    user_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    reason = Column(String(REPORT_REASON_LENGTH))
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    flag_type: DBFlagTargetType = Column(Enum(DBFlagTargetType), nullable=False)  # type: ignore
+    user_id: str = Column(String(ID_STRING_LENGTH), nullable=False, index=True)  # type: ignore
+    target_id: str = Column(String(ID_STRING_LENGTH), nullable=False, index=True)  # type: ignore
+    reason: str = Column(String(REPORT_REASON_LENGTH))  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    create_timestamp: float = Column(Float, nullable=False)  # type: ignore
 
     def __repr__(self):
         return f"DBFlag({self.db_id!r}| {self.target_id}-{self.flag_type})"
@@ -544,21 +574,21 @@ class DBQuest(SQLBase, HasDBIDMixin):
     __tablename__ = "quests"
     ID_PREFIX = "QST"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    agent_id: str = Column(ForeignKey("agents.db_id"), nullable=False)
-    parent_id: Optional[str] = Column(
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    agent_id: str = Column(ForeignKey("agents.db_id"), nullable=False)  # type: ignore
+    parent_id: Optional[str] = Column(  # type: ignore
         ForeignKey("quests.db_id")
     )  # Map to possible parent
-    text_motivation = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)
-    target_type = Column(Enum(DBQuestTargetType), nullable=False)
-    target = Column(String(QUEST_MOTIVATION_LENGTH))
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    origin_filepath = Column(String(FILE_PATH_LENGTH_CAP))
-    position = Column(Integer)  # If subgoal of a parent, which substep?
-    creator_id = Column(
+    text_motivation: str = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)  # type: ignore
+    target_type: DBQuestTargetType = Column(Enum(DBQuestTargetType), nullable=False)  # type: ignore
+    target: str = Column(String(QUEST_MOTIVATION_LENGTH))  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    origin_filepath: str = Column(String(FILE_PATH_LENGTH_CAP))  # type: ignore
+    position: int = Column(Integer)  # type: ignore If subgoal of a parent, which substep?
+    creator_id: str = Column(  # type: ignore
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
-    create_timestamp = Column(Float, nullable=False)
+    create_timestamp: float = Column(Float, nullable=False)  # type: ignore
 
     _subgoals: Optional[List["DBQuest"]] = None
     _parent_chain: Optional[List["DBQuest"]] = None
@@ -607,8 +637,8 @@ class DBQuest(SQLBase, HasDBIDMixin):
             curr_item = parent_item
         parent_chain = list(reversed(parent_chain))
 
-        self._parent_chain = parent_chain
-        return parent_chain
+        self._parent_chain = parent_chain  # type: ignore
+        return parent_chain  # type: ignore
 
     def load_relations(self, db: "EnvDB") -> None:
         """Expand the parent chain and subgoals for this item"""
@@ -634,14 +664,14 @@ class DBGraph(SQLBase, HasDBIDMixin):
     __tablename__ = "saved_graphs"
     ID_PREFIX = "UGR"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    graph_name = Column(String(WORLD_NAME_LENGTH_CAP), nullable=False, index=True)
-    creator_id = Column(
+    db_id: str = Column(String(ID_STRING_LENGTH), primary_key=True)  # type: ignore
+    graph_name: str = Column(String(WORLD_NAME_LENGTH_CAP), nullable=False, index=True)  # type: ignore
+    creator_id: str = Column(  # type: ignore
         String(ID_STRING_LENGTH), nullable=False, index=True
     )  # retain the creator ID, they own this
-    file_path = Column(String(FILE_PATH_LENGTH_CAP), nullable=False)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
+    file_path: str = Column(String(FILE_PATH_LENGTH_CAP), nullable=False)  # type: ignore
+    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)  # type: ignore
+    create_timestamp: float = Column(Float, nullable=False)  # type: ignore
 
     def get_graph(self, db: "EnvDB") -> OOGraph:
         """Get an OOGraph for this DBGraph, loading from file"""
@@ -782,7 +812,7 @@ class EnvDB(BaseDB):
                 return name_keys
             stmt = select(KeyClass)
             if name is not None:
-                stmt = stmt.where(KeyClass.name.like(f"%{name}%"))
+                stmt = stmt.where(KeyClass.name.like(f"%{name}%"))  # type: ignore
             if status is not None:
                 stmt = stmt.where(KeyClass.status == status)
             if split is not None:
@@ -949,12 +979,12 @@ class EnvDB(BaseDB):
         if base_id is not None:
             stmt = stmt.where(DBAgent.base_id == base_id)
         if name is not None:
-            stmt = stmt.where(DBAgent.name.like(f"%{name}%"))
+            stmt = stmt.where(DBAgent.name.like(f"%{name}%"))  # type: ignore
         if persona is not None:
-            stmt = stmt.where(DBAgent.persona.like(f"%{persona}%"))
+            stmt = stmt.where(DBAgent.persona.like(f"%{persona}%"))  # type: ignore
         if physical_description is not None:
             stmt = stmt.where(
-                DBAgent.physical_description.like(f"%{physical_description}%")
+                DBAgent.physical_description.like(f"%{physical_description}%")  # type: ignore
             )
         if name_prefix is not None:
             stmt = stmt.where(DBAgent.name_prefix == name_prefix)
@@ -964,7 +994,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBAgent.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.where(DBAgent.base_name.has(split=split))
+            stmt = stmt.where(DBAgent.base_name.has(split=split))  # type: ignore
         if creator_id is not None:
             stmt = stmt.where(DBAgent.creator_id == creator_id)
 
@@ -1107,9 +1137,9 @@ class EnvDB(BaseDB):
         # Construct query
         stmt = select(DBObject)
         if base_id is not None:
-            stmt = stmt.where(DBObject.base_id.like(f"%{base_id}%"))
+            stmt = stmt.where(DBObject.base_id.like(f"%{base_id}%"))  # type: ignore
         if name is not None:
-            stmt = stmt.where(DBObject.name.like(f"%{name}%"))
+            stmt = stmt.where(DBObject.name.like(f"%{name}%"))  # type: ignore
         if physical_description is not None:
             stmt = stmt.where(
                 DBObject.physical_description.like(f"%{physical_description}%")
@@ -1157,7 +1187,7 @@ class EnvDB(BaseDB):
             stmt = stmt.where(DBObject.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.where(DBObject.base_name.has(split=split))
+            stmt = stmt.where(DBObject.base_name.has(split=split))  # type: ignore
         if creator_id is not None:
             stmt = stmt.where(DBObject.creator_id == creator_id)
         # Do query
@@ -1273,18 +1303,18 @@ class EnvDB(BaseDB):
         if base_id is not None:
             stmt = stmt.where(DBRoom.base_id == base_id)
         if name is not None:
-            stmt = stmt.where(DBRoom.name.like(f"%{name}%"))
+            stmt = stmt.where(DBRoom.name.like(f"%{name}%"))  # type: ignore
         if description is not None:
-            stmt = stmt.where(DBRoom.description.like(f"%{description}%"))
+            stmt = stmt.where(DBRoom.description.like(f"%{description}%"))  # type: ignore
         if backstory is not None:
-            stmt = stmt.where(DBRoom.backstory.like(f"%{backstory}%"))
+            stmt = stmt.where(DBRoom.backstory.like(f"%{backstory}%"))  # type: ignore
         if indoor_status is not None:
             stmt = stmt.where(DBRoom.indoor_status == indoor_status)
         if status is not None:
             stmt = stmt.where(DBRoom.status == status)
         if split is not None:
             # Need to join up to parent for split query
-            stmt = stmt.where(DBRoom.base_name.has(split=split))
+            stmt = stmt.where(DBRoom.base_name.has(split=split))  # type: ignore
         if creator_id is not None:
             stmt = stmt.where(DBRoom.creator_id == creator_id)
         # Do query
@@ -1864,7 +1894,7 @@ class EnvDB(BaseDB):
 
     # release functionality
 
-    def scrub_creators(self, start_time: Optional[int] = None) -> int:
+    def scrub_creators(self, start_time: Optional[float] = None) -> int:
         """
         Remove creators from anything in the dataset longer than 60 days
         """
@@ -1954,7 +1984,7 @@ class EnvDB(BaseDB):
                     if len(all_data) == 0:
                         continue
                     new_conn.execute(table_obj.insert().values(all_data))
-                    new_conn.commit()
+                    new_conn.commit()  # type: ignore
 
         new_db.clear_player_graphs(scrub_all=True)
         new_db.scrub_creators(
@@ -1970,7 +2000,7 @@ class EnvDB(BaseDB):
                     graph.file_path, json_encoded=False
                 )
                 new_db.write_data_to_file(
-                    graph_data, graph.file_path, json_encoded=False
+                    graph_data, graph.file_path, json_encode=False
                 )
 
             # Copy the quests to the new DB
@@ -1981,6 +2011,6 @@ class EnvDB(BaseDB):
                 if file_path is None:
                     continue  # no quest file
                 quest_data = self.read_data_from_file(file_path, json_encoded=False)
-                new_db.write_data_to_file(quest_data, file_path, json_encoded=False)
+                new_db.write_data_to_file(quest_data, file_path, json_encode=False)
 
         return new_db
