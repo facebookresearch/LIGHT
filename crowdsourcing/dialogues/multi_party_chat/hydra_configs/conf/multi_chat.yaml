@@ -15,7 +15,6 @@ mephisto:
       in a fantasy setting. You will all be given characters, and should
       have a conversation about your assigned characters and the setting,
       taking natural turns.
-    task_reward: 1.80
     max_num_concurrent_units: 15
     task_tags: "dynamic,chat,testing,fantasy,role-playing"
     assignment_duration_in_seconds: 2400
