@@ -36,7 +36,6 @@ class ModelTypeName(enum.Enum):
     """Common model names of use in LIGHT, for use in register_model"""
 
     SAFETY = "safety"  # Models used to evaluate dialog or env safety
-    MAP_CONNECTIONS = 'map_connections'  # Models to create the game world and room connections
     DIALOG = "dialog"  # Models for generating dialogue
     SCORING = "role_playing_score"  # Models to score player utterances
     ACTION = "action"  # Models used by model agents for generating actions
