@@ -126,13 +126,13 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 self.config.model_loader_config, [ModelTypeName.CONNECTIONS]
             )
         self.agents["room"] = self.model_pool.get_model(
-            ModelTypeName.MAP_CONNECTIONS, {"target_type": "room"}
+            ModelTypeName.CONNECTIONS, {"target_type": "room"}
         )
         self.agents["object"] = self.model_pool.get_model(
-            ModelTypeName.MAP_CONNECTIONS, {"target_type": "object"}
+            ModelTypeName.CONNECTIONS, {"target_type": "object"}
         )
         self.agents["character"] = self.model_pool.get_model(
-            ModelTypeName.MAP_CONNECTIONS, {"target_type": "character"}
+            ModelTypeName.CONNECTIONS, {"target_type": "character"}
         )
 
     def _props_from_obj(self, obj: DBObject) -> Dict[str, Any]:

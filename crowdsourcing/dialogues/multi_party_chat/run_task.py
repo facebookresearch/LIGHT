@@ -66,7 +66,7 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
             LIGHT_PATH, "light/registry/models/config/baseline_starspace.opt"
         )
     )
-    pool.register_model(model_config, [ModelTypeName.MAP_CONNECTIONS])
+    pool.register_model(model_config, [ModelTypeName.CONNECTIONS])
     builder_config = OneRoomChatBuilderConfig(model_loader_config=model_config)
 
     world_opt = {
