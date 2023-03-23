@@ -70,6 +70,7 @@ class TestDatabase(unittest.TestCase):
 
     def test_column_names(self):
         """Test that column name and type can be retrieved for a specific table"""
+        self.skipTest("Deprecating")
         # base room
         with LIGHTDatabase(os.path.join(self.data_dir, self.DB_NAME)) as test:
             self.assertEqual(

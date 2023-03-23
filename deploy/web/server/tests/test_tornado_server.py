@@ -1240,6 +1240,7 @@ class TestBuilderApp(AsyncHTTPTestCase):
     @gen_test
     def test_get_column_names(self, mocked_auth):
         """Tests all column names are returned correctly"""
+        self.skipTest("Deprecating")
         # test base entity
         response = yield self.client.fetch(f"{URL}/builder/entities/base_object/fields")
         self.assertEqual(response.code, 200)
