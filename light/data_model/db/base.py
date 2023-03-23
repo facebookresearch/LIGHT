@@ -101,7 +101,7 @@ class BaseDB(ABC):
 
     DB_TYPE: str
 
-    def __init__(self, config: "DictConfig"):
+    def __init__(self, config: "LightDBConfig"):
         """
         Create this database, either connecting to a remote host or local
         files and instances.
@@ -113,8 +113,10 @@ class BaseDB(ABC):
             if self.made_temp_dir:
                 self.file_root = mkdtemp()
             else:
+                assert config.file_root is not None  # to make typing happy
                 self.file_root = config.file_root
         elif config.backend == "local":
+            assert config.file_root is not None, "Must provide valid file_root"
             self.file_root = config.file_root
             db_path = os.path.join(self.file_root, f"{self.DB_TYPE}.db")
             self.engine = create_engine(f"sqlite:////{db_path}")
@@ -128,6 +130,9 @@ class BaseDB(ABC):
                 )
                 raise
             # Get DB registered and functioning
+            assert isinstance(
+                config, LightAWSDBConfig
+            ), "Must use LightAWSDBConfig for aws-postgres"
             self.db_address = config.db_address
             db_address = config.db_address
             login_user = config.db_user
@@ -137,9 +142,12 @@ class BaseDB(ABC):
             )
 
             # Connect to the s3 filestore
+            assert (
+                config.file_root is not None
+            ), "Must provide fileroot as s3 bucket address"
             self.file_root = config.file_root  # file root is a s3 bucket address
             s3 = boto3.resource("s3")
-            self.bucket = s3.Bucket(self.file_root)
+            self.bucket = s3.Bucket(self.file_root)  # type: ignore
         else:
             raise NotImplementedError(
                 f"Provided backend {config.backend} doens't exist"
@@ -147,7 +155,7 @@ class BaseDB(ABC):
         self._complete_init(config)
 
     @abstractmethod
-    def _complete_init(self, config: "DictConfig"):
+    def _complete_init(self, config: "LightDBConfig"):
         """
         Complete implementation-specific initialization
         """
@@ -181,7 +189,7 @@ class BaseDB(ABC):
             try:
                 self.bucket.Object(file_path).load()
                 return True
-            except botocore.exceptions.ClientError as e:
+            except botocore.exceptions.ClientError as e:  # type: ignore
                 if e.response["Error"]["Code"] == "404":
                     # The object does not exist.
                     return False

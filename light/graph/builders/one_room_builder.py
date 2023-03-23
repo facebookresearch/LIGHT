@@ -233,9 +233,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             else:
                 # modify object description to make plural work.
                 # TODO: fix in data
-                desc = obj.description
+                desc = obj.physical_description
                 desc = f"You peer closer at one of them. {desc}"
-                obj.description = desc
+                obj.physical_description = desc
         if self._name_not_in_graph(g, obj.name):
             obj_node = self._add_object_to_graph(g, obj, container_node)
             if obj_node.container and self.suggestion_type != "human":
@@ -295,7 +295,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if char.is_plural > 0:
             print("skipping PLURAL character! " + char.name)
             return None
-        use_desc = char.name if char.is_plural == 0 else char.base_form
+        use_desc = char.name if char.is_plural == 0 else char.base_name.name
         use_desc = self._heuristic_name_cleaning(use_desc)
 
         if use_desc in [node.name for node in g.get_npcs()]:
@@ -339,9 +339,10 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             }
 
         for obj in objs:
-            obj_node = await self.add_object_to_graph(
-                g, self.get_obj_from_id(obj), agent_node
-            )
+            db_obj = self.get_obj_from_id(obj)
+            if db_obj is None:
+                continue
+            obj_node = await self.add_object_to_graph(g, db_obj, agent_node)
             if obj_node is not None:
                 if objs[obj] == "equipped":
                     obj_node.set_prop("equipped", True)
@@ -434,7 +435,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if banned_rooms is None:
             banned_rooms = [room_id]
         if room_id not in self.roomid_to_feats:
-            txt_feats = self.get_text_features(self.get_room_from_id(room_id))
+            room = self.get_room_from_id(room_id)
+            assert room is not None, f"Invalid room id {room_id}"
+            txt_feats = self.get_text_features(room)
             # This is added due to the new model prediction for neighbors
         else:
             txt_feats = self.roomid_to_feats[room_id]
@@ -520,7 +523,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             },
             db_id=set_room.db_id,
         )
-        set_room.g_id = room_node.node_id
+        set_room_g_id = room_node.node_id
 
         possible_chars = await self.get_contained_characters(
             room_id=set_room.db_id, num_results=15
@@ -549,6 +552,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
                 )
         else:
             player_char = self.get_char_from_id(self.charfeats_to_id(player.lower()))
+            assert player_char is not None
             self_char_id = await self.add_new_agent_to_graph(g, player_char, room_node)
 
         for _ in range(num_partners):
@@ -592,7 +596,7 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             )
             for o in predicted_objects:
                 if o is not None:
-                    room_node = g.get_node(set_room.g_id)
+                    room_node = g.get_node(set_room_g_id)
                     assert room_node is not None
                     await self.add_object_to_graph(g, o, room_node)
 
@@ -669,17 +673,23 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
             if container_id in self.roomid_to_feats:
                 txt_feats = self.roomid_to_feats[container_id]
             else:
-                txt_feats = self.get_text_features(self.get_room_from_id(container_id))
+                container = self.get_room_from_id(container_id)
+                assert container is not None, "invalid container"
+                txt_feats = self.get_text_features(container)
         elif container_type == OBJECT_TYPE:
             if container_id in self.objid_to_feats:
                 txt_feats = self.objid_to_feats[container_id]
             else:
-                txt_feats = self.get_text_features(self.get_obj_from_id(container_id))
+                container = self.get_obj_from_id(container_id)
+                assert container is not None, "invalid container"
+                txt_feats = self.get_text_features(container)
         elif container_type == AGENT_TYPE:
             if container_id in self.charid_to_feats:
                 txt_feats = self.charid_to_feats[container_id]
             else:
-                txt_feats = self.get_text_features(self.get_char_from_id(container_id))
+                container = self.get_char_from_id(container_id)
+                assert container is not None, "invalid container"
+                txt_feats = self.get_text_features(container)
         else:
             raise Exception(f"Improper container type given: {container_type}")
         response = await self.agent_recommend(txt_feats, "object")
@@ -713,7 +723,9 @@ class OneRoomChatBuilder(DBGraphBuilder, SingleSuggestionGraphBuilder):
         if room_id in self.roomid_to_feats:
             txt_feats = self.roomid_to_feats[room_id]
         else:
-            txt_feats = self.get_text_features(self.get_room_from_id(room_id))
+            room = self.get_room_from_id(room_id)
+            assert room is not None, "invalid room"
+            txt_feats = self.get_text_features(room)
         response = await self.agent_recommend(txt_feats, "character")
         ind = 0
         results = []

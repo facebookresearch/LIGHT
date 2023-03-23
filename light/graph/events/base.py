@@ -227,7 +227,9 @@ class GraphEvent(object):
         """Rectify any state following a load from json."""
         pass
 
-    def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
+    def to_json(
+        self, viewer: Optional[GraphAgent] = None, indent: Optional[int] = None
+    ) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
