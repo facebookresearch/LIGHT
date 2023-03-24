@@ -63,11 +63,7 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
     pool = ModelPool()
     model_config = MapStarspaceModelConfig(
         opt_file=os.path.join(
-<<<<<<< HEAD
             LIGHT_PATH, "light/registry/models/config/baseline_starspace.opt"
-=======
-            LIGHT_PATH, "/light/registry/models/config/baseline_starspace.opt"
->>>>>>> 14ae0c63 (black)
         )
     )
     pool.register_model(model_config, [ModelTypeName.MAP_CONNECTIONS])
