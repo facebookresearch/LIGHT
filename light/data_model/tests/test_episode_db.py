@@ -372,7 +372,7 @@ class TestEpisodesDB(unittest.TestCase):
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(loaded_event.to_json())
         for k in ref_json:
-            if k == "event_id":
+            if k in ["event_id", "event_time"]:
                 continue
             elif k == "target_nodes":
                 self.assertEqual(ref_json[k][0]["names"], event_ref[k][0]["names"])

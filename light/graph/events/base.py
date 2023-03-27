@@ -9,6 +9,7 @@ from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphNode,
 )
+import time
 from light.world.utils.json_utils import (
     convert_dict_to_node,
     GraphEncoder,
@@ -104,6 +105,7 @@ class GraphEvent(object):
         self.text_content = text_content
         self.event_id = event_id
         self.entered_text = None
+        self.event_time = time.time()
 
     def set_entered_text(self, entered_text):
         """Set the text tentered for this event to be loaded later"""
@@ -193,17 +195,18 @@ class GraphEvent(object):
         Instantiate this event from the given json over the given world
         """
         attribute_dict = convert_dict_to_node(json.loads(input_json), world)
+        assert isinstance(attribute_dict, dict), "Must have loaded dict"
         class_ = GraphEvent
         if "__class__" in attribute_dict:
             class_name = attribute_dict.pop("__class__")
             module_name = attribute_dict.pop("__module__")
             # Must pass non empty list to get the exact module
-            module = __import__(module_name, fromlist=[None])
+            module = __import__(module_name, fromlist=[None])  # type: ignore
             class_ = getattr(module, class_name)
             if "__failed_event" in attribute_dict:
                 # Get the class type for the failed event (error)
                 failed_module = __import__(
-                    attribute_dict.pop("__error_module"), fromlist=[None]
+                    attribute_dict.pop("__error_module"), fromlist=[None]  # type: ignore
                 )
                 attribute_dict["failed_event"] = getattr(
                     failed_module, attribute_dict["__failed_event"]
@@ -239,7 +242,6 @@ class GraphEvent(object):
         use_dict["viewer"] = viewer
         use_dict["__class__"] = className
         use_dict["__module__"] = self.__module__
-        # TODO: Consider moving graph encoder to a utils since we use here too!
         res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
         return res
 
@@ -329,7 +331,9 @@ class ErrorEvent(GraphEvent):
         return f"ErrorEvent({self.display_text}, {self.target_nodes})"
 
     # Error event overrides, needs __failed_event for constructor
-    def to_json(self, viewer: GraphAgent = None, indent: int = None) -> str:
+    def to_json(
+        self, viewer: Optional[GraphAgent] = None, indent: Optional[int] = None
+    ) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
