@@ -219,6 +219,7 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Ensure an episode was created properly
         self.assertIsNotNone(episode_id)
+        assert episode_id is not None
         episode = episode_db.get_episode(episode_id)
         graph_map = episode.get_graph_map()
         self.assertEqual(len(episode.graphs), 2, "Expected an init and final graph")
@@ -304,6 +305,7 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Ensure an episode was created properly
         self.assertIsNotNone(episode_id)
+        assert episode_id is not None
         episode = episode_db.get_episode(episode_id)
         events = episode.get_parsed_events(episode_db)
         self.assertEqual(len(events), 1, f"Expected 1 graph type, found {events}")
