@@ -34,6 +34,8 @@ from light.registry.model_pool import  ModelTypeName
 
 from light.registry.model_pool import  ModelTypeName
 
+from light.registry.model_pool import  ModelTypeName
+
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
     from light.graph.elements.graph_nodes import (
