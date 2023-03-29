@@ -17,11 +17,16 @@ from mephisto.utils.qualifications import make_qualification_dict
 
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
+<<<<<<< HEAD
 from light.constants import LIGHT_PATH
 from light.graph.builders.one_room_builder import (
     OneRoomChatBuilder,
     OneRoomChatBuilderConfig,
 )
+=======
+from light.constants import LIGHT_PATH, PARLAI_PATH
+from light.graph.builders.one_room_builder import OneRoomChatBuilder, OneRoomChatBuilderConfig
+>>>>>>> 4d43e4c1 (light path)
 from light.data_model.light_database import LIGHTDatabase
 from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.models.starspace_model import MapStarspaceModelConfig
@@ -61,12 +66,17 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
     ldb = LIGHTDatabase(LIGHT_DB_PATH)
 
     pool = ModelPool()
+<<<<<<< HEAD
     model_config = MapStarspaceModelConfig(
         opt_file=os.path.join(
             LIGHT_PATH, "light/registry/models/config/baseline_starspace.opt"
         )
     )
     pool.register_model(model_config, [ModelTypeName.CONNECTIONS])
+=======
+    model_config = MapStarspaceModelConfig(opt_file=os.path.join(LIGHT_PATH, "/light/registry/models/config/baseline_starspace.opt"))
+    pool.register_model(model_config, [ModelTypeName.MAP_CONNECTIONS])
+>>>>>>> 4d43e4c1 (light path)
     builder_config = OneRoomChatBuilderConfig(model_loader_config=model_config)
 
     world_opt = {
