@@ -4,6 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from dataclasses import dataclass, field
+from omegaconf import MISSING, DictConfig  # type: ignore
+from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
+
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 from light.world.world import World, WorldConfig
 from light.graph.structured_graph import OOGraph
@@ -22,14 +26,10 @@ from light.data_model.db.environment import (
     DBEdgeType,
 )
 
-import os
 import random
 import time
-import asyncio
 
-from dataclasses import dataclass, field
-from omegaconf import MISSING, DictConfig  # type: ignore
-from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
+from light.registry.model_pool import  ModelTypeName
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
