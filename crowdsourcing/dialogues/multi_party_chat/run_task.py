@@ -30,7 +30,8 @@ from light.graph.builders.one_room_builder import (
     OneRoomChatBuilder,
     OneRoomChatBuilderConfig,
 )
-from light.data_model.light_database import LIGHTDatabase
+from light.data_model.db.environment import EnvDB
+from light.data_model.db.base import LightDBConfig
 from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 
@@ -63,10 +64,15 @@ class ParlAITaskConfig(build_default_task_config("dev")):  # type: ignore
     allowlist_qualification: str = ALLOWLIST_QUALIFICATION
 
 
+def env_db():
+    ldbc = LightDBConfig()
+    ldbc.backend = 'local'
+    ldbc.file_root = '/checkpoint/light/db/prod/'
+    return EnvDB(ldbc)
+
+
 @task_script(config=ParlAITaskConfig)
 def main(operator: "Operator", cfg: DictConfig) -> None:
-    ldb = LIGHTDatabase(LIGHT_DB_PATH)
-
     pool = ModelPool()
     model_config = MapStarspaceModelConfig(
         opt_file=os.path.join(
@@ -81,7 +87,7 @@ def main(operator: "Operator", cfg: DictConfig) -> None:
     world_opt = {
         "num_turns": cfg.num_turns,
         "turn_timeout": cfg.turn_timeout,
-        "builder": OneRoomChatBuilder(ldb, pool, builder_config),
+        "builder": OneRoomChatBuilder(builder_config, env_db(), pool),
     }
 
     custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
