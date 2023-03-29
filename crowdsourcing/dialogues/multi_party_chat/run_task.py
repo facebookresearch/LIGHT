@@ -18,6 +18,9 @@ from mephisto.utils.qualifications import make_qualification_dict
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f1d374bb (fixed DB)
 from light.constants import LIGHT_PATH
 from light.graph.builders.one_room_builder import (
     OneRoomChatBuilder,
@@ -41,10 +44,14 @@ from light.registry.models.starspace_model import MapStarspaceModelConfig
 
 ALLOWLIST_QUALIFICATION = "multiparty-allow-prod-v2"
 <<<<<<< HEAD
+<<<<<<< HEAD
 LIGHT_DB_PATH = os.path.join(LIGHT_PATH, "light/data_model/database.db")
 =======
 LIGHT_DB_PATH = os.path.join(PARLAI_PATH, "data/light/merged.db")
 >>>>>>> 14ae0c63 (black)
+=======
+LIGHT_DB_PATH = os.path.join(LIGHT_PATH, "light/data_model/database.db")
+>>>>>>> f1d374bb (fixed DB)
 
 
 @dataclass
