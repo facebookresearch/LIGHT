@@ -22,7 +22,7 @@ from light.graph.builders.one_room_builder import (
     OneRoomChatBuilder,
     OneRoomChatBuilderConfig,
 )
-from light.constants import LIGHT_PATH, PARLAI_PATH
+from light.constants import LIGHT_PATH
 
 from light.graph.builders.one_room_builder import OneRoomChatBuilder, OneRoomChatBuilderConfig
 
@@ -36,8 +36,9 @@ from light.registry.model_pool import ModelPool, ModelTypeName
 from light.registry.models.starspace_model import MapStarspaceModelConfig
 
 
+# TODO replace this later when the EnvDB is added to the repo.
+TEMP_DATABASE_ROOT_DIR = '/checkpoint/light/db/prod/'
 ALLOWLIST_QUALIFICATION = "multiparty-allow-prod-v2"
-LIGHT_DB_PATH = os.path.join(LIGHT_PATH, "light/data_model/database.db")
 
 @dataclass
 class ParlAITaskConfig(build_default_task_config("dev")):  # type: ignore
@@ -65,9 +66,10 @@ class ParlAITaskConfig(build_default_task_config("dev")):  # type: ignore
 
 
 def env_db():
+    assert os.path.exists(TEMP_DATABASE_ROOT_DIR), 'The EnvDB is not available yet.'
     ldbc = LightDBConfig()
     ldbc.backend = 'local'
-    ldbc.file_root = '/checkpoint/light/db/prod/'
+    ldbc.file_root = TEMP_DATABASE_ROOT_DIR
     return EnvDB(ldbc)
 
 
