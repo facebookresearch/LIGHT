@@ -61,7 +61,6 @@ class MapStarspaceModelLoader(ParlAIModelLoader):
                 self.config.resource_path, "object_full_cands.txt"
             )
         else:
-            breakpoint()
             raise NotImplementedError(
                 f"Given starspace target type {opt['target_type']} not implemented"
             )

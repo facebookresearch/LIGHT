@@ -12,7 +12,6 @@ from datetime import datetime
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.core.worlds import validate
 import parlai.utils.logging as logging
-from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.data_model.exceptions import (
     AgentReturnedError,
     AgentDisconnectedError,
@@ -26,7 +25,6 @@ from acceptability import MultiPartyChatChecker
 
 
 SHORT_FORCED_TIMEOUT_TIME = 0.0001
-mephisto_db = LocalMephistoDB()
 
 
 def get_worker_from_agent(agent):
