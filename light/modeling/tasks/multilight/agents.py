@@ -10,7 +10,7 @@ import copy
 import jsonlines
 import random
 import os
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 from parlai.core.message import Message
 from parlai.core.metrics import ExactMatchMetric, F1Metric
@@ -25,24 +25,24 @@ from light.modeling.tasks.multilight.build import build, DATA_PATH
 from light.modeling.tasks.multilight import constants
 
 
-def _format_timestep(timestamp, first_utterance_timestamp):
+def _format_timestep(timestamp: str, first_utterance_timestamp: str):
     """
     Outputs timestep in the format of '00:00:00' relative to `first_utterance_timestamp`
     """
-    time_delta = float(timestamp) - float(first_utterance_timestamp)
-    hour = int(time_delta // 3600)
+    time_delta = int(float(timestamp) - float(first_utterance_timestamp))
+    hour = time_delta // 3600
     time_delta %= 3600
-    minute = int(time_delta // 60)
+    minute = time_delta // 60
     time_delta %= 60
-    second = int(time_delta)
+    second = time_delta
     return f"{hour:02d}:{minute:02d}:{second:02d}"
 
 
-def get_clean_text(message):
+def get_clean_text(message: Message) -> str:
     return message["text"].replace("\n", " ")
 
 
-def flatten_personas(personas: Dict, delim="\n"):
+def flatten_personas(personas: List[Dict[str, str]], delim: Optional[str]="\n") -> str:
     personass_str_parts = []
     personass_str_parts.append("__personas__")
     personass_str_parts.extend([f"{p['name']}: {p['persona']}" for p in personas])
@@ -50,7 +50,7 @@ def flatten_personas(personas: Dict, delim="\n"):
     return delim.join(personass_str_parts)
 
 
-def flatten_location(location: Dict, delim="\n"):
+def flatten_location(location: Dict[str, str], delim: Optional[str]="\n") -> str:
     location_str_parts = [
         "__location__",
         f"{location['name']}: {location['description']}",
@@ -59,11 +59,11 @@ def flatten_location(location: Dict, delim="\n"):
     return delim.join(location_str_parts)
 
 
-def get_speaker_names(utt):
+def get_speaker_names(utt: Message) -> List[str]:
     return [p["name"] for p in utt["personas"]]
 
 
-def get_speaker_name_from_index(utt, index):
+def get_speaker_name_from_index(utt: Message, index: int) -> str:
     return utt["personas"][index]["name"]
 
 
@@ -73,7 +73,7 @@ class BaseTeacher(DialogTeacher):
     The messages from this teacher are not formatted for use. Do NOT use directly!
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         opt = copy.deepcopy(opt)
         build(opt)
         self.fold = DatatypeHelper.fold(opt["datatype"])
@@ -194,7 +194,7 @@ class BaseTeacher(DialogTeacher):
         )
         return parser
 
-    def _get_data_quality_tiers(self, tiers_str):
+    def _get_data_quality_tiers(self, tiers_str: str) -> Set[int]:
         tiers = set([int(t) for t in tiers_str.split(",")])
         for t in tiers:
             assert t in (
@@ -203,7 +203,7 @@ class BaseTeacher(DialogTeacher):
             ), f"Requested data tier ({t}) is invalid. Available tiers are 1 and 2 (only)."
         return tiers
 
-    def get_speaker_prompt(self, utt, ts=None):
+    def get_speaker_prompt(self, utt: Message, ts: Optional[str]=None) -> str:
         spkr = utt["speaker"]
         return (
             f"{spkr} {ts} {self.speaker_token_delimiter}"
@@ -211,19 +211,19 @@ class BaseTeacher(DialogTeacher):
             else f"{spkr}{self.speaker_token_delimiter}"
         )
 
-    def get_utterance_context(self, utt, ts=None):
+    def get_utterance_context(self, utt: Message, ts: Optional[str]=None) -> str:
         text = get_clean_text(utt)
         if self.include_speaker_in_context:
             text = f"{self.get_speaker_prompt(utt, ts)} {text}"
         return text
 
-    def get_utterance_label(self, utt):
+    def get_utterance_label(self, utt: Dict[str, Any]) -> str:
         label = get_clean_text(utt)
         if self.include_speaker_in_label:
             label = f"{self.get_speaker_prompt(utt)} {label}"
         return label
 
-    def setup_data(self, datafile):
+    def setup_data(self, datafile: str) -> List[Message]:
         with jsonlines.open(datafile) as reader:
             conversations = [dl for dl in reader]
 
@@ -295,12 +295,12 @@ class BaseTeacher(DialogTeacher):
                         self.get_utterance_context(utt=utterance, ts=timestep)
                     )
 
-    def get_utterance_speaker_id(self, personas, speaker):
+    def get_utterance_speaker_id(self, personas: Dict[str, str], speaker: str):
         for idx, persona in enumerate(personas):
             if persona["name"] == speaker:
                 return idx
 
-    def get_extra_context_before(self, conv):
+    def get_extra_context_before(self, conv: Message):
         """
         Generates the persona and location, which goes *before* the conversation context.
         """
@@ -312,7 +312,7 @@ class BaseTeacher(DialogTeacher):
             extra_context_before.append(flatten_personas(conv["personas"]))
         return extra_context_before
 
-    def get_extra_context_after(self, conv):
+    def get_extra_context_after(self, conv: Message):
         """
         Generates the timestep and speaker prompt, which goes *after* the conversation context.
         """
@@ -327,11 +327,11 @@ class BaseTeacher(DialogTeacher):
 
 @register_teacher("light:multilight:AllCharactersTeacher")
 class AllSpeakersTeacher(BaseTeacher):
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
         self.id = "multilight_dialogue_:all_speakers"
 
-    def setup_data(self, datafile):
+    def setup_data(self, datafile: str) -> List[Message]:
         for utt, _ in super().setup_data(datafile):
             ret = copy.deepcopy(utt)
             extra_context_before = self.get_extra_context_before(ret)
@@ -388,7 +388,7 @@ class AllSpeakersTeacher(BaseTeacher):
 
 @register_teacher("light:multilight:Speaker")
 class SpeakerPredictionTeacher(AllSpeakersTeacher):
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         self.add_current_turn = opt["add_current_turn"]
         super().__init__(opt, shared)
         self.id = "SpeakerPrediction"
@@ -406,7 +406,7 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
             help="Whether to include the current turn in the text.",
         )
 
-    def _remove_label_speaker(self, message):
+    def _remove_label_speaker(self, message: Message):
         """
         Removes the speaker when the last utterance is being added to the context.
         """
@@ -419,7 +419,7 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
             label = label_text.strip()
         return label
 
-    def setup_data(self, datafile):
+    def setup_data(self, datafile: str) -> List[Message]:
         for utt, _e in super().setup_data(datafile):
             msg = copy.deepcopy(utt)
             current_turn_utterance = self._remove_label_speaker(msg)
@@ -439,7 +439,7 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     (Abstract class) Do NOT use directly.
     """
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         self.silence_token = opt["silence_token"]
         self.silence_token_dropout = opt["silence_token_dropout"]
         assert (
@@ -473,24 +473,24 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
         return parser
 
     @abstractclassmethod
-    def get_speaker_index(self):
+    def get_speaker_index(self) -> int:
         """
         Returns the index of the speaker in the dataset (0, 1, 2)
         """
 
-    def generate_silence_label(self, speaker):
+    def generate_silence_label(self, speaker: str) -> str:
         label = self.silence_token
         if self.include_speaker_in_label:
             label = f"{speaker}{self.speaker_token_delimiter} {label}"
         return label
 
-    def is_this_speaker_turn(self, utt):
+    def is_this_speaker_turn(self, utt: Message) -> bool:
         return (
             self.get_utterance_speaker_id(utt["personas"], utt["speaker"])
             == self.get_speaker_index()
         )
 
-    def setup_data(self, datafile):
+    def setup_data(self, datafile: str) -> List[Message]:
         episode_needs_reset = False
 
         for utt, new_episode in super().setup_data(datafile):
@@ -577,29 +577,29 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
 
 @register_teacher("light:multilight:speaker1")
 class FirstSpeakerTeacher(SingleSpeakerTeacher):
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
         self.id = "multilight_dialogue:first_speaker"
 
-    def get_speaker_index(self):
+    def get_speaker_index(self) -> int:
         return 0
 
 
 @register_teacher("light:multilight:speaker2")
 class SecondSpeakerTeacher(SingleSpeakerTeacher):
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
         self.id = "multilight_dialogue:second_speaker"
 
-    def get_speaker_index(self):
+    def get_speaker_index(self) -> int:
         return 1
 
 
 @register_teacher("light:multilight:speaker3")
 class ThirdSpeakerTeacher(SingleSpeakerTeacher):
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
         self.id = "multilight_dialogue:third_speaker"
 
-    def get_speaker_index(self):
+    def get_speaker_index(self) -> int:
         return 2
