@@ -245,9 +245,6 @@ class BaseTeacher(DialogTeacher):
                 "name": conv["location"]["name"],
                 "description": conv["location"]["description"],
             }
-            speaker_worker_tier = [
-                wq["worker_tier"] for wq in conv["workers_quality_check"]
-            ]
 
             context = []
 
@@ -285,10 +282,7 @@ class BaseTeacher(DialogTeacher):
                     "characters": [p["name"] for p in personas],
                     "speaker_id": utterance["speaker_id"],
                     "full_context": context,
-                    "speaker_worker_tier": speaker_worker_tier[
-                        self.get_utterance_speaker_id(personas, speaker)
-                    ],
-                    "workers_tier": speaker_worker_tier,
+                    "speaker_worker_tier": utterance["workers_tier"],
                     "quality_tier": conv["quality_tier"],
                     "text": None,  # This is an abstract class, we will feel in the text later.
                     "label": self.get_utterance_label(utterance),
@@ -501,10 +495,7 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
 
         for utt, new_episode in super().setup_data(datafile):
             # checking if we need to skip this round because of the speaker tier
-            if (
-                utt["workers_tier"][self.get_speaker_index()]
-                not in self.speaker_quality_tiers
-            ):
+            if utt["speaker_worker_tier"] not in self.speaker_quality_tiers:
                 continue
 
             if new_episode:
