@@ -71,36 +71,37 @@ def get_speaker_name_from_index(utt: Message, index: int) -> str:
 
 class BaseTeacher(DialogTeacher):
     """
-    Base class for multi-party chat teacher.
-    The messages from this teacher are not formatted for use. Do NOT use directly!
+    Base class for MultiLIGHT teacher.
+    This is an abstract class: do NOT use directly!
     """
 
     def __init__(self, opt: Opt, shared=None):
         opt = copy.deepcopy(opt)
-        build(opt)
+        build()
+        # We often also call folds splits (for example in the build file here).
         self.fold = DatatypeHelper.fold(opt["datatype"])
         opt["datafile"] = os.path.join(
             DATA_PATH, constants.PROCESSED_FILES_DIRNAME, f"{self.fold}.jsonl"
         )
 
-        self.use_start_token = opt["use_start_token"]
-        self.start_token = opt["start_token"]
-        self.include_speaker_in_context = opt["include_speaker_in_context"]
-        self.include_speaker_in_label = opt["include_speaker_in_label"]
-        self.add_speaker_to_context_end = opt["add_speaker_to_context_end"]
-        self.utterance_delimiter = opt["utterance_delimiter"]
-        self.speaker_token_delimiter = opt["speaker_token_delimiter"]
-        self.include_timestep_in_context = opt["include_timestep_in_context"]
-        self.add_current_timestep_to_context = opt["add_current_timestep_to_context"]
-        self.add_personas_to_context = opt["add_personas_to_context"]
-        self.add_location_to_context = opt["add_location_to_context"]
-        self.id = "light_multiparty_dialogue"
         self.episode_quality_tiers = self._get_data_quality_tiers(
             opt["episode_quality_tiers"]
         )
         self.speaker_quality_tiers = self._get_data_quality_tiers(
             opt["speaker_quality_tiers"]
         )
+        self.utterance_delimiter = opt["utterance_delimiter"]
+        self.use_start_token = opt["use_start_token"]
+        self.start_token = opt["start_token"]
+        self.include_speaker_in_context = opt["include_speaker_in_context"]
+        self.include_speaker_in_label = opt["include_speaker_in_label"]
+        self.add_speaker_to_context_end = opt["add_speaker_to_context_end"]
+        self.speaker_token_delimiter = opt["speaker_token_delimiter"]
+        self.include_timestep_in_context = opt["include_timestep_in_context"]
+        self.add_current_timestep_to_context = opt["add_current_timestep_to_context"]
+        self.add_personas_to_context = opt["add_personas_to_context"]
+        self.add_location_to_context = opt["add_location_to_context"]
+        self.id = "light_multiparty_dialogue"
 
         super().__init__(opt, shared)
 
@@ -109,12 +110,12 @@ class BaseTeacher(DialogTeacher):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        agent = parser.add_argument_group("MultiLIGHT Corpus Arguments")
+        agent = parser.add_argument_group("MultiLIGHT Teacher Arguments")
         agent.add_argument(
             "--episode-quality-tiers",
             type=str,
             default="1,2",
-            help="Comma seperated list of tiers of data quality for episodes to include. "
+            help="Comma separated list of tiers of data quality for episodes to include. "
             "The available tiers are 1 (high), 2 (low) quality."
             " NOTE: only training data split has tiers. valid and test are only tier 1 data.",
         )
@@ -122,7 +123,7 @@ class BaseTeacher(DialogTeacher):
             "--speaker-quality-tiers",
             type=str,
             default="1,2",
-            help="Comma seperated list of tiers of data quality for speakers to include. "
+            help="Comma separated list of tiers of data quality for speakers to include. "
             "The available tiers are 1 (high), 2 (low) quality."
             " NOTE: only training data split has tiers. valid and test are only tier 1 data.",
         )
@@ -131,6 +132,18 @@ class BaseTeacher(DialogTeacher):
             type=str,
             default="\n",
             help="A string used to separate each utterance in the context. Defaults to newline. For example, 'A: Hello\nB: Hi there'.",
+        )
+        agent.add_argument(
+            "--use-start-token",
+            type="bool",
+            default=False,
+            help="Use start token at the beginning of each conversation, and include the first sentence as a training example.",
+        )
+        agent.add_argument(
+            "--start-token",
+            type=str,
+            default=constants.START_TOKEN,
+            help=f"The token to use to indicate the beginning of a conversation. Defaults to {constants.START_TOKEN}",
         )
         agent.add_argument(
             "--include-speaker-in-label",
@@ -153,44 +166,32 @@ class BaseTeacher(DialogTeacher):
             help="Append the current speaker (who says `label`) to the end of each context. Defaults to True.",
         )
         agent.add_argument(
-            "--use-start-token",
-            type="bool",
-            default=False,
-            help="Use start token at the beginning of each conversation, and include the first sentence as a training example.",
-        )
-        agent.add_argument(
-            "--start-token",
-            type=str,
-            default=constants.START_TOKEN,
-            help=f"The token to use to indicate the beginning of a conversation. Defaults to {constants.START_TOKEN}",
-        )
-        agent.add_argument(
             "--speaker-token-delimiter",
             type=str,
-            default=":",
+            default=constants.SPEAKER_TOKEN_DELIM,
             help="The token to use to separate the speaker label from the actual utterance in `obs['text']`.",
         )
         agent.add_argument(
             "--include-timestep-in-context",
-            type=bool,
+            type="bool",
             default=False,
             help="If true, will add the timestep as part of the context for each previous utterance.",
         )
         agent.add_argument(
             "--add-current-timestep-to-context",
-            type=bool,
+            type="bool",
             default=False,
             help="If true, will add the current timestep at the end of the context.",
         )
         agent.add_argument(
             "--add-personas-to-context",
-            type=bool,
+            type="bool",
             default=False,
             help="If true, will prepend the flattened persona descriptions to the context.",
         )
         agent.add_argument(
             "--add-location-to-context",
-            type=bool,
+            type="bool",
             default=False,
             help="If true, will prepend the flattened location description to the context.",
         )
@@ -364,15 +365,11 @@ class AllSpeakersTeacher(BaseTeacher):
             if len(parts) >= 2:
                 predited_speaker = parts[0].strip()
             else:
+                # A dummy string to trigger this as the wrong speaker.
                 predited_speaker = "__NO_SPEAKER__"
 
             # The teacher will always include the correct speaker label in the 'speaker' field
-            expected_speaker = (
-                teacher_action.get("speaker_id")
-                if self.use_bb3_context_format
-                else teacher_action.get("speaker")
-            )
-
+            expected_speaker = teacher_action.get("speaker")
             # Predicted speaker accuracy
             self.metrics.add(
                 "speaker_acc",
@@ -390,6 +387,10 @@ class AllSpeakersTeacher(BaseTeacher):
 
 @register_teacher("light:multilight:Speaker")
 class SpeakerPredictionTeacher(AllSpeakersTeacher):
+    """
+    Generates the speaker name for the current turn.
+    """
+
     def __init__(self, opt: Opt, shared=None):
         self.add_current_turn = opt["add_current_turn"]
         super().__init__(opt, shared)
@@ -408,12 +409,13 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
             help="Whether to include the current turn in the text.",
         )
 
-    def _remove_label_speaker(self, message: Message):
+    def _label_text(self, message: Message):
         """
         Removes the speaker when the last utterance is being added to the context.
         """
         label = message["label"]
         if self.include_speaker_in_label:
+            # Just a quick check to be extra sure about the data format.
             label_speaker, label_text = label.split(self.speaker_token_delimiter, 1)
             assert (
                 label_speaker.strip() == message["speaker"]
@@ -424,7 +426,7 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
     def setup_data(self, datafile: str) -> List[Message]:
         for utt, _e in super().setup_data(datafile):
             msg = copy.deepcopy(utt)
-            current_turn_utterance = self._remove_label_speaker(msg)
+            current_turn_utterance = self._label_text(msg)
             msg["label"] = msg["speaker"]
             msg["label_candidates"] = get_speaker_names(msg)
             if self.add_current_turn:
@@ -438,7 +440,7 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     """
     Generaes the utterances for a single character only.
     The label will be the silent token if that character doesn't speak that round.
-    (Abstract class) Do NOT use directly.
+    This is an abstract class: do NOT use directly!
     """
 
     def __init__(self, opt: Opt, shared=None):
@@ -455,7 +457,7 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group(
-            "LIGHT Multiparty Chat Corpus Arguments (Single Speaker Teacher)"
+            "MultiLIGHT Teacher Arguments (Single Speaker Teacher)"
         )
         agent.add_argument(
             "--silence-token",
@@ -536,18 +538,16 @@ class SingleSpeakerTeacher(ABC, BaseTeacher):
             else:
                 ret["text"] = self.utterance_delimiter.join(context)
 
-            # Adding the prompot to the temp_history for not keeping it in the full history.
-            # There is also an extra \n to make the format more alike the other teachers.
-            ret["temp_history"] = "\n".join([""] + self.get_extra_context_after(ret))
-
             last_speaker_trun = turn_num
             # Setting the speaker to the current speaker.
             # Even if the speaker doesn't speak, the silence term is this speaker's action.
             ret["speaker"] = get_speaker_name_from_index(utt, self.get_speaker_index())
+
+            # Adding the prompot to the temp_history for not keeping it in the full history.
+            # There is also an extra \n to make the format more alike the other teachers.
+            ret["temp_history"] = "\n".join([""] + self.get_extra_context_after(ret))
             if is_silence_turn:
-                ret["label"] = self.generate_silence_label(
-                    get_speaker_name_from_index(utt, self.get_speaker_index())
-                )
+                ret["label"] = self.generate_silence_label(ret["speaker"])
             else:
                 last_speaker_trun += 1
 

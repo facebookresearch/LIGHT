@@ -3,7 +3,7 @@
 # Copyright (c) Meta, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-# Download and build the data if it does not exist.
+
 
 from collections import defaultdict
 import json
@@ -13,7 +13,6 @@ from tqdm import tqdm
 from typing import Any, Dict, List
 
 import parlai.core.build_data as build_data
-from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 
 from light.constants import LIGHT_DATAPATH
@@ -34,7 +33,10 @@ def get_personas(graph: Dict[str, Any]) -> List[Dict[str, str]]:
 
 def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
     db_path = os.path.join(DATA_PATH, "episode.db")
-    assert os.path.exists(db_path), f"No EpisodeDB  found at {db_path}"
+    assert os.path.exists(db_path), (
+        f"No EpisodeDB  found at {db_path}. "
+        "Make sure you have downloaded the updated EpisodeDB."
+    )
     db_conf = LightDBConfig(backend="local", file_root=DATA_PATH)
     db = EpisodeDB(db_conf)
     db_episodes = db.get_episodes()
@@ -52,17 +54,19 @@ def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
         with open(conv_file, "r") as fi:
             episodes_dump_data = json.load(fi)
 
-        conv = {"messages": []}
-        for ei, e in enumerate(episodes_dump_data["events"]):
-            utt_data = json.loads(e["event_json"])
+        conv = {
+            "messages": [],
+            "characters": get_personas(episode_data.get_before_graph(db)),
+        }
+        for ei, game_event in enumerate(episodes_dump_data["events"]):
+            utt_data = json.loads(game_event["event_json"])
             if ei == 0:
-                # Setting the location and personas from the first message
+                # Setting the location and quality tier from the first message
                 conv["quality_tier"] = utt_data["room"]["data_quality_tier"]
                 conv["location"] = {
                     "name": utt_data["room"]["name"],
                     "description": utt_data["room"]["extra_desc"],
                 }
-                conv["characters"] = get_personas(episode_data.get_before_graph(db))
 
             # Adding the messages
             conv["messages"].append(
@@ -78,7 +82,7 @@ def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
     return data_splits
 
 
-def build(opt: Opt):
+def build():
     processed_dpath = os.path.join(DATA_PATH, constants.PROCESSED_FILES_DIRNAME)
     version = "0.1"
     if not build_data.built(processed_dpath, version):
