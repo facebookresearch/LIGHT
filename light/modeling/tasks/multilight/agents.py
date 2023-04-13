@@ -21,7 +21,7 @@ from parlai.core.teachers import DialogTeacher
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric
 from parlai.utils.data import DatatypeHelper
 
-from light.modeling.tasks.multilight.build import build
+from light.modeling.tasks.multilight.build import build, DATA_PATH
 from light.modeling.tasks.multilight import constants
 
 
@@ -78,7 +78,7 @@ class BaseTeacher(DialogTeacher):
         build(opt)
         self.fold = DatatypeHelper.fold(opt["datatype"])
         opt["datafile"] = os.path.join(
-            opt["datapath"], constants.DATASET_NAME, f"{self.fold}.jsonl"
+            DATA_PATH, constants.PROCESSED_FILES_DIRNAME, f"{self.fold}.jsonl"
         )
 
         self.use_start_token = opt["use_start_token"]

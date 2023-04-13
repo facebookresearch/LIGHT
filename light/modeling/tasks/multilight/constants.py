@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-DATASET_NAME = "light_multiparty"
+DEFAULT_DATASET_SUBPATH = "dialog/multi_party_chat"
+PROCESSED_FILES_DIRNAME = "processed"
 START_TOKEN = "__START__"
 SILENCE_TOKEN = "__SILENCE__"
