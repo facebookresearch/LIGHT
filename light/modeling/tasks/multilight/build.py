@@ -73,7 +73,7 @@ def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
                 {
                     "speaker": utt_data["actor"]["name"],
                     "timestamp": utt_data["event_time"],
-                    "text": utt_data["entered_text"],
+                    "text": utt_data["text_content"],
                     "workers_tier": utt_data["actor"]["tier"],
                 }
             )
