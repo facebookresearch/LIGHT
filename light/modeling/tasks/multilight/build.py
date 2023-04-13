@@ -103,6 +103,6 @@ def build():
                 for conv in conv_data:
                     fo.write(conv)
 
-        logging.info("Finished downloading dataset files successfully.")
+        logging.info("Finished creating the processed dataset files successfully.")
 
         build_data.mark_done(processed_dpath, version)
