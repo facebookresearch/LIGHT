@@ -28,54 +28,55 @@ DATA_PATH = os.path.join(LIGHT_DATAPATH, constants.DEFAULT_DATASET_SUBPATH)
 def get_personas(graph: Dict[str, Any]) -> List[Dict[str, str]]:
     personas = []
     for p in graph.get_humans():
-        personas.append(
-            {
-                'name': p.name,
-                'persona': p.persona
-            }
-        )
+        personas.append({"name": p.name, "persona": p.persona})
     return personas
 
 
 def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
-    db_path = os.path.join(DATA_PATH, 'episode.db')
-    assert os.path.exists(db_path), f'No EpisodeDB  found at {db_path}'
+    db_path = os.path.join(DATA_PATH, "episode.db")
+    assert os.path.exists(db_path), f"No EpisodeDB  found at {db_path}"
     db_conf = LightDBConfig(backend="local", file_root=DATA_PATH)
     db = EpisodeDB(db_conf)
     db_episodes = db.get_episodes()
-    logging.info(f'Processing a total of {len(db_episodes)} episodes from the EpisodeDB.')
+    logging.info(
+        f"Processing a total of {len(db_episodes)} episodes from the EpisodeDB."
+    )
     data_splits = defaultdict(list)
     for episode_data in tqdm(db_episodes):
-        
-        conv_file = os.path.join(LIGHT_DATAPATH, constants.DEFAULT_DATASET_SUBPATH, episode_data.dump_file_path)
-        with open(conv_file, 'r') as fi:
+
+        conv_file = os.path.join(
+            LIGHT_DATAPATH,
+            constants.DEFAULT_DATASET_SUBPATH,
+            episode_data.dump_file_path,
+        )
+        with open(conv_file, "r") as fi:
             episodes_dump_data = json.load(fi)
 
-        conv = {'messages': []}
-        for ei, e in enumerate(episodes_dump_data['events']):
-            utt_data = json.loads(e['event_json'])
+        conv = {"messages": []}
+        for ei, e in enumerate(episodes_dump_data["events"]):
+            utt_data = json.loads(e["event_json"])
             if ei == 0:
                 # Setting the location and personas from the first message
-                conv['quality_tier'] = utt_data['room']['data_quality_tier']
-                conv['location'] = {
-                    'name': utt_data['room']['name'],
-                    'description': utt_data['room']['extra_desc']
+                conv["quality_tier"] = utt_data["room"]["data_quality_tier"]
+                conv["location"] = {
+                    "name": utt_data["room"]["name"],
+                    "description": utt_data["room"]["extra_desc"],
                 }
-                conv['characters'] = get_personas(episode_data.get_before_graph(db))
-            
+                conv["characters"] = get_personas(episode_data.get_before_graph(db))
+
             # Adding the messages
-            conv['messages'].append(
+            conv["messages"].append(
                 {
-                    'speaker': utt_data['actor']['name'],
-                    'timestamp': utt_data['event_time'],
-                    'text': utt_data['entered_text'],
-                    'workers_tier': utt_data['actor']['tier']
+                    "speaker": utt_data["actor"]["name"],
+                    "timestamp": utt_data["event_time"],
+                    "text": utt_data["entered_text"],
+                    "workers_tier": utt_data["actor"]["tier"],
                 }
             )
 
         data_splits[episode_data.split].append(conv)
-    return  data_splits
-   
+    return data_splits
+
 
 def build(opt: Opt):
     processed_dpath = os.path.join(DATA_PATH, constants.PROCESSED_FILES_DIRNAME)
@@ -91,11 +92,13 @@ def build(opt: Opt):
 
         extracted_data_splits = read_episodes_from_db()
         for dsplt, conv_data in extracted_data_splits.items():
-            logging.info(f'Storing {len(conv_data)} processed data for {dsplt}')
-            with jsonlines.open(os.path.join(processed_dpath, f'{dsplt.value}.jsonl'), 'w') as fo:
+            logging.info(f"Storing {len(conv_data)} processed data for {dsplt}")
+            with jsonlines.open(
+                os.path.join(processed_dpath, f"{dsplt.value}.jsonl"), "w"
+            ) as fo:
                 for conv in conv_data:
                     fo.write(conv)
-        
+
         logging.info("Finished downloading dataset files successfully.")
 
         build_data.mark_done(processed_dpath, version)

@@ -42,7 +42,9 @@ def get_clean_text(message: Message) -> str:
     return message["text"].replace("\n", " ")
 
 
-def flatten_personas(personas: List[Dict[str, str]], delim: Optional[str]="\n") -> str:
+def flatten_personas(
+    personas: List[Dict[str, str]], delim: Optional[str] = "\n"
+) -> str:
     personass_str_parts = []
     personass_str_parts.append("__personas__")
     personass_str_parts.extend([f"{p['name']}: {p['persona']}" for p in personas])
@@ -50,7 +52,7 @@ def flatten_personas(personas: List[Dict[str, str]], delim: Optional[str]="\n") 
     return delim.join(personass_str_parts)
 
 
-def flatten_location(location: Dict[str, str], delim: Optional[str]="\n") -> str:
+def flatten_location(location: Dict[str, str], delim: Optional[str] = "\n") -> str:
     location_str_parts = [
         "__location__",
         f"{location['name']}: {location['description']}",
@@ -203,7 +205,7 @@ class BaseTeacher(DialogTeacher):
             ), f"Requested data tier ({t}) is invalid. Available tiers are 1 and 2 (only)."
         return tiers
 
-    def get_speaker_prompt(self, utt: Message, ts: Optional[str]=None) -> str:
+    def get_speaker_prompt(self, utt: Message, ts: Optional[str] = None) -> str:
         spkr = utt["speaker"]
         return (
             f"{spkr} {ts} {self.speaker_token_delimiter}"
@@ -211,7 +213,7 @@ class BaseTeacher(DialogTeacher):
             else f"{spkr}{self.speaker_token_delimiter}"
         )
 
-    def get_utterance_context(self, utt: Message, ts: Optional[str]=None) -> str:
+    def get_utterance_context(self, utt: Message, ts: Optional[str] = None) -> str:
         text = get_clean_text(utt)
         if self.include_speaker_in_context:
             text = f"{self.get_speaker_prompt(utt, ts)} {text}"
