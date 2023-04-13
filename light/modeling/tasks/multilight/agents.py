@@ -605,3 +605,8 @@ class ThirdSpeakerTeacher(SingleSpeakerTeacher):
 
     def get_speaker_index(self) -> int:
         return 2
+
+
+@register_teacher("light:multilight")
+class DefaultTeacher(AllSpeakersTeacher):
+    pass
