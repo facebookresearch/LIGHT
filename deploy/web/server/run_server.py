@@ -47,7 +47,7 @@ HYDRA_CONFIG_DIR = os.path.join(LIGHT_DIR, "hydra_configs")
 DEFAULT_PORT = 35494
 DEFAULT_HOSTNAME = "localhost"
 
-MAP_DIR = os.path.expanduser("~/LIGHT/scripts/examples/prod_maps")
+MAP_DIR = os.path.join(LIGHT_DIR, "scripts/examples/prod_maps")
 MAPS = [os.path.join(MAP_DIR, m) for m in os.listdir(MAP_DIR)]
 random.shuffle(MAPS)
 print(f"Loading maps from: {MAPS}")

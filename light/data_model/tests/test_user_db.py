@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
-from omegaconf import OmegaConf
-from sqlalchemy.exc import IntegrityError
+from omegaconf import OmegaConf  # type: ignore
+from sqlalchemy.exc import IntegrityError  # type: ignore
 from light.data_model.db.base import LightDBConfig
 from light.data_model.db.users import UserDB, PlayerStatus
 from light.data_model.db.environment import EnvDB
@@ -84,7 +84,7 @@ class TestUserDB(unittest.TestCase):
         )
         self.assertEqual(
             player_1_by_id.account_status,
-            PlayerStatus.TUTORIAL,
+            PlayerStatus.INTRO,
             "Did not initialize to tutorial",
         )
 
@@ -116,14 +116,14 @@ class TestUserDB(unittest.TestCase):
         )
         self.assertEqual(
             player_2_by_id.account_status,
-            PlayerStatus.TUTORIAL,
+            PlayerStatus.INTRO,
             "Did not initialize to tutorial",
         )
 
         # Assert cannot find non-existent players
 
         with self.assertRaises(KeyError):
-            player_5 = db.get_player(-1)
+            player_5 = db.get_player("-1")
         with self.assertRaises(KeyError):
             player_5 = db.get_player_by_extern_id("FakePlayer")
 
@@ -134,8 +134,8 @@ class TestUserDB(unittest.TestCase):
 
         extern_id_1 = "TEST_LOGIN"
         player_id_1 = db.create_user(extern_id_1, is_preauth=False)
-        agent_id_1 = 1
-        agent_id_2 = 2
+        agent_id_1 = "1"
+        agent_id_2 = "2"
 
         # Check default score is present and 0
         base_score = db.get_agent_score(player_id_1)
@@ -144,11 +144,11 @@ class TestUserDB(unittest.TestCase):
 
         # Check that querying non-existent score fails
         with self.assertRaises(KeyError, msg="Able to find nonexisting score"):
-            base_score = db.get_agent_score(player_id_1, -1)
+            base_score = db.get_agent_score(player_id_1, "-1")
         with self.assertRaises(
             KeyError, msg="Able to find score for nonexisting player"
         ):
-            base_score = db.get_agent_score(-1)
+            base_score = db.get_agent_score("-1")
 
         # Add a few scores for at least 2 different agent names
         db.update_agent_score(player_id_1, agent_id_1, 1, 4, 5)
@@ -207,9 +207,9 @@ class TestUserDB(unittest.TestCase):
 
         # Ensure we cannot flag or trigger non-existing users
         with self.assertRaises(KeyError, msg="Could mark non-existing player"):
-            db.mark_flag(-1)
+            db.mark_flag("-1")
         with self.assertRaises(KeyError, msg="Could mark non-existing player"):
-            db.mark_safety_trigger(-1)
+            db.mark_safety_trigger("-1")
 
     def test_update_player_status(self):
         """Ensure we can flag players successfully"""
@@ -223,6 +223,7 @@ class TestUserDB(unittest.TestCase):
         for player_status in [
             PlayerStatus.STANDARD,
             PlayerStatus.BLOCKED,
+            PlayerStatus.INTRO,
             PlayerStatus.TUTORIAL,
             PlayerStatus.ADMIN,
         ]:
@@ -236,7 +237,7 @@ class TestUserDB(unittest.TestCase):
 
         # Ensure update on nonexisting player fails
         with self.assertRaises(KeyError, msg="Could change existing player status"):
-            db.update_player_status(-1, PlayerStatus.STANDARD)
+            db.update_player_status("-1", PlayerStatus.STANDARD)
 
 
 if __name__ == "__main__":

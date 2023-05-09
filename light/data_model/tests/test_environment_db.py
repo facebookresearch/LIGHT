@@ -6,11 +6,9 @@
 
 import unittest
 import shutil, tempfile
-from omegaconf import OmegaConf
-import os
-import json
 import time
 import sqlalchemy
+import sqlalchemy.exc
 
 from light.graph.structured_graph import OOGraph
 from light.data_model.db.environment import (
@@ -1067,7 +1065,7 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # Try expanding edge
         with self.assertRaises(AssertionError):
-            _test_child = edge_1.child()
+            _test_child = edge_1.child
         edge_1.expand_edge(db)
         self.assertIsInstance(edge_1.child, DBAgent)
         self.assertEqual(edge_1.child.db_id, agent_1_id)
@@ -1808,7 +1806,8 @@ class TestEnvironmentDB(unittest.TestCase):
 
         # Check that inter-node references work
         with Session(db.engine) as session:
-            quest_6 = session.query(DBQuest).get(quest_6_id)
+            quest_6: DBQuest = session.get(DBQuest, quest_6_id)  # type: ignore
+            assert quest_6 is not None, "No such quest found"
             session.expunge_all()
 
         # Loads should fail outside of session

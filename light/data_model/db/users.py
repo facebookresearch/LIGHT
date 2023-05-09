@@ -4,27 +4,27 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, HasDBIDMixin
+from light.data_model.db.base import BaseDB, LightDBConfig, HasDBIDMixin
 from omegaconf import MISSING, DictConfig
-from typing import Optional, Union, Dict, Any, TYPE_CHECKING
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
 from sqlalchemy import (
-    insert,
     select,
     delete,
     Enum,
-    Column,
     Integer,
     String,
     Boolean,
     ForeignKey,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session
 import enum
+from sqlalchemy.orm import relationship, Session, Mapped, mapped_column, DeclarativeBase
 
 if TYPE_CHECKING:
     from light.data_model.db.environment import EnvDB
 
-SQLBase = declarative_base()
+
+class SQLBase(DeclarativeBase):
+    pass
 
 
 class PlayerStatus(enum.Enum):
@@ -41,14 +41,18 @@ class DBPlayer(HasDBIDMixin, SQLBase):
     __tablename__ = "user_accounts"
     ID_PREFIX = "USR"
 
-    db_id = Column(String(40), primary_key=True)
-    extern_id = Column(String(60), nullable=False, index=True, unique=True)
-    is_preauth = Column(Boolean, nullable=False)
-    flag_count = Column(Integer, nullable=False)
-    safety_trigger_count = Column(Integer, nullable=False)
-    total_messages = Column(Integer, nullable=False)
-    account_status = Column(Enum(PlayerStatus), nullable=False)
-    scores = relationship("DBScoreEntry")
+    db_id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    extern_id: Mapped[str] = mapped_column(
+        String(60), nullable=False, index=True, unique=True
+    )
+    is_preauth: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    flag_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    safety_trigger_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    total_messages: Mapped[int] = mapped_column(Integer, nullable=False)
+    account_status: Mapped[PlayerStatus] = mapped_column(
+        Enum(PlayerStatus), nullable=False
+    )
+    scores: Mapped[List["DBScoreEntry"]] = relationship(argument="DBScoreEntry")
 
     def __repr__(self):
         return f"DBPlayer(ids:[{self.db_id!r},{self.extern_id!r}], preauth:{self.is_preauth!r}, status:{self.account_status.value!r})"
@@ -59,16 +63,16 @@ class DBScoreEntry(SQLBase):
 
     __tablename__ = "user_scores"
 
-    id = Column(Integer, primary_key=True)
-    user_id = Column(
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[str] = mapped_column(
         String, ForeignKey("user_accounts.db_id"), nullable=False, index=True
     )
-    agent_name_id = Column(
-        String(40), index=True
+    agent_name_id: Mapped[Optional[str]] = mapped_column(
+        String(40), nullable=True, index=True
     )  # Null for overall score for an agent
-    score = Column(Integer, nullable=False)
-    count = Column(Integer, nullable=False)
-    reward_xp = Column(Integer)
+    score: Mapped[int] = mapped_column(Integer, nullable=False)
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
+    reward_xp: Mapped[int] = mapped_column(Integer, default=0)
 
     def __repr__(self):
         if self.agent_name_id is None:
@@ -101,7 +105,7 @@ class UserDB(BaseDB):
         self,
         extern_id: str,
         is_preauth: bool,
-    ) -> int:
+    ) -> str:
         """Create the specified player, idempotently"""
         try:
             user = self.get_player_by_extern_id(extern_id)

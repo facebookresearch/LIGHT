@@ -35,6 +35,8 @@ logs/*
 # production
 /build
 
+# database by product
+database.db.json
 
 # misc
 .DS_Store

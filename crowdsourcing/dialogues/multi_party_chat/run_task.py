@@ -1,47 +1,50 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 
 import os
 from mephisto.operations.operator import Operator
-from mephisto.tools.scripts import load_db_and_process_config
+from mephisto.tools.scripts import task_script
+from mephisto.operations.hydra_config import build_default_task_config
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
-    BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
+from mephisto.data_model.qualification import QUAL_EXISTS, QUAL_NOT_EXIST
+from mephisto.utils.qualifications import make_qualification_dict
 
-from light.graph.builders.one_room_builder import OneRoomChatBuilder
-from light.data_model.light_database import LIGHTDatabase
-import hydra
 from omegaconf import DictConfig
 from dataclasses import dataclass, field
-from typing import List, Any
 
-TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
-LIGHT_DB_PATH = "~/ParlAI/data/LIGHT/merged.db"
+from light.graph.builders.one_room_builder import (
+    OneRoomChatBuilder,
+    OneRoomChatBuilderConfig,
+)
+from light.constants import LIGHT_PATH
 
-hydra_defaults = [
-    {"mephisto/blueprint": BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "multi_chat"},
-]
+from light.graph.builders.one_room_builder import OneRoomChatBuilder, OneRoomChatBuilderConfig
 
-from mephisto.operations.hydra_config import RunScriptConfig, register_script_config
+from light.graph.builders.one_room_builder import (
+    OneRoomChatBuilder,
+    OneRoomChatBuilderConfig,
+)
+from light.data_model.db.environment import EnvDB
+from light.data_model.db.base import LightDBConfig
+from light.registry.model_pool import ModelPool, ModelTypeName
+from light.registry.models.starspace_model import MapStarspaceModelConfig
 
+
+# TODO replace this later when the EnvDB is added to the repo.
+TEMP_DATABASE_ROOT_DIR = '/checkpoint/light/db/prod/'
+ALLOWLIST_QUALIFICATION = "multiparty-allow-prod-v2"
 
 @dataclass
-class ScriptConfig(RunScriptConfig):
-    defaults: List[Any] = field(default_factory=lambda: hydra_defaults)
-    task_dir: str = TASK_DIRECTORY
+class ParlAITaskConfig(build_default_task_config("dev")):  # type: ignore
     num_turns: int = field(
         default=8,
-        metadata={
-            "help": "Number of min turns per worker before a conversation is complete"
-        },
+        metadata={"help": "Number of turns before a conversation is complete"},
     )
     turn_timeout: int = field(
         default=300,
@@ -50,62 +53,69 @@ class ScriptConfig(RunScriptConfig):
             "a worker out, default 300 seconds"
         },
     )
-    qualify_new_workers: bool = False
+    max_acts_per_turn: int = field(
+        default=5,
+        metadata={
+            "help": "Maximum number of messages "
+            "a worker can send consecutively before"
+            "someone else replies, default 5 messages"
+        },
+    )
+    am_qualifiying_new_workers: bool = False
+    allowlist_qualification: str = ALLOWLIST_QUALIFICATION
 
 
-register_script_config(name="scriptconfig", module=ScriptConfig)
+def env_db():
+    assert os.path.exists(TEMP_DATABASE_ROOT_DIR), 'The EnvDB is not available yet.'
+    ldbc = LightDBConfig()
+    ldbc.backend = 'local'
+    ldbc.file_root = TEMP_DATABASE_ROOT_DIR
+    return EnvDB(ldbc)
 
 
-@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
-def main(cfg: DictConfig) -> None:
-    db, cfg = load_db_and_process_config(cfg)
-    ldb = LIGHTDatabase(LIGHT_DB_PATH)
+@task_script(config=ParlAITaskConfig)
+def main(operator: "Operator", cfg: DictConfig) -> None:
+    pool = ModelPool()
+    model_config = MapStarspaceModelConfig(
+        opt_file=os.path.join(
+            LIGHT_PATH, "light/registry/models/config/baseline_starspace.opt"
+        )
+    )
+
+    pool.register_model(model_config, [ModelTypeName.MAP_CONNECTIONS])
+
+    builder_config = OneRoomChatBuilderConfig(model_loader_config=model_config)
 
     world_opt = {
         "num_turns": cfg.num_turns,
         "turn_timeout": cfg.turn_timeout,
-        "builder": OneRoomChatBuilder(
-            ldb=ldb,
-            opt={
-                "db_path": LIGHT_DB_PATH,
-                "model_path": "/checkpoint/light/models",
-                "suggestion_type": "hybrid",
-                "hybridity_prob": 0.2,
-            },
-        ),
+        "builder": OneRoomChatBuilder(builder_config, env_db(), pool),
     }
 
     custom_bundle_path = cfg.mephisto.blueprint.get("custom_source_bundle", None)
     if custom_bundle_path is not None:
         assert os.path.exists(custom_bundle_path), (
             "Must build the custom bundle with `npm install; npm run dev` from within "
-            f"the {TASK_DIRECTORY}/webapp directory in order to demo a custom bundle "
+            f"the {cfg.task_dir}/webapp directory in order to demo a custom bundle "
         )
         world_opt["send_task_data"] = True
 
-    shared_state = SharedParlAITaskState(
-        world_opt=world_opt, onboarding_world_opt=world_opt
-    )
-
-    if cfg.qualify_new_workers:
-        shared_state.mturk_specific_qualifications = [
-            {
-                "QualificationTypeId": "00000000000000000040",
-                "Comparator": "GreaterThanOrEqualTo",
-                "IntegerValues": [1500],
-                "ActionsGuarded": "DiscoverPreviewAndAccept",
-            },
-            {
-                "QualificationTypeId": "000000000000000000L0",
-                "Comparator": "GreaterThanOrEqualTo",
-                "IntegerValues": [95],
-                "ActionsGuarded": "DiscoverPreviewAndAccept",
-            },
+    if cfg.am_qualifiying_new_workers:
+        use_qualifications = [
+            make_qualification_dict(cfg.allowlist_qualification, QUAL_NOT_EXIST, None),
+        ]
+    else:
+        use_qualifications = [
+            make_qualification_dict(cfg.allowlist_qualification, QUAL_EXISTS, None),
         ]
 
-    operator = Operator(db)
+    shared_state = SharedParlAITaskState(
+        world_opt=world_opt,
+        onboarding_world_opt=world_opt,
+        qualifications=use_qualifications,
+    )
 
-    operator.validate_and_run_config(cfg.mephisto, shared_state)
+    operator.launch_task_run(cfg.mephisto, shared_state)
     operator.wait_for_runs_then_shutdown(skip_input=True, log_rate=30)
 
 

@@ -1,6 +1,6 @@
 {
     "model": "starspace",
-    "model_file": "$LIGHT_MODEL_ROOT/starspace/angela_starspace/model4"
+    "model_file": "$LIGHT_MODEL_ROOT/starspace/angela_starspace/model4",
     "eval_candidates": "inline",
     "ignore_bad_candidates": true,
     "interactive_mode": true
