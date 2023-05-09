@@ -110,6 +110,7 @@ class GraphEventTests(unittest.TestCase):
         ) in self.SUCCESS_CASES:
             self.reset_world()
             actor_node = self.graph.get_node(actor_id)
+            assert isinstance(actor_node, GraphAgent)
             possible_text_args = GraphEventClass.split_text_args(
                 actor_node, input_string
             )
@@ -120,6 +121,7 @@ class GraphEventTests(unittest.TestCase):
             )
             assert not isinstance(possible_text_args, ErrorEvent)
             found_success = False
+            result = None
             for string_args in possible_text_args:
                 result = GraphEventClass.find_nodes_for_args(
                     self.graph, actor_node, *string_args
@@ -132,6 +134,7 @@ class GraphEventTests(unittest.TestCase):
                 found_success,
                 f"Did not succesesfully find ProcessedArguments on input {input_string}, got {result}",
             )
+            assert result is not None
             assert not isinstance(result, ErrorEvent)
             target_nodes = result.targets
             target_node_ids = [x.node_id for x in target_nodes]
@@ -197,6 +200,7 @@ class GraphEventTests(unittest.TestCase):
         for (actor_id, input_string) in self.ERROR_CASES:
             self.reset_world()
             actor_node = self.graph.get_node(actor_id)
+            assert isinstance(actor_node, GraphAgent)
             possible_text_args = GraphEventClass.split_text_args(
                 actor_node, input_string
             )
@@ -236,15 +240,18 @@ class GraphEventTests(unittest.TestCase):
         for agent_id in agent_ids:
             self.reset_world()
             actor_node = self.graph.get_node(agent_id)
+            assert isinstance(actor_node, GraphAgent)
             event_count = len(GraphEventClass.get_valid_actions(self.graph, actor_node))
             for e_idx in range(event_count):
                 self.reset_world()
                 actor_node = self.graph.get_node(agent_id)
+                assert isinstance(actor_node, GraphAgent)
                 event = GraphEventClass.get_valid_actions(self.graph, actor_node)[e_idx]
                 event.execute(self.world)
                 _ = event.to_canonical_form()
                 for viewer_id in agent_ids:
                     viewer = self.graph.get_node(viewer_id)
+                    assert isinstance(viewer, GraphAgent) or viewer is None
                     event_view = event.view_as(viewer)
                     if event_view is None:
                         continue
@@ -1920,6 +1927,7 @@ test_graph_3_before_wearing_hat = OOGraph.from_json(test_graph_3)
 actor_node = test_graph_3_before_wearing_hat.get_node("carrier_12")
 equipped_node = test_graph_3_before_wearing_hat.get_node("hat_5")
 assert isinstance(equipped_node, GraphObject), "Graph parsing failed"
+assert isinstance(actor_node, GraphAgent), "Graph parsing failed"
 equipped_node.equipped = "wear"
 actor_node.defense += 1
 actor_node.num_wieldable_items = 0
