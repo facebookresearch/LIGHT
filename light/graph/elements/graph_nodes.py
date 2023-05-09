@@ -6,7 +6,7 @@
 
 import random
 import json
-from typing import List, Set, Dict, Any
+from typing import List, Set, Dict, Any, Optional, TypeVar, cast
 
 NodeProps = Dict[str, Any]
 
@@ -24,6 +24,8 @@ DEAD_DESCRIPTIONS = [
 ]
 
 TICKS_TO_CLEAN_CORPSE = 150
+
+T = TypeVar("T")
 
 
 def node_to_json(node):
@@ -86,11 +88,17 @@ class NeighborEdge(GraphEdge):
     """Structure for edges between rooms in a graph. Contains relevant details
     for traversing through the graph"""
 
-    def __init__(self, target_node, label=None, examine_desc=None, locked_edge=None):
+    def __init__(
+        self,
+        target_node: "GraphRoom",
+        label: Optional[str] = None,
+        examine_desc: Optional[str] = None,
+        locked_edge: Optional[LockEdge] = None,
+    ):
         super().__init__(target_node)
         self.label = label
         self.examine_desc = examine_desc
-        self.locked_edge = locked_edge
+        self.locked_edge: Optional[LockEdge] = locked_edge
 
     def get_examine_desc(self):
         """Return the description this path should give when examined"""
@@ -112,6 +120,7 @@ class NeighborEdge(GraphEdge):
         return self.locked_edge is not None and self.locked_edge.get_is_locked()
 
     def get_path_locked_with(self):
+        assert self.locked_edge is not None, "Path with no lock cannot be locked"
         return self.locked_edge.get()
 
 
@@ -282,8 +291,8 @@ class GraphNode(object):
             return None
         return self.container_node.get()
 
-    def get_prop(self, prop_name, default=False):
-        return self.__dict__.get(prop_name, default)
+    def get_prop(self, prop_name, default: T = False) -> T:
+        return cast(T, self.__dict__.get(prop_name, default))
 
     def get_props(self):
         """Extract props and attributes from this node"""
@@ -452,7 +461,7 @@ class GraphRoom(GraphNode):
         self.classes = set(self._props.get("classes", {"room"}))
         self.contain_size = self._props.get("contain_size", self.DEFAULT_CONTAIN_SIZE)
         self.grid_location = self._props.get("grid_location", [0, 0, 0])
-        self.neighbors = {}
+        self.neighbors: Dict[str, NeighborEdge] = {}
 
     def assert_valid(self):
         """Ensure no invariants are broken for this node that would make it
@@ -464,7 +473,7 @@ class GraphRoom(GraphNode):
 
     def get_neighbors(self) -> List["GraphRoom"]:
         """return the neighboring nodes across outgoing edges from this room"""
-        return list([x.get() for x in self.neighbors.values()])
+        return list([cast(GraphRoom, x.get()) for x in self.neighbors.values()])
 
     def get_edge_to(self, other_node):
         """return edge to the other node if it exists, None otherwise"""

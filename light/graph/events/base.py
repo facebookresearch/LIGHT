@@ -8,13 +8,19 @@
 from light.graph.elements.graph_nodes import (
     GraphAgent,
     GraphNode,
+    GraphObject,
+    GraphRoom,
 )
-import time
 from light.world.utils.json_utils import (
-    convert_dict_to_node,
     GraphEncoder,
     node_to_json,
+    convert_dict_to_node,
 )
+import time
+import inspect
+import json
+from uuid import uuid4
+
 from typing import (
     Any,
     Dict,
@@ -25,9 +31,6 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
-import inspect
-import json
-from uuid import uuid4
 
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
@@ -118,7 +121,7 @@ class GraphEvent(object):
         """
         raise NotImplementedError
 
-    def view_as(self, viewer: GraphAgent) -> Optional[str]:
+    def view_as(self, viewer: Optional[GraphAgent]) -> Optional[str]:
         """Provide the way that the given actor should view this event"""
         raise NotImplementedError
 
@@ -215,6 +218,46 @@ class GraphEvent(object):
                     "__failed_constraint"
                 ]
 
+        if "_actor_id" in attribute_dict:
+            actor_id = attribute_dict.pop("_actor_id")
+            room_id = attribute_dict.pop("_room_id")
+            target_ids = attribute_dict.pop("_target_ids")
+            viewer_id = attribute_dict.pop("_viewer_id")
+
+            attribute_dict["actor"] = world.oo_graph.get_node(actor_id)
+            attribute_dict["room"] = world.oo_graph.get_node(room_id)
+            if viewer_id is not None:
+                attribute_dict["viewer"] = world.oo_graph.get_node(viewer_id)
+            else:
+                attribute_dict["viewer"] = None
+            attribute_dict["actor"] = world.oo_graph.get_node(actor_id)
+            attribute_dict["target_nodes"] = [
+                world.oo_graph.get_node(t_id) for t_id in target_ids
+            ]
+
+        if "_actor_tree" in attribute_dict:
+            actor_tree = attribute_dict.pop("_actor_tree")
+            graph = world.oo_graph
+            sync_nodes: Dict[str, GraphNode] = {}
+            for k, v in actor_tree.items():
+                if k in world.oo_graph.all_nodes:
+                    continue
+                if v["agent"]:
+                    x = GraphAgent.from_json_dict(v)
+                    graph.agents[x.node_id] = x
+                elif v["object"]:
+                    x = GraphObject.from_json_dict(v)
+                    graph.objects[x.node_id] = x
+                elif v["room"]:
+                    x = GraphRoom.from_json_dict(v)
+                    graph.rooms[x.node_id] = x
+                else:
+                    raise AssertionError("Node was none of expected types")
+                sync_nodes[x.node_id] = x
+                graph.all_nodes[x.node_id] = x
+            for node in sync_nodes.values():
+                node.sync(graph.all_nodes)
+
         arglist = [
             attribute_dict.pop(arg)
             for arg in inspect.getfullargspec(class_.__init__)[0]
@@ -231,15 +274,33 @@ class GraphEvent(object):
         pass
 
     def to_json(
-        self, viewer: Optional[GraphAgent] = None, indent: Optional[int] = None
+        self,
+        viewer: Optional[GraphAgent] = None,
+        indent: Optional[int] = None,
+        compressed: Optional[bool] = False,
     ) -> str:
         """
         Convert the content of this action into a json format that can be
         imported back to the original with from_json
         """
         className = self.__class__.__name__
-        use_dict = {k: v for k, v in self.__dict__.copy().items()}
-        use_dict["viewer"] = viewer
+        if not compressed:
+            use_dict = {k: v for k, v in self.__dict__.copy().items()}
+            use_dict["viewer"] = viewer
+        else:
+            SKIPPED_KEYS = [
+                "actor",
+                "room",
+                "target_nodes",
+            ]
+            use_dict = {
+                k: v for k, v in self.__dict__.copy().items() if k not in SKIPPED_KEYS
+            }
+            use_dict["_actor_id"] = self.actor.node_id
+            use_dict["_room_id"] = self.room.node_id
+            use_dict["_target_ids"] = [node.node_id for node in self.target_nodes]
+            use_dict["_viewer_id"] = None if viewer is None else viewer.node_id
+
         use_dict["__class__"] = className
         use_dict["__module__"] = self.__module__
         res = json.dumps(use_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
