@@ -36,6 +36,19 @@ class GraphEncoder(json.JSONEncoder):
         return use_dict
 
 
+def create_agent_tree(node: GraphAgent) -> Dict[str, GraphNode]:
+    unvisited_nodes: List[GraphNode] = [node]
+    agent_nodes: Dict[str, GraphNode] = {}
+    while len(unvisited_nodes) > 0:
+        new_node = unvisited_nodes.pop()
+        agent_nodes[new_node.node_id] = new_node
+        for v in new_node.contained_nodes.values():
+            if v._target_node.node_id not in agent_nodes:
+                unvisited_nodes.append(v._target_node)
+
+    return agent_nodes
+
+
 def node_to_json(node: GraphNode) -> str:
     return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 

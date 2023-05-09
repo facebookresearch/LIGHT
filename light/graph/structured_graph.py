@@ -24,11 +24,11 @@ class OOGraph(object):
     """
 
     def __init__(self, title: str = "untitled", db_id: Optional[str] = None):
-        self.objects = {}
-        self.agents = {}
-        self.rooms = {}
+        self.objects: Dict[str, GraphObject] = {}
+        self.agents: Dict[str, GraphAgent] = {}
+        self.rooms: Dict[str, GraphRoom] = {}
         self.room_id_to_loggers = {}
-        self.all_nodes = {}
+        self.all_nodes: Dict[str, GraphNode] = {}
         self.void = GraphVoidNode()
         self.cnt = 0
         self._nodes_to_delete = []
@@ -289,10 +289,10 @@ class OOGraph(object):
 
     # Graph setters and getters and simple accessors
 
-    def get_node(self, id):
+    def get_node(self, id) -> Optional[GraphNode]:
         return self.all_nodes.get(id)
 
-    def node_exists(self, id):
+    def node_exists(self, id) -> bool:
         return id in self.all_nodes
 
     def get_edge(self, from_id, to_id):

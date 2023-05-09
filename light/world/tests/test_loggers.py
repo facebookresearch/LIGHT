@@ -103,7 +103,7 @@ class TestInteractionLoggers(unittest.TestCase):
         test_graph, test_world, agent_node, room_node = initial
 
         logger = AgentInteractionLogger(test_world, agent_node)
-        logger.event_buffer.append("Testing")
+        logger.event_buffer.append((0, 0, "Testing", 1.0))
         logger.state_history.append("Testing")
         logger._begin_meta_episode()
 
