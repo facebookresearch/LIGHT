@@ -22,6 +22,11 @@ from light.modeling.tasks.multilight import constants
 
 
 DATA_PATH = os.path.join(LIGHT_DATAPATH, constants.DEFAULT_DATASET_SUBPATH)
+DATASET_FILE = build_data.DownloadableFile(
+    'http://parl.ai/downloads/projects/multilight.tar.gz',
+    'multilight.tar.gz',
+    '079b775f431a16404e26bd128aa0ae72491b9f2a044e6e405912d80147a6c2c6',
+)
 
 
 def get_personas(graph: Dict[str, Any]) -> List[Dict[str, str]]:
@@ -29,6 +34,10 @@ def get_personas(graph: Dict[str, Any]) -> List[Dict[str, str]]:
     for p in graph.get_humans():
         personas.append({"name": p.name, "persona": p.persona})
     return personas
+
+
+def download_dataset_db():
+    DATASET_FILE.download_file(DATA_PATH)
 
 
 def read_episodes_from_db() -> Dict[DBSplitType, List[Dict[str, Any]]]:
@@ -94,6 +103,7 @@ def build():
             build_data.remove_dir(processed_dpath)
         build_data.make_dir(processed_dpath)
 
+        download_dataset_db()
         extracted_data_splits = read_episodes_from_db()
         for dsplt, conv_data in extracted_data_splits.items():
             logging.info(f"Storing {len(conv_data)} processed data for {dsplt}")
