@@ -9,8 +9,8 @@ from light.graph.builders.map_json_builder import MapJsonBuilder
 from light.graph.builders.tutorial_builder import TutorialWorldBuilder
 from light.graph.builders.base import GraphBuilderConfig
 from light.world.souls.repeat_soul import RepeatSoul
-from light.world.souls.models.generative_heuristic_model_soul import (
-    GenerativeHeuristicModelSoul,
+from light.world.souls.models.generative_multiagent_model_soul import (
+    GenerativeMultiagentModelSoul,
 )
 from light.world.souls.models.tutorial_model_soul import (
     TutorialModelSoul,
@@ -145,7 +145,7 @@ class GameInstance:
         else:
             purgatory.register_filler_soul_provider(
                 "model",
-                GenerativeHeuristicModelSoul,
+                GenerativeMultiagentModelSoul,
                 lambda: [],
             )
         for empty_agent in self.world.oo_graph.agents.values():

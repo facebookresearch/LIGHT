@@ -202,7 +202,7 @@ class BaseSoul(Soul):
 
     def build_dialog_context(self, quest_txt=None):
         # Initial context.
-        txt = self.build_context(quest_txt)
+        txt = self.build_context(quest_txt=quest_txt)
         # Dialogue/interaction context.
         dtxt = ""
         agent = self.target_node
