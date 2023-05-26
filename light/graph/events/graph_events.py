@@ -14,12 +14,19 @@ from light.graph.events.base import (
     proper_caps_wrapper,
 )
 
-# Used for typehinting
-from typing import Union, Dict, List, Optional, Tuple, Any, Type, TYPE_CHECKING
+from light.world.utils.json_utils import (
+    create_agent_tree,
+    GraphEncoder,
+)
+
 import emoji
 import random
 import time
-import re
+import math
+import json
+
+# Used for typehinting
+from typing import Union, Dict, List, Optional, Tuple, Any, Type, TYPE_CHECKING
 from light.graph.elements.graph_nodes import (
     GraphNode,
     GraphAgent,
@@ -27,8 +34,6 @@ from light.graph.elements.graph_nodes import (
     GraphRoom,
     LockEdge,
 )
-from light.graph.events.safety import SafetyClassifier
-import math
 
 if TYPE_CHECKING:
     from light.registry.model_pool import ModelPool
@@ -333,7 +338,7 @@ class WhisperEvent(SpeechEvent):
     def split_text_args(
         cls, actor: GraphAgent, text: str
     ) -> Union[List[List[str]], ErrorEvent]:
-        """Format is whisper <target> "words being whispered". """
+        """Format is whisper <target> "words being whispered"."""
         if '"' not in text:
             return ErrorEvent(
                 cls,
@@ -469,7 +474,7 @@ class TellEvent(SpeechEvent):
     def split_text_args(
         cls, actor: GraphAgent, text: str
     ) -> Union[List[List[str]], ErrorEvent]:
-        """Format is tell <target> "words being told". """
+        """Format is tell <target> "words being told"."""
         if '"' not in text:
             return ErrorEvent(
                 cls,
@@ -698,6 +703,7 @@ class GoEvent(GraphEvent):
         if len(blockers) == 0:
             return True
         blocked = False
+        blocker_name = ""
         for blocker in blockers:
             # Check if still in same room
             if blocker.get_room() != self.actor.get_room():
@@ -822,7 +828,7 @@ class GoEvent(GraphEvent):
 
     @classmethod
     def split_text_args(cls, actor: GraphAgent, text: str) -> List[List[str]]:
-        """Format is go <place>. """
+        """Format is go <place>."""
         text = text.strip()
         if text in cls.REPLACEMENTS:
             text = cls.REPLACEMENTS[text]
@@ -853,7 +859,8 @@ class GoEvent(GraphEvent):
             )
 
         target_room = room_nodes[0]
-        if current_room.get_edge_to(target_room).path_is_locked():
+        path_edge = current_room.get_edge_to(target_room)
+        if path_edge is not None and path_edge.path_is_locked():
             return ErrorEvent(cls, actor, f"The path there is locked!")
         if not target_room.would_fit(actor):
             return ErrorEvent(cls, actor, f"There's not enough room to fit in there!")
@@ -880,7 +887,8 @@ class GoEvent(GraphEvent):
         valid_actions: List[GraphEvent] = []
         room = actor.get_room()
         for neighbor in room.get_neighbors():
-            if not room.get_edge_to(neighbor).path_is_locked():
+            path_edge = room.get_edge_to(neighbor)
+            if path_edge is not None and not path_edge.path_is_locked():
                 if neighbor.would_fit(actor):
                     valid_actions.append(cls(actor, target_nodes=[neighbor]))
         return valid_actions
@@ -893,6 +901,27 @@ class GoEvent(GraphEvent):
         BLOCK_TEXT = "you blocked from moving was by".split()
         EXHAUSTED_TEXT = "you are too exhausted to move tries to leave but is".split()
         return ["arrived", "from"] + BLOCK_TEXT + EXHAUSTED_TEXT
+
+    def to_json(
+        self,
+        viewer: Optional[GraphAgent] = None,
+        indent: Optional[int] = None,
+        compressed: Optional[bool] = False,
+    ) -> str:
+        """
+        Convert the content of this action into a json format that can be
+        imported back to the original with from_json.
+
+        Arrive events may come from other graphs, and nodes will have additional contents
+        that are not always in the existing graph.
+        """
+        base_json = super(GoEvent, self).to_json(
+            viewer=viewer, indent=indent, compressed=compressed
+        )
+        as_dict = json.loads(base_json)
+        as_dict["_actor_tree"] = create_agent_tree(self.actor)
+        res = json.dumps(as_dict, cls=GraphEncoder, sort_keys=True, indent=indent)
+        return res
 
 
 class UnfollowEvent(NoArgumentEvent):
@@ -907,7 +936,9 @@ class UnfollowEvent(NoArgumentEvent):
         """
         assert not self.executed
         actor_name = self.actor.get_prefix_view()
-        follow_name = self.actor.get_following().get_prefix_view()
+        follow_node = self.actor.get_following()
+        assert follow_node is not None, "Must be following to unfollow!"
+        follow_name = follow_node.get_prefix_view()
         self.__unfollow_view = f"You stopped following {follow_name}"
         self.__unfollowed_view = f"{actor_name} stopped following you"
 
@@ -1089,7 +1120,9 @@ class UnblockEvent(NoArgumentEvent):
         if self.actor.dead:
             return []
         actor_name = self.actor.get_prefix_view()
-        block_name = self.actor.get_blocking().get_prefix_view()
+        block_node = self.actor.get_blocking()
+        assert block_node is not None, "Cannot unblock if not blocking"
+        block_name = block_node.get_prefix_view()
         self.__unblock_view = f"You stopped blocking {block_name}"
         self.__unblocked_view = f"{actor_name} stopped blocking you"
 
@@ -1267,6 +1300,7 @@ class DeleteObjectEvent(TriggeredEvent):
         g = world.oo_graph
         g.delete_nodes([self.actor])
         world.broadcast_to_room(self)
+        return []
 
     @proper_caps_wrapper
     def view_as(self, viewer: GraphAgent) -> Optional[str]:
@@ -1381,7 +1415,7 @@ class SpawnEvent(TriggeredEvent):
         """Construct intro text and broadcast to the player"""
         actor_name = self.actor.get_prefix_view()
 
-        sun_txt = emoji.emojize(":star2:", use_aliases=True) * 31
+        sun_txt = emoji.emojize(":star2:") * 31
         msg_txt = sun_txt + "\n"
         msg_txt += f"You are spawned into this world as {self.actor.get_view()}.\n"
         msg_txt += "Your character:\n"
@@ -1517,6 +1551,7 @@ class HitEvent(GraphEvent):
             weapons = []
             for id, obj in self.actor.contained_nodes.items():
                 n = obj._target_node
+                assert isinstance(n, GraphObject)
                 if n.wieldable and n.equipped:
                     weapons.append(n)
             if len(weapons) == 0:
@@ -1560,6 +1595,9 @@ class HitEvent(GraphEvent):
             if viewer == self.actor:
                 return self.__self_view
             return ""
+
+        if self.attack is None:
+            self.attack = 0
 
         if self.attack == 0:
             # The attack missed
@@ -2316,7 +2354,9 @@ class StealObjectEvent(GraphEvent):
 
         # Calculate if can steal using dexterity actor vs victim.
         actor_dex = self.actor.dexterity
-        victim_dex = self.target_nodes[1].dexterity
+        victim = self.target_nodes[1]
+        assert isinstance(victim, GraphAgent), "must steal from another agent"
+        victim_dex = victim.dexterity
         chance = max(1, 1 + actor_dex - victim_dex)
         self.failed = False
         r = random.randint(0, 20)
@@ -2838,7 +2878,7 @@ class WearEvent(EquipObjectEvent):
         return object_node.wearable
 
     @classmethod
-    def get_vocab(self) -> List[str]:
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3135,7 +3175,7 @@ class EatEvent(IngestEvent):
         return object_node.food
 
     @classmethod
-    def get_vocab(self) -> List[str]:
+    def get_vocab(cls) -> List[str]:
         """
         Return the vocabulary this event uses
         """
@@ -3193,11 +3233,13 @@ class LockableEvent(GraphEvent):
         lock_edge = None
         if lock_target.room:
             neighbor_to_lock = self.room.get_edge_to(lock_target)
+            assert neighbor_to_lock is not None, "Target doesn't exist"
             lock_edge = neighbor_to_lock.locked_edge
         elif lock_target.object and lock_target.container:
             lock_edge = lock_target.locked_edge
         else:
             raise AssertionError("Cannot lock a non-lockable thing")
+        assert lock_edge is not None, "Cannot lock a non-lockable thing"
 
         self.process_locking(lock_edge)
 
@@ -3271,7 +3313,7 @@ class LockableEvent(GraphEvent):
         definitely_lockable_rooms = [
             (room, edge)
             for (room, edge) in rooms_with_edges
-            if edge.locked_edge is not None
+            if edge is not None and edge.locked_edge is not None
         ]
 
         possible_lockable_objects = [
@@ -3757,7 +3799,7 @@ class InventoryEvent(NoArgumentEvent):
 
 
 class QuestEvent(NoArgumentEvent):
-    """Quest events just allow a player to see their assigned quests. """
+    """Quest events just allow a player to see their assigned quests."""
 
     NAMES = ["quest", "quests", "mission", "missions", "goal", "goals", "q"]
     TEMPLATES = ["quests"]
@@ -3828,7 +3870,7 @@ class QuestEvent(NoArgumentEvent):
 
 
 class RewardEvent(GraphEvent):
-    """Reward events allow to give another agent XP. """
+    """Reward events allow to give another agent XP."""
 
     NAMES = ["reward", "r"]
     TEMPLATES = ["reward <agent>"]

@@ -12,7 +12,6 @@ import "./styles.css";
 import Scribe from "../../../assets/images/scribe.png";
 
 const TutorialContent = ({ tip }) => {
-  const [tipPage, setTipPage] = useState(0);
   const { title, description } = tip;
   return (
     <div className="tip-container">

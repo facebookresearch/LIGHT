@@ -5,6 +5,11 @@
  */
 
 const GameCopy = {
+  reportCategories :[
+    "Report Inappropriate Content",
+    "Report Bug",
+    "Other",
+  ],
   tutorialTips: [
     {
       tipId: 0,
@@ -42,7 +47,7 @@ const GameCopy = {
       tipId: 5,
       title: "Interaction Mode",
       description:
-        "With this button (or by using the ` key) you can toggle between saying and doing things.  You can use this button to toggle away from a tell target.",
+        "With this button or by pressing the back the backtick (`) key located above the tab button you can toggle between saying and doing things.  You can use this button to toggle away from a tell target.",
     },
     {
       tipId: 6,
@@ -62,7 +67,7 @@ const GameCopy = {
       description:
         "Clicking one of these speech bubbles will target them for direct communication.",
     },
-    //CHAT MESSAGE TIPS
+    //MESSAGE TYPE TIPS
     {
       tipId: 9,
       title: "Soul Spawn Message",

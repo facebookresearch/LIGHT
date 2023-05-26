@@ -121,7 +121,7 @@ class World(object):
 
             # TODO likely cleaner way to get one of these
             model_pool = ModelPool()
-        self.model_pool = config.model_pool
+        self.model_pool = model_pool
 
         # TODO better specific player management?
         self._player_cnt = 0
@@ -160,7 +160,7 @@ class World(object):
             oo_graph.room_id_to_loggers[room_id] = RoomInteractionLogger(self, room_id)
 
     @staticmethod
-    def from_graph(graph, config: WorldConfig = None):
+    def from_graph(graph, config: Optional[WorldConfig] = None):
         """Loads the world from the older versions of graph."""
         if config is None:
             config = WorldConfig()
@@ -438,7 +438,7 @@ class World(object):
         pos_playerid = self.agentid_to_playerid(agent_id)
 
     def broadcast_to_agents(self, action, agents, exclude_agents=None):
-        """send a message to agents in the specified list """
+        """send a message to agents in the specified list"""
         if exclude_agents is None:
             exclude_agents = []
         else:
@@ -478,7 +478,7 @@ class World(object):
         # self._room_convo_buffers[action['room_id']].observe_turn(action)
 
     def broadcast_to_all_agents(self, action, exclude_agents=None, told_by=None):
-        """send a message to everyone """
+        """send a message to everyone"""
         agents = set(self.oo_graph.agents.values())
         self.broadcast_to_agents(action, agents, exclude_agents)
 
@@ -819,7 +819,7 @@ class World(object):
             self.send_msg(
                 actor, "Strange magic is afoot. This failed for some reason..."
             )
-            with open('/home/ubuntu/light_errors.txt', 'a') as logfile:
+            with open("/home/ubuntu/light_errors.txt", "a") as logfile:
                 logfile.write(str(e))
                 logfile.write(traceback.format_exc())
             return False, "FailedParseExec"
@@ -866,6 +866,7 @@ class World(object):
         """Try to parse and execute the given event"""
         orig_inst = inst
         # basic replacements
+        orig_inst = inst
         inst = self.action_parser.post_process(inst, actor)
         parse_shortcuts = {
             "e": "go east",

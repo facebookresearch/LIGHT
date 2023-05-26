@@ -14,7 +14,13 @@ import time
 from light.graph.elements.graph_nodes import GraphAgent
 from light.graph.structured_graph import OOGraph
 from light.world.world import World, WorldConfig
-from light.graph.events.graph_events import ArriveEvent, LeaveEvent, GoEvent, LookEvent
+from light.graph.events.graph_events import (
+    ArriveEvent,
+    LeaveEvent,
+    GoEvent,
+    LookEvent,
+    WaitEvent,
+)
 from light.world.content_loggers import AgentInteractionLogger, RoomInteractionLogger
 from light.world.utils.json_utils import read_event_logs
 from light.data_model.db.episodes import EpisodeDB, EpisodeLogType
@@ -66,6 +72,7 @@ class TestEpisodesDB(unittest.TestCase):
         # Push a json episode out to the db
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
         room_logger._begin_meta_episode()
+        room_logger.worth_logging = True
         room_logger._end_meta_episode()
 
         # Mark the end time to test queries later
@@ -168,7 +175,7 @@ class TestEpisodesDB(unittest.TestCase):
         test_event = ArriveEvent(agent_node, text_content="")
         test_init_json = test_world.oo_graph.to_json_rv(agent_node.get_room().node_id)
         room_logger.observe_event(test_event)
-        test_event2 = LookEvent(agent_node)
+        test_event2 = WaitEvent(agent_node)
         room_logger.observe_event(test_event2)
         room_logger._end_meta_episode()
 
@@ -211,6 +218,7 @@ class TestEpisodesDB(unittest.TestCase):
         test_init_json = test_world.oo_graph.to_json_rv(room_node.node_id)
         agent_logger = AgentInteractionLogger(test_world, agent_node)
         agent_logger._begin_meta_episode()
+        agent_logger.worth_logging = True
         agent_logger._end_meta_episode()
 
         # Mark the end time to test queries later
@@ -219,6 +227,7 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Ensure an episode was created properly
         self.assertIsNotNone(episode_id)
+        assert episode_id is not None
         episode = episode_db.get_episode(episode_id)
         graph_map = episode.get_graph_map()
         self.assertEqual(len(episode.graphs), 2, "Expected an init and final graph")
@@ -304,6 +313,7 @@ class TestEpisodesDB(unittest.TestCase):
 
         # Ensure an episode was created properly
         self.assertIsNotNone(episode_id)
+        assert episode_id is not None
         episode = episode_db.get_episode(episode_id)
         events = episode.get_parsed_events(episode_db)
         self.assertEqual(len(events), 1, f"Expected 1 graph type, found {events}")
@@ -370,7 +380,7 @@ class TestEpisodesDB(unittest.TestCase):
         ref_json = json.loads(event_room_node_observed)
         event_ref = json.loads(loaded_event.to_json())
         for k in ref_json:
-            if k == "event_id":
+            if k in ["event_id", "event_time"]:
                 continue
             elif k == "target_nodes":
                 self.assertEqual(ref_json[k][0]["names"], event_ref[k][0]["names"])

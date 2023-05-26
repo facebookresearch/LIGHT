@@ -7,7 +7,7 @@
 /* REACT */
 import React from "react";
 //ROUTER COMPONENTS
-import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 //PAGES
 import GamePage from "../pages/GamePage";
 

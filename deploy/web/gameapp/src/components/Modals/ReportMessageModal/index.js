@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useEffect, useState, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 /* REDUX */
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 /* ---- REDUCER ACTIONS ---- */
@@ -15,9 +15,12 @@ import {
 } from "../../../features/modals/modals-slice";
 /* STYLES */
 import { Dialog, Transition } from "@headlessui/react";
-
 /* CONFIG */
 import CONFIG from "../../../config.js";
+/* COPY */
+import GameCopy from "../../../GameCopy";
+//Report Dropdown categories
+const { reportCategories } = GameCopy;
 
 import { Button } from "daisyui";
 
@@ -27,6 +30,7 @@ const ReportCategories = [
   "Other",
 ];
 
+//ReportMessageForm - Modal that allows users to specifically describe and report content for a variety of reasons.
 const ReportMessageForm = () => {
   /* REDUX DISPATCH FUNCTION */
   const dispatch = useAppDispatch();
@@ -48,10 +52,7 @@ const ReportMessageForm = () => {
   const [reportCategory, setReportCategory] = useState("");
   const [reportReason, setReportReason] = useState("");
 
-  /*  LIFE CYCLE */
-
   /* HANDLERS */
-
   const closeReportModalHandler = () => {
     dispatch(setReportModal(false));
   };

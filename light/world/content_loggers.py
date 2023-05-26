@@ -14,6 +14,7 @@ import os
 import time
 import uuid
 from light.data_model.db.episodes import DBGroupName, EpisodeLogType
+from light.graph.elements.graph_nodes import GraphAgent
 
 # TODO: Investigate changing the format from 3 line to csv or some other standard
 from light.graph.events.graph_events import (
@@ -25,13 +26,15 @@ from light.graph.events.graph_events import (
     TellEvent,
     ShoutEvent,
     WhisperEvent,
+    LookEvent,
 )
 
 from typing import Optional, List, Set, Dict, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from light.world.world import World
-    from light.graph.elements.graph_nodes import GraphAgent
+    from light.graph.structured_graph import OOGraph
+    from light.graph.events.base import GraphEvent
 
 
 class InteractionLogger(abc.ABC):
@@ -41,9 +44,9 @@ class InteractionLogger(abc.ABC):
     """
 
     def __init__(self, world: "World"):
-        self.world = world
+        self.world: "World" = world
         graph = world.oo_graph
-        self.graph = graph
+        self.graph: "OOGraph" = graph
         self.players: Set[str] = set()
         self.actions: int = 0
         self._last_episode_logged: Optional[str] = None
@@ -57,7 +60,8 @@ class InteractionLogger(abc.ABC):
         self.state_history: List[str] = []
         # Event buffer is (state_history_idx, event_hash, event_json, timestamp)
         # where state_history_idx is the index of the graph the event executed on
-        self.event_buffer: List[Tuple[int, str, str, float]] = []
+        self.event_buffer: List[Tuple[int, int, str, float]] = []
+        self.worth_logging = False
 
     def _begin_meta_episode(self) -> None:
         """
@@ -71,10 +75,10 @@ class InteractionLogger(abc.ABC):
         Handles any postprocessing associated with the end of a meta episode
         such as flushing buffers by writing to data location, and updating variables
         """
-        self._log_interactions()
+        # Implementation should call self._log_interactions()
         raise NotImplementedError
 
-    def observe_event(self, event) -> None:
+    def observe_event(self, event: "GraphEvent") -> None:
         """
         Examine event passed in, deciding how to save it to the logs
         """
@@ -84,7 +88,7 @@ class InteractionLogger(abc.ABC):
         """
         This method is responsible for preparing the graphs for this event logger
         """
-        states = []
+        states: List[Dict[str, str]] = []
         for idx, state in enumerate(self.state_history):
             rand_id = str(uuid.uuid4())[:8]
             unique_graph_name = f"{time.time():.0f}-{idx}-{rand_id}"
@@ -110,12 +114,12 @@ class InteractionLogger(abc.ABC):
         unique_event_name = str(uuid.uuid4())[:8]
         id_name = f"{target_id}".replace(" ", "_")[:20]
         event_file_name = f"{id_name}_{time.time():.0f}_{unique_event_name}_events.json"
-        events = []
+        events: List[Dict[str, str]] = []
         for (graph_idx, hashed, event, timestamp) in self.event_buffer:
             events.append(
                 {
                     "graph_key": graph_states[graph_idx]["key"],
-                    "hash": hashed,
+                    "hash": f"{hashed}",
                     "event_json": event,
                 }
             )
@@ -162,13 +166,14 @@ class AgentInteractionLogger(InteractionLogger):
         self._clear_buffers()
         self._add_current_graph_state()
         self.turns_wo_player_action = 0
-        self.actions = 0
+        self.actions: int = 0
         self._logging_intialized = True
 
     def _clear_buffers(self) -> None:
         """Clear the buffers storage for this logger, dumping context"""
         self.state_history.clear()
         self.event_buffer.clear()
+        self.worth_logging = False
 
     def _add_current_graph_state(self) -> None:
         """Make a copy of the graph state so we can replay events on top of it"""
@@ -189,9 +194,10 @@ class AgentInteractionLogger(InteractionLogger):
     def _end_meta_episode(self) -> None:
         self._logging_intialized = False
         self._add_current_graph_state()
-        self._log_interactions(EpisodeLogType.AGENT, self.agent.node_id)
+        if self.worth_logging:
+            self._log_interactions(EpisodeLogType.AGENT, self.agent.node_id)
 
-    def observe_event(self, event) -> None:
+    def observe_event(self, event: "GraphEvent") -> None:
         if not self.is_active:
             return
         event_t = type(event)
@@ -220,14 +226,17 @@ class AgentInteractionLogger(InteractionLogger):
         if event.actor.is_player:
             user_id = event.actor.user_id
             if user_id is not None and user_id not in self.players:
-                self.players.add(event.actor.user_id)
+                self.players.add(user_id)
+            # Only log episodes that exceed minimum spawn + look
+            if event_t not in [SoulSpawnEvent, LookEvent]:
+                self.worth_logging = True
 
         # Append the particular event
         self.event_buffer.append(
             (
                 len(self.state_history) - 1,
                 event.__hash__(),
-                event.to_json(),
+                event.to_json(compressed=True),
                 time.time(),
             )
         )
@@ -262,9 +271,8 @@ class RoomInteractionLogger(InteractionLogger):
 
         # Initialize player count here (bc sometimes players are force moved)
         for node_id in self.graph.all_nodes[self.room_id].contained_nodes:
-            if self.graph.all_nodes[node_id].agent and (
-                self.graph.all_nodes[node_id].is_player
-            ):
+            node = self.graph.all_nodes[node_id]
+            if isinstance(node, GraphAgent) and node.is_player:
                 self._add_player()
                 self.players.add(node_id)
 
@@ -278,6 +286,7 @@ class RoomInteractionLogger(InteractionLogger):
         """Clear the buffers storage for this logger"""
         self.state_history.clear()
         self.event_buffer.clear()
+        self.worth_logging = False
 
     def _add_current_graph_state(self) -> None:
         """Make a copy of the graph state so we can replay events on top of it"""
@@ -298,10 +307,11 @@ class RoomInteractionLogger(InteractionLogger):
 
     def _end_meta_episode(self) -> None:
         self._add_current_graph_state()
-        self._log_interactions(EpisodeLogType.ROOM, self.room_id)
+        if self.worth_logging:
+            self._log_interactions(EpisodeLogType.ROOM, self.room_id)
 
     def _add_player(self) -> None:
-        """ Record that a player entered the room, updating variables as needed"""
+        """Record that a player entered the room, updating variables as needed"""
         if not self.is_active:
             return
         if not self._is_logging():
@@ -309,7 +319,7 @@ class RoomInteractionLogger(InteractionLogger):
         self.num_players_present += 1
 
     def _remove_player(self) -> None:
-        """ Record that a player left the room, updating variables as needed"""
+        """Record that a player left the room, updating variables as needed"""
         if not self.is_active:
             return
         self.num_players_present -= 1
@@ -317,7 +327,7 @@ class RoomInteractionLogger(InteractionLogger):
         if not self._is_logging():
             self._end_meta_episode()
 
-    def observe_event(self, event) -> None:
+    def observe_event(self, event: "GraphEvent") -> None:
         if not self.is_active:
             return
 
@@ -341,11 +351,15 @@ class RoomInteractionLogger(InteractionLogger):
         if event_t not in [TellEvent, SayEvent, ShoutEvent, WhisperEvent]:
             self.actions += 1
 
+        # Only log episodes that exceed minimum spawn + look
+        if event_t not in [SoulSpawnEvent, LookEvent]:
+            self.worth_logging = True
+
         # Keep track of human events
         if self.human_controlled(event):
             user_id = event.actor.user_id
             if user_id is not None and user_id not in self.players:
-                self.players.add(event.actor.user_id)
+                self.players.add(user_id)
             self.turns_wo_players = 0
         else:
             self.turns_wo_players += 1
@@ -355,7 +369,7 @@ class RoomInteractionLogger(InteractionLogger):
             (
                 len(self.state_history) - 1,
                 event.__hash__(),
-                event.to_json(),
+                event.to_json(compressed=True),
                 time.time(),
             )
         )
@@ -365,7 +379,7 @@ class RoomInteractionLogger(InteractionLogger):
         if self._is_players_afk():
             self._end_meta_episode()
 
-    def human_controlled(self, event) -> bool:
+    def human_controlled(self, event: "GraphEvent") -> bool:
         """
         Determines if an event is controlled by a human or not
         """

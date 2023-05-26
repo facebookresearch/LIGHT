@@ -32,6 +32,7 @@ const ChatBar = ({
   scrollToBottom,
   resetIdleTimer,
   chatInputRef,
+  autoScrollToBottom,
 }) => {
   /* ------ REDUX STATE ------ */
   // CHAT STATE
@@ -77,6 +78,9 @@ const ChatBar = ({
         onSubmit(textSubmission);
         dispatch(updateChatText(""));
         scrollToBottom();
+        if (autoScrollToBottom) {
+          scrollToBottom();
+        }
         chatInputRef.current.focus();
       }
     }

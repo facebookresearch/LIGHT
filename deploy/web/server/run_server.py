@@ -183,6 +183,18 @@ def get_path(filename):
     cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     return os.path.join(cwd, filename)
 
+def get_path(filename):
+    """Get the path to an asset."""
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    return os.path.join(cwd, filename)
+
+
+def get_path(filename):
+    """Get the path to an asset."""
+    cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    return os.path.join(cwd, filename)
+
+
 @hydra.main(
     config_path=HYDRA_CONFIG_DIR, config_name="scriptconfig", version_base="1.2"
 )

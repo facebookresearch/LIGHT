@@ -12,7 +12,10 @@ from light.graph.elements.graph_nodes import (
     GraphObject,
     GraphRoom,
 )
-from typing import Any, Dict
+from typing import Any, Dict, Union, List, Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from light.world.world import World
 
 
 class GraphEncoder(json.JSONEncoder):
@@ -33,11 +36,27 @@ class GraphEncoder(json.JSONEncoder):
         return use_dict
 
 
-def node_to_json(node: GraphNode) -> Dict[str, Any]:
+def create_agent_tree(node: GraphAgent) -> Dict[str, GraphNode]:
+    unvisited_nodes: List[GraphNode] = [node]
+    agent_nodes: Dict[str, GraphNode] = {}
+    while len(unvisited_nodes) > 0:
+        new_node = unvisited_nodes.pop()
+        agent_nodes[new_node.node_id] = new_node
+        for v in new_node.contained_nodes.values():
+            if v._target_node.node_id not in agent_nodes:
+                unvisited_nodes.append(v._target_node)
+
+    return agent_nodes
+
+
+def node_to_json(node: GraphNode) -> str:
     return json.dumps(node, cls=GraphEncoder, sort_keys=True, indent=4)
 
 
-def convert_dict_to_node(obj, world):
+def convert_dict_to_node(
+    obj: Union[List[Any], Dict[str, Any]],
+    world: "World",
+) -> Union[Dict[str, Any], List[Any], "GraphNode"]:
     """
     Given a dictionary (typically loaded from json), iterate over the elements
     recursively, reconstructing any nodes that we are able to using the reference
@@ -73,11 +92,13 @@ def convert_dict_to_node(obj, world):
         return obj
 
 
-def read_event_logs(event_file):
+def read_event_logs(event_file: str) -> List[Tuple[str, str, float, str]]:
     """
     Parses an event file, returning the read file in a buffer
     """
     buffer = []
+    world_hash = [None, "None"]
+    timestamp = -1.0
     with open(event_file, "r") as event_json_file:
         parity = 0
         for line in event_json_file:

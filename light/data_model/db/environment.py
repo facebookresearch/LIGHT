@@ -4,27 +4,27 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.base import (
+    BaseDB,
+    DBStatus,
+    DBSplitType,
+    HasDBIDMixin,
+    LightDBConfig,
+)
 from light.data_model.db.users import DBPlayer
 from light.graph.structured_graph import OOGraph
-from omegaconf import MISSING, DictConfig
 from typing import (
     Optional,
     List,
-    Tuple,
-    Union,
+    Sequence,
     Dict,
     Any,
-    Set,
     Type,
     cast,
-    TYPE_CHECKING,
 )
 from sqlalchemy import (
-    insert,
     select,
     Enum,
-    Column,
     Integer,
     String,
     Float,
@@ -32,14 +32,19 @@ from sqlalchemy import (
     Boolean,
     UniqueConstraint,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session, join
+from sqlalchemy.orm import (
+    relationship,
+    Session,
+    Mapped,
+    mapped_column,
+    DeclarativeBase,
+    reconstructor,
+)
 import sqlalchemy.exc
 
 import enum
 import os
 import time
-
-SQLBase = declarative_base()
 
 FILE_PATH_KEY = "env"
 GRAPH_PATH_KEY = "graphs"
@@ -61,6 +66,10 @@ REPORT_REASON_LENGTH = 1024
 FILE_PATH_LENGTH_CAP = 96
 
 
+class SQLBase(DeclarativeBase):
+    pass
+
+
 # Name Key Components - Should be text searchable
 
 
@@ -70,13 +79,17 @@ class DBNameKey(HasDBIDMixin):
     id and a name
     """
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True, unique=True)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    split = Column(Enum(DBSplitType), nullable=False, index=True)
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    name: Mapped[str] = mapped_column(
+        String(BASE_NAME_LENGTH_CAP), nullable=False, index=True, unique=True
+    )
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    split: Mapped[DBSplitType] = mapped_column(
+        Enum(DBSplitType), nullable=False, index=True
+    )
 
 
-class DBAgentName(DBNameKey, SQLBase):
+class DBAgentName(SQLBase, DBNameKey):
     """
     Class containing the expected elements for an agent name,
     with any supporting methods
@@ -85,11 +98,13 @@ class DBAgentName(DBNameKey, SQLBase):
     __tablename__ = "agent_names"
     ID_PREFIX = "AGN"
 
+    agents: Mapped[List["DBAgent"]] = relationship(back_populates="base_name")
+
     def __repr__(self):
         return f"DBAgentName({self.db_id!r}| {self.name})"
 
 
-class DBObjectName(DBNameKey, SQLBase):
+class DBObjectName(SQLBase, DBNameKey):
     """
     Class containing the expected elements for an object name,
     with any supporting methods
@@ -98,11 +113,13 @@ class DBObjectName(DBNameKey, SQLBase):
     __tablename__ = "object_names"
     ID_PREFIX = "OBN"
 
+    objects: Mapped[List["DBObject"]] = relationship(back_populates="base_name")
+
     def __repr__(self):
         return f"DBObjectName({self.db_id!r}| {self.name})"
 
 
-class DBRoomName(DBNameKey, SQLBase):
+class DBRoomName(SQLBase, DBNameKey):
     """
     Class containing the expected elements for a room name,
     with any supporting methods
@@ -110,6 +127,8 @@ class DBRoomName(DBNameKey, SQLBase):
 
     __tablename__ = "room_names"
     ID_PREFIX = "RMN"
+
+    rooms: Mapped[List["DBRoom"]] = relationship(back_populates="base_name")
 
     def __repr__(self):
         return f"DBRoomName({self.db_id!r}| {self.name})"
@@ -121,21 +140,25 @@ class DBRoomName(DBNameKey, SQLBase):
 class DBElem(HasDBIDMixin):
     """Class for shared attributes for all graph model components"""
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    name = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
-    built_occurrences = Column(Integer, nullable=False, default=0)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
-    creator_id = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    name: Mapped[str] = mapped_column(
+        String(BASE_NAME_LENGTH_CAP), nullable=False, index=True
+    )
+    built_occurrences: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
+    creator_id: Mapped[Optional[str]] = mapped_column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
 
-    _text_edges: Optional[List["DBTextEdge"]] = None
-    _node_edges: Optional[List["DBEdge"]] = None
-    _attributes: Optional[List["DBNodeAttribute"]] = None
+    @reconstructor
+    def init_on_load(self):
+        self._text_edges: Optional[Sequence["DBTextEdge"]] = None
+        self._node_edges: Optional[Sequence["DBEdge"]] = None
+        self._attributes: Optional[Sequence["DBNodeAttribute"]] = None
 
     @property
-    def text_edges(self) -> List["DBTextEdge"]:
+    def text_edges(self) -> Sequence["DBTextEdge"]:
         """Return the cached text edges, if available"""
         if self._text_edges is not None:
             return self._text_edges
@@ -150,7 +173,7 @@ class DBElem(HasDBIDMixin):
         return text_edges
 
     @property
-    def node_edges(self) -> List["DBEdge"]:
+    def node_edges(self) -> Sequence["DBEdge"]:
         """Return the cached node edges, if available"""
         if self._node_edges is not None:
             return self._node_edges
@@ -184,7 +207,7 @@ class DBElem(HasDBIDMixin):
                 session.expunge_all()
 
     @property
-    def attributes(self) -> List["DBNodeAttribute"]:
+    def attributes(self) -> Sequence["DBNodeAttribute"]:
         if self._attributes is not None:
             return self._attributes
 
@@ -212,7 +235,7 @@ class DBElem(HasDBIDMixin):
                 session.expunge_all()
 
 
-class DBAgent(DBElem, SQLBase):
+class DBAgent(SQLBase, DBElem):
     """
     Class containing the expected elements for an agent,
     with any supporting methods
@@ -226,30 +249,44 @@ class DBAgent(DBElem, SQLBase):
     )
     ID_PREFIX = "AGE"
 
-    base_id: str = Column(ForeignKey("agent_names.db_id"), nullable=False)
-    persona = Column(String(PERSONA_LENGTH_CAP), nullable=False, index=True)
-    physical_description = Column(
+    base_id: Mapped[str] = mapped_column(
+        ForeignKey("agent_names.db_id"), nullable=False
+    )
+    persona: Mapped[str] = mapped_column(
+        String(PERSONA_LENGTH_CAP), nullable=False, index=True
+    )
+    physical_description: Mapped[str] = mapped_column(
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
-    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
-    is_plural = Column(Boolean)
-    size = Column(Integer)
-    contain_size = Column(Integer)
-    constitution = Column(Float)
-    charisma = Column(Float)
-    strength = Column(Float)
-    dexterity = Column(Float)
-    intelligence = Column(Float)
-    wisdom = Column(Float)
-    base_name: List["DBAgent"] = relationship(
-        "DBAgentName", backref="agents", foreign_keys=[base_id]
+    name_prefix: Mapped[str] = mapped_column(String(NAME_PREFIX_LENGTH), nullable=False)
+    is_plural: Mapped[Optional[bool]] = mapped_column(Boolean)
+    size: Mapped[Optional[int]] = mapped_column(Integer)
+    contain_size: Mapped[Optional[int]] = mapped_column(Integer)
+    constitution: Mapped[Optional[float]] = mapped_column(Float)
+    charisma: Mapped[Optional[float]] = mapped_column(Float)
+    strength: Mapped[Optional[float]] = mapped_column(Float)
+    dexterity: Mapped[Optional[float]] = mapped_column(Float)
+    intelligence: Mapped[Optional[float]] = mapped_column(Float)
+    wisdom: Mapped[Optional[float]] = mapped_column(Float)
+    base_name: Mapped["DBAgentName"] = relationship(
+        argument="DBAgentName", back_populates="agents", foreign_keys=[base_id]
     )
+
+    def character_features(self, globalFull: bool, full: bool = False) -> str:
+        """Get text feature for a db agent (for model use)"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.persona}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBAgent({self.db_id!r}| {self.name})"
 
 
-class DBObject(DBElem, SQLBase):
+class DBObject(SQLBase, DBElem):
     """
     Class containing the expected elements for an object,
     with any supporting methods
@@ -261,26 +298,38 @@ class DBObject(DBElem, SQLBase):
     )
     ID_PREFIX = "OBE"
 
-    base_id: str = Column(ForeignKey("object_names.db_id"), nullable=False)
-    physical_description = Column(
+    base_id: Mapped[str] = mapped_column(
+        ForeignKey("object_names.db_id"), nullable=False
+    )
+    physical_description: Mapped[str] = mapped_column(
         String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
-    is_container = Column(Float)
-    is_drink = Column(Float)
-    is_food = Column(Float)
-    is_gettable = Column(Float)
-    is_surface = Column(Float)
-    is_wearable = Column(Float)
-    is_weapon = Column(Float)
-    name_prefix = Column(String(NAME_PREFIX_LENGTH), nullable=False)
-    is_plural = Column(Boolean)
-    size = Column(Integer)
-    contain_size = Column(Integer)
-    value = Column(Float)
-    rarity = Column(Float)
-    base_name: List["DBObject"] = relationship(
-        "DBObjectName", backref="objects", foreign_keys=[base_id]
+    is_container: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_drink: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_food: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_gettable: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_surface: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_wearable: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    is_weapon: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    name_prefix: Mapped[str] = mapped_column(String(NAME_PREFIX_LENGTH), nullable=False)
+    is_plural: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True)
+    size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    contain_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    value: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    rarity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    base_name: Mapped["DBObjectName"] = relationship(
+        argument="DBObjectName", back_populates="objects", foreign_keys=[base_id]
     )
+
+    def object_features(self, globalFull: bool, full: bool = False):
+        """Get text feature for a dbobject"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.physical_description}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBObject({self.db_id!r}| {self.name})"
@@ -299,7 +348,7 @@ class DBRoomInsideType(enum.Enum):
     UNKNOWN = "unknown"
 
 
-class DBRoom(DBElem, SQLBase):
+class DBRoom(SQLBase, DBElem):
     """
     Class containing the expected elements for a room,
     with any supporting methods
@@ -313,21 +362,37 @@ class DBRoom(DBElem, SQLBase):
     )
     ID_PREFIX = "RME"
 
-    base_id: str = Column(ForeignKey("room_names.db_id"), nullable=False)
-    description = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    backstory = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    size = Column(Integer)
-    indoor_status = Column(Enum(DBRoomInsideType), nullable=False)
-    rarity = Column(Float)
-    base_name: List["DBRoom"] = relationship(
-        "DBRoomName", backref="rooms", foreign_keys=[base_id]
+    base_id: Mapped[str] = mapped_column(ForeignKey("room_names.db_id"), nullable=False)
+    description: Mapped[str] = mapped_column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
     )
+    backstory: Mapped[str] = mapped_column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
+    )
+    size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    indoor_status: Mapped[DBRoomInsideType] = mapped_column(
+        Enum(DBRoomInsideType), nullable=False
+    )
+    rarity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    base_name: Mapped["DBRoomName"] = relationship(
+        argument="DBRoomName", back_populates="rooms", foreign_keys=[base_id]
+    )
+
+    def room_features(self, globalFull: bool, full: bool = False):
+        """Get text feature for a DBRoom"""
+        if globalFull:
+            full = True
+        str = ""
+        str += self.name
+        if full:
+            str += f". {self.base_name}. {self.description} {self.backstory}"
+        return str.rstrip()
 
     def __repr__(self):
         return f"DBRoom({self.db_id!r}| {self.name})"
 
 
-class DBNodeAttribute(HasDBIDMixin, SQLBase):
+class DBNodeAttribute(SQLBase, HasDBIDMixin):
     """
     Class containing unique attribute values for specific element instances
     """
@@ -340,15 +405,21 @@ class DBNodeAttribute(HasDBIDMixin, SQLBase):
     )
     ID_PREFIX = "ATT"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    attribute_name = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False, index=True)
-    attribute_value_string = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
-    status: DBStatus = Column(Enum(DBStatus), nullable=False, index=True)
-    creator_id = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    target_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), nullable=False, index=True
+    )
+    attribute_name: Mapped[str] = mapped_column(
+        String(EDGE_LABEL_LENGTH_CAP), nullable=False, index=True
+    )
+    attribute_value_string: Mapped[str] = mapped_column(
+        String(EDGE_LABEL_LENGTH_CAP), nullable=False
+    )
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    creator_id: Mapped[Optional[str]] = mapped_column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
-    create_timestamp = Column(Float, nullable=False)
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
 
 
 # Graph edges and attributes
@@ -372,18 +443,20 @@ class DBEdgeType(enum.Enum):
 class DBEdgeBase(HasDBIDMixin):
     """Base attributes for an edge as stored in the environment DB"""
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    parent_id = Column(String(ID_STRING_LENGTH), nullable=False)
-    edge_type = Column(Enum(DBEdgeType), nullable=False)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    edge_label = Column(String(EDGE_LABEL_LENGTH_CAP), nullable=False)
-    create_timestamp = Column(Float, nullable=False)
-    creator_id = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    parent_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), nullable=False)
+    edge_type: Mapped[DBEdgeType] = mapped_column(Enum(DBEdgeType), nullable=False)
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    edge_label: Mapped[str] = mapped_column(
+        String(EDGE_LABEL_LENGTH_CAP), nullable=False
+    )
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
+    creator_id: Mapped[Optional[str]] = mapped_column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
 
 
-class DBEdge(DBEdgeBase, SQLBase):
+class DBEdge(SQLBase, DBEdgeBase):
     """Class for edges between two GraphNodes registered in the DB"""
 
     __tablename__ = "edges"
@@ -394,10 +467,12 @@ class DBEdge(DBEdgeBase, SQLBase):
     )
     ID_PREFIX = "NED"
 
-    child_id = Column(String(ID_STRING_LENGTH), nullable=False)
-    built_occurrences = Column(Integer, nullable=False, default=0)
+    child_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), nullable=False)
+    built_occurrences: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    _child: Optional[DBElem] = None
+    @reconstructor
+    def init_on_load(self):
+        self._child: Optional[DBElem] = None
 
     @property
     def child(self) -> DBElem:
@@ -450,7 +525,7 @@ class DBEdge(DBEdgeBase, SQLBase):
         )
 
 
-class DBTextEdge(DBEdgeBase, SQLBase):
+class DBTextEdge(SQLBase, DBEdgeBase):
     """Class for edges between a GraphNodes and a new entity in the DB"""
 
     __tablename__ = "text_edges"
@@ -461,7 +536,9 @@ class DBTextEdge(DBEdgeBase, SQLBase):
     )
     ID_PREFIX = "TED"
 
-    child_text = Column(String(BASE_NAME_LENGTH_CAP), nullable=False, index=True)
+    child_text: Mapped[str] = mapped_column(
+        String(BASE_NAME_LENGTH_CAP), nullable=False, index=True
+    )
 
     def __repr__(self):
         return f"DBTextEdge({self.db_id!r}| {self.parent_id}-{self.edge_type}-{self.child_text})"
@@ -476,16 +553,24 @@ class DBEdit(SQLBase, HasDBIDMixin):
     __tablename__ = "edits"
     ID_PREFIX = "EDT"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    editor_id = Column(String(ID_STRING_LENGTH))  # temp retain the associated user ID
-    node_id = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    editor_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH)
+    )  # temp retain the associated user ID
+    node_id: Mapped[str] = mapped_column(
         String(ID_STRING_LENGTH), nullable=False, index=True
     )  # Id of entry in table
-    field = Column(String(ID_STRING_LENGTH), nullable=False)  # name of field in table
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    old_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    new_value = Column(String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
+    field: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), nullable=False
+    )  # name of field in table
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    old_value: Mapped[str] = mapped_column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
+    )
+    new_value: Mapped[str] = mapped_column(
+        String(DESCRIPTION_LENGTH_CAP), nullable=False, index=True
+    )
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
 
     def accept_and_apply(self, db: "EnvDB") -> None:
         """Accept and apply the given edit"""
@@ -513,19 +598,25 @@ class DBFlagTargetType(enum.Enum):
     FLAG_ENVIRONMENT = "env_flag"  # Flag something inappropriate in the environment
 
 
-class DBFlag(HasDBIDMixin, SQLBase):
+class DBFlag(SQLBase, HasDBIDMixin):
     """User-flagged content of some type"""
 
     __tablename__ = "flags"
     ID_PREFIX = "FLG"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    flag_type = Column(Enum(DBFlagTargetType), nullable=False)
-    user_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    target_id = Column(String(ID_STRING_LENGTH), nullable=False, index=True)
-    reason = Column(String(REPORT_REASON_LENGTH))
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    flag_type: Mapped[DBFlagTargetType] = mapped_column(
+        Enum(DBFlagTargetType), nullable=False
+    )
+    user_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), nullable=False, index=True
+    )
+    target_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), nullable=False, index=True
+    )
+    reason: Mapped[str] = mapped_column(String(REPORT_REASON_LENGTH))
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
 
     def __repr__(self):
         return f"DBFlag({self.db_id!r}| {self.target_id}-{self.flag_type})"
@@ -544,24 +635,32 @@ class DBQuest(SQLBase, HasDBIDMixin):
     __tablename__ = "quests"
     ID_PREFIX = "QST"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    agent_id: str = Column(ForeignKey("agents.db_id"), nullable=False)
-    parent_id: Optional[str] = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    agent_id: Mapped[str] = mapped_column(ForeignKey("agents.db_id"), nullable=False)
+    parent_id: Mapped[Optional[str]] = mapped_column(
         ForeignKey("quests.db_id")
     )  # Map to possible parent
-    text_motivation = Column(String(QUEST_MOTIVATION_LENGTH), nullable=False)
-    target_type = Column(Enum(DBQuestTargetType), nullable=False)
-    target = Column(String(QUEST_MOTIVATION_LENGTH))
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    origin_filepath = Column(String(FILE_PATH_LENGTH_CAP))
-    position = Column(Integer)  # If subgoal of a parent, which substep?
-    creator_id = Column(
+    text_motivation: Mapped[str] = mapped_column(
+        String(QUEST_MOTIVATION_LENGTH), nullable=False
+    )
+    target_type: Mapped[DBQuestTargetType] = mapped_column(
+        Enum(DBQuestTargetType), nullable=False
+    )
+    target: Mapped[str] = mapped_column(String(QUEST_MOTIVATION_LENGTH))
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    origin_filepath: Mapped[Optional[str]] = mapped_column(String(FILE_PATH_LENGTH_CAP))
+    position: Mapped[int] = mapped_column(
+        Integer
+    )  # If subgoal of a parent, which substep?
+    creator_id: Mapped[Optional[str]] = mapped_column(
         String(ID_STRING_LENGTH)
     )  # temp retain the creator ID for new things
-    create_timestamp = Column(Float, nullable=False)
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
 
-    _subgoals: Optional[List["DBQuest"]] = None
-    _parent_chain: Optional[List["DBQuest"]] = None
+    @reconstructor
+    def init_on_load(self):
+        self._subgoals: Optional[List["DBQuest"]] = None
+        self._parent_chain: Optional[List["DBQuest"]] = None
 
     @property
     def subgoals(self) -> List["DBQuest"]:
@@ -598,10 +697,10 @@ class DBQuest(SQLBase, HasDBIDMixin):
             use_session is not None
         ), "Must be in-session if not cached. Otherwise call `load_relations` first"
 
-        parent_chain = [self]
+        parent_chain: List[DBQuest] = [self]
         curr_item = self
         while curr_item.parent_id is not None:
-            parent_item = use_session.query(DBQuest).get(curr_item.parent_id)
+            parent_item = use_session.get(DBQuest, curr_item.parent_id)
             assert parent_item is not None
             parent_chain.append(parent_item)
             curr_item = parent_item
@@ -634,14 +733,16 @@ class DBGraph(SQLBase, HasDBIDMixin):
     __tablename__ = "saved_graphs"
     ID_PREFIX = "UGR"
 
-    db_id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    graph_name = Column(String(WORLD_NAME_LENGTH_CAP), nullable=False, index=True)
-    creator_id = Column(
+    db_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    graph_name: Mapped[str] = mapped_column(
+        String(WORLD_NAME_LENGTH_CAP), nullable=False, index=True
+    )
+    creator_id: Mapped[Optional[str]] = mapped_column(
         String(ID_STRING_LENGTH), nullable=False, index=True
     )  # retain the creator ID, they own this
-    file_path = Column(String(FILE_PATH_LENGTH_CAP), nullable=False)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    create_timestamp = Column(Float, nullable=False)
+    file_path: Mapped[str] = mapped_column(String(FILE_PATH_LENGTH_CAP), nullable=False)
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    create_timestamp: Mapped[float] = mapped_column(Float, nullable=False)
 
     def get_graph(self, db: "EnvDB") -> OOGraph:
         """Get an OOGraph for this DBGraph, loading from file"""
@@ -665,7 +766,7 @@ class EnvDB(BaseDB):
 
     DB_TYPE = "environment"
 
-    def _complete_init(self, config: "DictConfig"):
+    def _complete_init(self, config: "LightDBConfig"):
         """
         Initialize any specific environment-related paths
         """
@@ -686,12 +787,12 @@ class EnvDB(BaseDB):
         relationships, to use for rapid construction of things
         without needing repeated queries
         """
-        all_rooms: List[Any] = self.find_rooms()
-        all_agents: List[Any] = self.find_agents()
-        all_objects: List[Any] = self.find_objects()
+        all_rooms: List[Any] = [e for e in self.find_rooms()]
+        all_agents: List[Any] = [e for e in self.find_agents()]
+        all_objects: List[Any] = [e for e in self.find_objects()]
         all_nodes: List[Any] = all_rooms + all_agents + all_objects
-        all_node_edges: List[Any] = self.get_edges()
-        all_text_edges: List[Any] = self.get_text_edges()
+        all_node_edges: List[Any] = [e for e in self.get_edges()]
+        all_text_edges: List[Any] = [e for e in self.get_text_edges()]
         all_entities: List[Any] = all_nodes + all_node_edges + all_text_edges
         self._cache = {
             "rooms": {r.db_id: r for r in all_rooms},
@@ -772,7 +873,7 @@ class EnvDB(BaseDB):
         name: Optional[str] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
-    ) -> List[DBNameKey]:
+    ) -> Sequence[DBNameKey]:
         """Find all matching name keys"""
         with Session(self.engine) as session:
             if name is None and status is None and split is None:
@@ -932,7 +1033,7 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
-    ) -> List[DBAgent]:
+    ) -> Sequence[DBAgent]:
         """Return all agents matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1091,7 +1192,7 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
-    ) -> List["DBObject"]:
+    ) -> Sequence["DBObject"]:
         """Return all objects matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1252,11 +1353,11 @@ class EnvDB(BaseDB):
         name: Optional[str] = None,
         description: Optional[str] = None,
         backstory: Optional[str] = None,
-        indoor_status: Optional[str] = None,
+        indoor_status: Optional[DBRoomInsideType] = None,
         status: Optional[DBStatus] = None,
         split: Optional[DBSplitType] = None,
         creator_id: Optional[str] = None,
-    ) -> List["DBRoom"]:
+    ) -> Sequence["DBRoom"]:
         """Return all rooms matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1343,7 +1444,7 @@ class EnvDB(BaseDB):
         attribute_value_string: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-    ) -> List[DBNodeAttribute]:
+    ) -> Sequence[DBNodeAttribute]:
         """Return the list of all attributes stored that match the given filters"""
         # Empty query first
         query_args = locals().copy()
@@ -1426,7 +1527,7 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
         min_strength: Optional[float] = None,
-    ) -> List[DBEdge]:
+    ) -> Sequence[DBEdge]:
         """Return all edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1522,7 +1623,7 @@ class EnvDB(BaseDB):
         edge_label: Optional[str] = None,
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
-    ) -> List[DBTextEdge]:
+    ) -> Sequence[DBTextEdge]:
         """Return all text edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1591,7 +1692,7 @@ class EnvDB(BaseDB):
         old_value: Optional[str] = None,
         new_value: Optional[str] = None,
         status: Optional[DBStatus] = None,
-    ) -> List[DBEdit]:
+    ) -> Sequence[DBEdit]:
         """Return all edits matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1658,7 +1759,7 @@ class EnvDB(BaseDB):
         target_id: Optional[str] = None,
         reason: Optional[str] = None,
         status: Optional[DBStatus] = None,
-    ) -> List[DBFlag]:
+    ) -> Sequence[DBFlag]:
         """Return all flags matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1736,7 +1837,7 @@ class EnvDB(BaseDB):
         status: Optional[DBStatus] = None,
         creator_id: Optional[str] = None,
         origin_filepath: Optional[str] = None,
-    ) -> List[DBQuest]:
+    ) -> Sequence[DBQuest]:
         """Return all text edges matching the given parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1788,7 +1889,7 @@ class EnvDB(BaseDB):
 
         # Create or update the graph
         with Session(self.engine) as session:
-            db_graph = session.query(DBGraph).get(db_id)
+            db_graph = session.get(DBGraph, db_id)
             if db_graph is not None:
                 # Update old graph, ensure same creator
                 assert db_graph.creator_id == creator_id, (
@@ -1820,7 +1921,7 @@ class EnvDB(BaseDB):
     def load_graph(self, graph_id: str) -> DBGraph:
         """Return the queried graph, raising if nonexistent"""
         with Session(self.engine) as session:
-            db_graph = session.query(DBGraph).get(graph_id)
+            db_graph = session.get(DBGraph, graph_id)
             if db_graph is None:
                 raise KeyError(f"Graph key {graph_id} didn't exist!")
             session.expunge_all()
@@ -1831,7 +1932,7 @@ class EnvDB(BaseDB):
         graph_name: Optional[str] = None,
         creator_id: Optional[str] = None,
         # ... TODO can add other search attributes?
-    ) -> List[DBGraph]:
+    ) -> Sequence[DBGraph]:
         """Return all graphs matching the provided parameters"""
         # Empty query first
         query_args = locals().copy()
@@ -1864,7 +1965,7 @@ class EnvDB(BaseDB):
 
     # release functionality
 
-    def scrub_creators(self, start_time: Optional[int] = None) -> int:
+    def scrub_creators(self, start_time: Optional[float] = None) -> int:
         """
         Remove creators from anything in the dataset longer than 60 days
         """
@@ -1933,7 +2034,7 @@ class EnvDB(BaseDB):
             graph.creator_id = SCRUBBED_USER_ID
             session.commit()
 
-    def export(self, config: "DictConfig") -> "EnvDB":
+    def export(self, config: "LightDBConfig") -> "EnvDB":
         """
         Create a scrubbed version of this database for use in releases
         """
@@ -1948,8 +2049,10 @@ class EnvDB(BaseDB):
                 continue
             with self.engine.connect() as orig_conn:
                 with new_db.engine.connect() as new_conn:
+                    keys = table_obj.c.keys()
                     all_data = [
-                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                        dict(zip(keys, row))
+                        for row in orig_conn.execute(select(table_obj.c))
                     ]
                     if len(all_data) == 0:
                         continue
@@ -1970,17 +2073,17 @@ class EnvDB(BaseDB):
                     graph.file_path, json_encoded=False
                 )
                 new_db.write_data_to_file(
-                    graph_data, graph.file_path, json_encoded=False
+                    graph_data, graph.file_path, json_encode=False
                 )
 
             # Copy the quests to the new DB
             stmt = select(DBQuest)
             quests = session.scalars(stmt).all()
             for quest in quests:
-                file_path = quest.origin_file_path
+                file_path = quest.origin_filepath
                 if file_path is None:
                     continue  # no quest file
                 quest_data = self.read_data_from_file(file_path, json_encoded=False)
-                new_db.write_data_to_file(quest_data, file_path, json_encoded=False)
+                new_db.write_data_to_file(quest_data, file_path, json_encode=False)
 
         return new_db

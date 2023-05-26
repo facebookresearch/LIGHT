@@ -5,7 +5,7 @@
  */
 
 /* REACT */
-import React, { useState, useEffect } from "react";
+import React from "react";
 /* STYLES */
 import "./styles.css";
 /* TOOLTIPS */
@@ -25,8 +25,6 @@ const TutorialPopover = ({
   children,
 }) => {
   const currentTip = tutorialTips[tipNumber];
-
-  const { title, description } = currentTip;
 
   return (
     <Tooltip

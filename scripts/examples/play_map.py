@@ -31,7 +31,6 @@ from light import LIGHT_DIR
 from light.graph.builders.base import GraphBuilderConfig
 from light.graph.builders.map_json_builder import MapJsonBuilder, MapJsonBuilderConfig
 from light.graph.builders.starspace_all import StarspaceBuilder
-from light.graph.events.graph_events import init_safety_classifier
 from light.data_model.light_database import LIGHTDatabase
 from light.world.utils.terminal_player_provider import TerminalPlayerProvider
 
@@ -128,14 +127,17 @@ def main(cfg: PlayMapScriptConfig):
 
     # TODO move builder initialization from builder into base GraphBuilder
     if cfg.builder._builder == "MapJsonBuilder":
-        world_builder = MapJsonBuilder(cfg.builder)
+        build_cfg = cfg.builder
+        assert isinstance(build_cfg, MapJsonBuilderConfig)
+        world_builder = MapJsonBuilder(build_cfg)
     else:
         # TODO FIXME make this all work with Hydra instead
         # to have stacked configs
-        StarspaceBuilder.add_parser_arguments(parser)
-        opt, _unknown = parser.parse_and_process_known_args()
-        ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
-        world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+        # StarspaceBuilder.add_parser_arguments(parser)
+        # opt, _unknown = parser.parse_and_process_known_args()
+        # ldb = LIGHTDatabase(opt["light_db_file"], read_only=True)
+        # world_builder = StarspaceBuilder(ldb, debug=False, opt=opt)
+        raise AssertionError("only supporting MapJsonBuilder rn")
 
     async def init_new_world() -> TerminalPlayerProvider:
         g, world = await world_builder.get_graph(

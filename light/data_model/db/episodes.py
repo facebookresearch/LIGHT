@@ -4,22 +4,32 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from light.data_model.db.base import BaseDB, DBStatus, DBSplitType, HasDBIDMixin
+from light.data_model.db.base import (
+    BaseDB,
+    LightDBConfig,
+    DBStatus,
+    DBSplitType,
+    HasDBIDMixin,
+)
 from light.data_model.db.users import DBPlayer
-from omegaconf import MISSING, DictConfig
-from typing import Optional, List, Tuple, Union, Dict, Any, Set, TYPE_CHECKING
+from typing import Optional, List, Tuple, Dict, Set, Sequence, TYPE_CHECKING
 from sqlalchemy import (
-    insert,
     select,
     Enum,
-    Column,
     Integer,
     String,
     Float,
     Boolean,
     ForeignKey,
 )
-from sqlalchemy.orm import declarative_base, relationship, Session
+from sqlalchemy.orm import (
+    relationship,
+    Session,
+    Mapped,
+    mapped_column,
+    DeclarativeBase,
+    reconstructor,
+)
 from light.graph.events.base import GraphEvent
 import time
 import enum
@@ -29,12 +39,15 @@ import hashlib
 if TYPE_CHECKING:
     from light.graph.structured_graph import OOGraph
 
-SQLBase = declarative_base()
 FILE_PATH_KEY = "episodes"
 ID_STRING_LENGTH = 40
 USR_KEY = DBPlayer.ID_PREFIX
 MAX_WILD_MODEL_LEN = 200
 MAX_WILD_CHOICE_LEN = 100
+
+
+class SQLBase(DeclarativeBase):
+    pass
 
 
 class DBGroupName(enum.Enum):
@@ -56,6 +69,36 @@ class EpisodeLogType(enum.Enum):
     FULL = "full"
 
 
+class DBEpisodeGraph(HasDBIDMixin, SQLBase):
+    """Class containing expected elements for a stored graph"""
+
+    __tablename__ = "graphs"
+
+    ID_PREFIX = "EPG"
+
+    id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    episode_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), ForeignKey("episodes.id"), nullable=False, index=True
+    )
+    full_path: Mapped[str] = mapped_column(String(80), nullable=False)
+    graph_key_id: Mapped[str] = mapped_column(String(60), nullable=False, index=True)
+    episode: Mapped["DBEpisode"] = relationship(
+        argument="DBEpisode", back_populates="graphs", foreign_keys=[episode_id]
+    )
+
+    def get_graph(self, db: "EpisodeDB") -> "OOGraph":
+        """Return the initialized graph based on this file"""
+        from light.graph.structured_graph import OOGraph
+
+        graph_json = db.read_data_from_file(self.full_path)
+        assert isinstance(graph_json, str)
+        graph = OOGraph.from_json(graph_json)
+        return graph
+
+    def __repr__(self):
+        return f"DBEpisodeGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
+
+
 class DBEpisode(HasDBIDMixin, SQLBase):
     """Class containing the expected elements for an episode as stored in the db"""
 
@@ -63,23 +106,40 @@ class DBEpisode(HasDBIDMixin, SQLBase):
 
     ID_PREFIX = "EPI"
 
-    id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    group = Column(Enum(DBGroupName), nullable=False, index=True)
-    split = Column(Enum(DBSplitType), nullable=False, index=True)
-    status = Column(Enum(DBStatus), nullable=False, index=True)
-    actors = Column(
+    id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    group: Mapped[DBGroupName] = mapped_column(
+        Enum(DBGroupName), nullable=False, index=True
+    )
+    split: Mapped[DBSplitType] = mapped_column(
+        Enum(DBSplitType), nullable=False, index=True
+    )
+    status: Mapped[DBStatus] = mapped_column(Enum(DBStatus), nullable=False, index=True)
+    actors: Mapped[str] = mapped_column(
         String
     )  # Comma separated list of actor IDs. Cleared on release data
-    dump_file_path = Column(String(90), nullable=False)  # Path to data
-    turn_count = Column(Integer, nullable=False)
-    human_count = Column(Integer, nullable=False)
-    action_count = Column(Integer, nullable=False)
-    timestamp = Column(Float, nullable=False)
-    log_type = Column(Enum(EpisodeLogType), nullable=False)
-    first_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
-    final_graph_id = Column(String(ID_STRING_LENGTH), ForeignKey("graphs.id"))
+    dump_file_path: Mapped[str] = mapped_column(
+        String(90), nullable=False
+    )  # Path to data
+    turn_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    human_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    action_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    timestamp: Mapped[float] = mapped_column(Float, nullable=False)
+    log_type: Mapped[EpisodeLogType] = mapped_column(
+        Enum(EpisodeLogType), nullable=False
+    )
+    first_graph_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), ForeignKey("graphs.id")
+    )
+    final_graph_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), ForeignKey("graphs.id")
+    )
+    graphs: Mapped[List["DBEpisodeGraph"]] = relationship(
+        back_populates="episode", foreign_keys=[DBEpisodeGraph.episode_id]
+    )
 
-    _cached_map = None
+    @reconstructor
+    def init_on_load(self):
+        self._cached_map = None
 
     def get_actors(self) -> List[str]:
         """Return the actors in this episode"""
@@ -97,11 +157,11 @@ class DBEpisode(HasDBIDMixin, SQLBase):
         # Import deferred as World imports loggers which import the EpisodeDB
         from light.world.world import World, WorldConfig
 
-        events = db.read_data_from_file(self.dump_file_path, json_encoded=True)[
-            "events"
-        ]
+        data_dict = db.read_data_from_file(self.dump_file_path, json_encoded=True)
+        assert isinstance(data_dict, dict)
+        events = data_dict["events"]
         graph_grouped_events: List[Tuple[str, List["GraphEvent"]]] = []
-        current_graph_events = None
+        current_graph_events = []
         curr_graph_key = None
         curr_graph = None
         tmp_world = None
@@ -110,7 +170,7 @@ class DBEpisode(HasDBIDMixin, SQLBase):
         for event_turn in events:
             # See if we've moved onto an event in a new graph
             if event_turn["graph_key"] != curr_graph_key:
-                if current_graph_events is not None:
+                if curr_graph_key is not None:
                     # There was old state, so lets push it to the list
                     graph_grouped_events.append((curr_graph_key, current_graph_events))
                 # We're on a new graph, have to reset the current graph state
@@ -120,10 +180,12 @@ class DBEpisode(HasDBIDMixin, SQLBase):
                 tmp_world = World(WorldConfig())
                 tmp_world.oo_graph = curr_graph
             # The current turn is part of the current graph's events, add
+            assert tmp_world is not None, "Must have created a world by here"
             current_graph_events.append(
                 GraphEvent.from_json(event_turn["event_json"], tmp_world)
             )
-        if current_graph_events is not None:
+        if len(current_graph_events) > 0:
+            assert curr_graph_key is not None, "Must have graph_key by here"
             # Push the last graph's events, which weren't yet added
             graph_grouped_events.append((curr_graph_key, current_graph_events))
         return graph_grouped_events
@@ -155,33 +217,6 @@ class DBEpisode(HasDBIDMixin, SQLBase):
         return f"DBEpisode(ids:[{self.id!r}] group/split:[{self.group.value!r}/{self.split.value!r}] File:[{self.dump_file_path!r}])"
 
 
-class DBEpisodeGraph(HasDBIDMixin, SQLBase):
-    """Class containing expected elements for a stored graph"""
-
-    __tablename__ = "graphs"
-
-    ID_PREFIX = "EPG"
-
-    id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    episode_id = Column(
-        String(ID_STRING_LENGTH), ForeignKey("episodes.id"), nullable=False, index=True
-    )
-    full_path = Column(String(80), nullable=False)
-    graph_key_id = Column(String(60), nullable=False, index=True)
-    episode = relationship("DBEpisode", backref="graphs", foreign_keys=[episode_id])
-
-    def get_graph(self, db: "EpisodeDB") -> "OOGraph":
-        """Return the initialized graph based on this file"""
-        from light.graph.structured_graph import OOGraph
-
-        graph_json = db.read_data_from_file(self.full_path)
-        graph = OOGraph.from_json(graph_json)
-        return graph
-
-    def __repr__(self):
-        return f"DBEpisodeGraph(ids:[{self.id!r},{self.graph_key_id!r}], episode:{self.episode_id!r})"
-
-
 class QuestCompletion(HasDBIDMixin, SQLBase):
     """Class containing metadata for episodes that represent quest completions"""
 
@@ -189,9 +224,13 @@ class QuestCompletion(HasDBIDMixin, SQLBase):
 
     ID_PREFIX = "QCP"
 
-    id = Column(String(ID_STRING_LENGTH), primary_key=True)
-    episode_id = Column(String, ForeignKey("episodes.id"), nullable=False, index=True)
-    quest_id = Column(String(ID_STRING_LENGTH), nullable=True, index=True)
+    id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH), primary_key=True)
+    episode_id: Mapped[str] = mapped_column(
+        String, ForeignKey("episodes.id"), nullable=False, index=True
+    )
+    quest_id: Mapped[str] = mapped_column(
+        String(ID_STRING_LENGTH), nullable=True, index=True
+    )
 
 
 class WildMetadata(SQLBase):
@@ -199,18 +238,18 @@ class WildMetadata(SQLBase):
 
     __tablename__ = "wild_metadata"
 
-    episode_id = Column(
+    episode_id: Mapped[str] = mapped_column(
         String(ID_STRING_LENGTH),
         ForeignKey("episodes.id"),
         nullable=False,
         index=True,
         primary_key=True,
     )
-    quest_id = Column(String(ID_STRING_LENGTH))
-    model_name = Column(String(MAX_WILD_MODEL_LEN), nullable=True)
-    score = Column(Integer, nullable=True)
-    is_complete = Column(Boolean, nullable=True)
-    choice_text = Column(String(MAX_WILD_CHOICE_LEN), nullable=True)
+    quest_id: Mapped[str] = mapped_column(String(ID_STRING_LENGTH))
+    model_name: Mapped[str] = mapped_column(String(MAX_WILD_MODEL_LEN), nullable=True)
+    score: Mapped[int] = mapped_column(Integer, nullable=True)
+    is_complete: Mapped[bool] = mapped_column(Boolean, nullable=True)
+    choice_text: Mapped[str] = mapped_column(String(MAX_WILD_CHOICE_LEN), nullable=True)
 
 
 class EpisodeDB(BaseDB):
@@ -224,7 +263,7 @@ class EpisodeDB(BaseDB):
 
     DB_TYPE = "episode"
 
-    def _complete_init(self, config: "DictConfig"):
+    def _complete_init(self, config: "LightDBConfig"):
         """
         Initialize any specific episode-related paths. Populate
         the list of available splits and datasets.
@@ -332,21 +371,24 @@ class EpisodeDB(BaseDB):
                 timestamp=time.time(),
                 log_type=log_type,
             )
-            first_graph = None
+            first_id = None
+            curr_id = None
             for idx, graph_info in enumerate(graphs):
                 graph_full_path = os.path.join(graph_dump_root, graph_info["filename"])
+                curr_id = DBEpisodeGraph.get_id()
                 db_graph = DBEpisodeGraph(
-                    id=DBEpisodeGraph.get_id(),
+                    id=curr_id,
                     graph_key_id=graph_info["key"],
                     full_path=graph_full_path,
                 )
                 if idx == 0:
-                    first_graph = db_graph
+                    first_id = curr_id
                 episode.graphs.append(db_graph)
             session.add(episode)
+            assert first_id is not None and curr_id is not None
+            episode.first_graph_id = first_id
+            episode.final_graph_id = curr_id
             session.flush()
-            episode.first_graph_id = first_graph.id
-            episode.final_graph_id = db_graph.id
             session.commit()
 
         return episode_id
@@ -377,7 +419,7 @@ class EpisodeDB(BaseDB):
         max_creation_time: Optional[float] = None,
         log_type: Optional[EpisodeLogType] = None,
         # ... other args
-    ) -> List["DBEpisode"]:
+    ) -> Sequence["DBEpisode"]:
         """
         Return all matching episodes
         """
@@ -446,15 +488,17 @@ class EpisodeDB(BaseDB):
                 graphs = episode.graphs
                 for graph in graphs:
                     graph_data = self.read_data_from_file(graph.full_path)
+                    assert isinstance(graph_data, str)
                     anon_graph_data = replace_all_actors(graph_data)
                     self.write_data_to_file(anon_graph_data, graph.full_path)
                 event_data = self.read_data_from_file(episode.dump_file_path)
+                assert isinstance(event_data, str)
                 anon_event_data = replace_all_actors(event_data)
                 self.write_data_to_file(anon_event_data, episode.dump_file_path)
                 session.commit()
         return True
 
-    def export(self, config: "DictConfig") -> "EpisodeDB":
+    def export(self, config: "LightDBConfig") -> "EpisodeDB":
         """
         Create a scrubbed version of this database for use in releases
         """
@@ -465,8 +509,10 @@ class EpisodeDB(BaseDB):
         for table_name, table_obj in SQLBase.metadata.tables.items():
             with self.engine.connect() as orig_conn:
                 with new_db.engine.connect() as new_conn:
+                    keys = table_obj.c.keys()
                     all_data = [
-                        dict(row) for row in orig_conn.execute(select(table_obj.c))
+                        dict(zip(keys, row))
+                        for row in orig_conn.execute(select(table_obj.c))
                     ]
                     if len(all_data) == 0:
                         continue

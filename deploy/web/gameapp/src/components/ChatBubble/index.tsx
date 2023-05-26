@@ -28,7 +28,11 @@ function ChatBubbleTail({
     align === "left" ? "100 0, 100 100, 20 50" : "0 0, 0 100, 80 50";
 
   return (
-    <div className={`_chat-tail-container_ w-3 h-3 ${align === "left" ? "ml-2" : "mr-2"}`}>
+    <div
+      className={`_chat-tail-container_ w-3 h-3 ${
+        align === "left" ? "ml-2" : "mr-2"
+      }`}
+    >
       <svg id="triangle" viewBox="0 0 100 100">
         <polygon
           points={polygon}
@@ -44,9 +48,9 @@ function CharacterName({
   action,
   align,
   name,
-  mobile
+  mobile,
 }: {
-  action:string;
+  action: string;
   mobile: boolean;
   name: string;
   align: "left" | "right";
@@ -54,9 +58,16 @@ function CharacterName({
   return (
     <div
       className={`_nameplate-container_ flex ${
-        align === "left" ? "justify-start" : "justify-end"}`}
+        align === "left" ? "justify-start" : "justify-end"
+      }`}
+    >
+      <p
+        className={`_nameplate-text_ max-w-[100px] text-md font-semibold break-words truncate ${
+          !mobile || action === "say" || action === "do"
+            ? "text-white"
+            : "text-black"
+        }`}
       >
-      <p className={`_nameplate-text_ max-w-[100px] text-md font-semibold break-words truncate ${ !mobile || action==="say" || action==="do" ? "text-white" : "text-black"}`}>
         {name}
       </p>
     </div>
@@ -77,10 +88,17 @@ export function ChatBubble({
           align === "left" ? "justify-start" : "justify-end"
         } hidden sm:hidden md:flex lg:flex xl:flex 2xl:flex flex-row items-center `}
       >
-        {align === "left" && <CharacterName name={actor} align={align} action={action} mobile={false}/>}
+        {align === "left" && (
+          <CharacterName
+            name={actor}
+            align={align}
+            action={action}
+            mobile={false}
+          />
+        )}
         {align === "left" && <ChatBubbleTail align={align} action={action} />}
         <div
-          className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden 
+          className={`_chat_bubble_ w-full min-w-[10%] flex relative p-4 min-h-[50px] font-medium overflow-hidden
         ${getActionThemeColor("bg", action)} ${getActionThemeColor(
             "text",
             action
@@ -90,7 +108,14 @@ export function ChatBubble({
           <div className="_chatbubble-body_ w-full ">{children}</div>
         </div>
         {align === "right" && <ChatBubbleTail align={align} action={action} />}
-        {align === "right" && <CharacterName name={actor} align={align} action={action} mobile={false} />}
+        {align === "right" && (
+          <CharacterName
+            name={actor}
+            align={align}
+            action={action}
+            mobile={false}
+          />
+        )}
       </div>
       <div
         className={`_mobile-chatbubble-row_ flex flex-row items-center ${
@@ -111,9 +136,20 @@ export function ChatBubble({
                 align === "left" ? "justify-start" : "justify-end"
               }`}
             >
-              <CharacterName name={actor} align={align} action={action} mobile={true} />
+              <CharacterName
+                name={actor}
+                align={align}
+                action={action}
+                mobile={true}
+              />
             </div>
-            <div className={`_mobile-chatbubble-body_ w-full ${align === "left" ? "text-left": "text-right"}`}>{children}</div>
+            <div
+              className={`_mobile-chatbubble-body_ w-full ${
+                align === "left" ? "text-left" : "text-right"
+              }`}
+            >
+              {children}
+            </div>
           </div>
         </div>
       </div>
