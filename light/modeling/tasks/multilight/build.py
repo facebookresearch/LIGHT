@@ -23,7 +23,7 @@ from light.modeling.tasks.multilight import constants
 
 DATA_PATH = os.path.join(LIGHT_DATAPATH, constants.DEFAULT_DATASET_SUBPATH)
 DATASET_FILE = build_data.DownloadableFile(
-    'http://parl.ai/downloads/projects/multilight.tar.gz',
+    'http://parl.ai/downloads/projects/multilight/multilight.tar.gz',
     'multilight.tar.gz',
     '079b775f431a16404e26bd128aa0ae72491b9f2a044e6e405912d80147a6c2c6',
 )
