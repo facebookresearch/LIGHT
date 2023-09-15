@@ -7,8 +7,7 @@
 import React from "react";
 
 var getUrl = window.location;
-var URL = "https://arcane-beyond-12630.herokuapp.com";
-// const URL = "https://www.mocky.io/v2/5d64601632000075a5ba2047";
+var URL = "<REDACED>";
 
 function augmentState(state, draft) {
   const { selectedTile, location, characters, objects } = draft;
