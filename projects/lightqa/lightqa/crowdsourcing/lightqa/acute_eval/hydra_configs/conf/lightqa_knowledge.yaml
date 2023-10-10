@@ -1,0 +1,22 @@
+#@package _global_
+mephisto:
+  blueprint:
+    acute_eval_type: knowledgeable
+    subtasks_per_unit: 7
+    root_dir: ${run_dir}/task_config
+    randomize_conversations: True
+    task: lightqa
+    matchups_per_pair: 1
+    additional_task_description_prefix: "On the right you see two chat windows with the same structure. First you'll get some information about the surrounding, your partner, and your own character. Then a dialogue will start between you and the partner. <b>Only the final response will differ between the left and right chat window</b>. Evaluate which speaker gave the better response."
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 1  # important for replicability and reliability
+    task_description: "Evaluate quality of conversations through comparison."
+    task_name: acute_eval_${current_time}
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    task_title: "Which Conversational Partner is Better?"
+mturk:
+  worker_blocklist_paths: "parlai_standard"

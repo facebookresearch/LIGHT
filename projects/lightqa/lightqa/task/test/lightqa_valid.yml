@@ -1,0 +1,200 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - hundreds <SEP> The Treasure Room is home to all the most valuable and legendary
+      pieces of fortune that have been collected by the kingdom over hundreds of years.
+    id: lightqa
+    text: 'Treasure Room, Somewhere
+
+      It is home to all the most valuable and legendary pieces of fortune that have
+      been collected by the kingdom over hundreds of years. It contains many treasure
+      chests filled to the brim with gold. Necklaces strewn about made from every
+      type of valuable material imaginable. Legendary swords made from the greatest
+      sword makers in all of the lands. Pieces of armor worn by the mightiest warriors
+      that have ever lived are lined up meticulously on one of the walls.
+
+      boat captain: "I am the captain of the world''s biggest boat. I know that I
+      am paid too much for the work I do. I have dark secrets I have told no one."
+
+      boat captain: "Hello could you make me a sword"
+
+      sword maker: "Certainly just pick out the metal and jewels from what lays nearby
+      and I will fashion it for you."
+
+      boat captain: "Okay I pick this steel and this amethyst"
+
+      sword maker: "You are truly a great captain."
+
+      boat captain: "Why thank you"
+
+      sword maker: "Now what else do you need?"
+
+      boat captain: "Could I get another sword I like to dual wield"
+
+      sword maker: "maybe you can steal one from a neighboring kingdom"
+
+      boat captain: "I shall do that then"
+
+      sword maker: "Good, let me get the captain to take stock and then you can go"
+
+      sword maker: "How many years have fortunes been collected by the kingdom?"'
+- - episode_done: true
+    eval_labels:
+    - Legendary swords <SEP> Legendary swords made from the greatest sword makers
+      in all of the lands.
+    id: lightqa
+    text: 'Treasure Room, Somewhere
+
+      It is home to all the most valuable and legendary pieces of fortune that have
+      been collected by the kingdom over hundreds of years. It contains many treasure
+      chests filled to the brim with gold. Necklaces strewn about made from every
+      type of valuable material imaginable. Legendary swords made from the greatest
+      sword makers in all of the lands. Pieces of armor worn by the mightiest warriors
+      that have ever lived are lined up meticulously on one of the walls.
+
+      boat captain: "I am the captain of the world''s biggest boat. I know that I
+      am paid too much for the work I do. I have dark secrets I have told no one."
+
+      boat captain: "Hello could you make me a sword"
+
+      sword maker: "Certainly just pick out the metal and jewels from what lays nearby
+      and I will fashion it for you."
+
+      boat captain: "Okay I pick this steel and this amethyst"
+
+      sword maker: "You are truly a great captain."
+
+      boat captain: "Why thank you"
+
+      sword maker: "Now what else do you need?"
+
+      boat captain: "Could I get another sword I like to dual wield"
+
+      sword maker: "maybe you can steal one from a neighboring kingdom"
+
+      boat captain: "I shall do that then"
+
+      sword maker: "Good, let me get the captain to take stock and then you can go"
+
+      sword maker: "What is made from the greatest sword makers in all of the lands?"'
+- - episode_done: true
+    eval_labels:
+    - Necklaces <SEP> Necklaces strewn about made from every type of valuable material.
+    id: lightqa
+    text: 'Treasure Room, Somewhere
+
+      It is home to all the most valuable and legendary pieces of fortune that have
+      been collected by the kingdom over hundreds of years. It contains many treasure
+      chests filled to the brim with gold. Necklaces strewn about made from every
+      type of valuable material imaginable. Legendary swords made from the greatest
+      sword makers in all of the lands. Pieces of armor worn by the mightiest warriors
+      that have ever lived are lined up meticulously on one of the walls.
+
+      boat captain: "I am the captain of the world''s biggest boat. I know that I
+      am paid too much for the work I do. I have dark secrets I have told no one."
+
+      boat captain: "Hello could you make me a sword"
+
+      sword maker: "Certainly just pick out the metal and jewels from what lays nearby
+      and I will fashion it for you."
+
+      boat captain: "Okay I pick this steel and this amethyst"
+
+      sword maker: "You are truly a great captain."
+
+      boat captain: "Why thank you"
+
+      sword maker: "Now what else do you need?"
+
+      boat captain: "Could I get another sword I like to dual wield"
+
+      sword maker: "maybe you can steal one from a neighboring kingdom"
+
+      boat captain: "I shall do that then"
+
+      sword maker: "Good, let me get the captain to take stock and then you can go"
+
+      sword maker: "What is strewn about in the Treasure Room made from every type
+      of valuable material?"'
+- - episode_done: true
+    eval_labels:
+    - The Treasure Room <SEP> The Treasure Room is home to all the most valuable and
+      legendary pieces of fortune that have been collected by the kingdom over hundreds
+      of years.
+    id: lightqa
+    text: 'Treasure Room, Somewhere
+
+      It is home to all the most valuable and legendary pieces of fortune that have
+      been collected by the kingdom over hundreds of years. It contains many treasure
+      chests filled to the brim with gold. Necklaces strewn about made from every
+      type of valuable material imaginable. Legendary swords made from the greatest
+      sword makers in all of the lands. Pieces of armor worn by the mightiest warriors
+      that have ever lived are lined up meticulously on one of the walls.
+
+      boat captain: "I am the captain of the world''s biggest boat. I know that I
+      am paid too much for the work I do. I have dark secrets I have told no one."
+
+      boat captain: "Hello could you make me a sword"
+
+      sword maker: "Certainly just pick out the metal and jewels from what lays nearby
+      and I will fashion it for you."
+
+      boat captain: "Okay I pick this steel and this amethyst"
+
+      sword maker: "You are truly a great captain."
+
+      boat captain: "Why thank you"
+
+      sword maker: "Now what else do you need?"
+
+      boat captain: "Could I get another sword I like to dual wield"
+
+      sword maker: "maybe you can steal one from a neighboring kingdom"
+
+      boat captain: "I shall do that then"
+
+      sword maker: "Good, let me get the captain to take stock and then you can go"
+
+      sword maker: "Where are the most valuable treasures from the kingdom?"'
+- - episode_done: true
+    eval_labels:
+    - hundreds of years <SEP> The Treasure Room is home to all the most valuable and
+      legendary pieces of fortune that have been collected by the kingdom over hundreds
+      of years.
+    id: lightqa
+    text: 'Treasure Room, Somewhere
+
+      It is home to all the most valuable and legendary pieces of fortune that have
+      been collected by the kingdom over hundreds of years. It contains many treasure
+      chests filled to the brim with gold. Necklaces strewn about made from every
+      type of valuable material imaginable. Legendary swords made from the greatest
+      sword makers in all of the lands. Pieces of armor worn by the mightiest warriors
+      that have ever lived are lined up meticulously on one of the walls.
+
+      boat captain: "I am the captain of the world''s biggest boat. I know that I
+      am paid too much for the work I do. I have dark secrets I have told no one."
+
+      boat captain: "Hello could you make me a sword"
+
+      sword maker: "Certainly just pick out the metal and jewels from what lays nearby
+      and I will fashion it for you."
+
+      boat captain: "Okay I pick this steel and this amethyst"
+
+      sword maker: "You are truly a great captain."
+
+      boat captain: "Why thank you"
+
+      sword maker: "Now what else do you need?"
+
+      boat captain: "Could I get another sword I like to dual wield"
+
+      sword maker: "maybe you can steal one from a neighboring kingdom"
+
+      boat captain: "I shall do that then"
+
+      sword maker: "Good, let me get the captain to take stock and then you can go"
+
+      sword maker: "How long have the treasures been in the Treasure Room?"'
+num_episodes: 3204
+num_examples: 3204

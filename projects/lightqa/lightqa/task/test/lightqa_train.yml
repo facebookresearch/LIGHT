@@ -1,0 +1,298 @@
+acts:
+- - episode_done: true
+    id: lightqa
+    labels:
+    - a dragon <SEP> Dragon is having a dream about being a dragon in the mountains.
+    text: 'Weapon Closet, Somewhere
+
+      The closet is a small dark room. There are different types of swords, axes,
+      bows and arrows, and other types of weapons organized inside of the closet.
+      It is just a barren, dark room with simple white walls and wooden floor.
+
+      dragon: "I am a dragon living in the mountains. I enjoy hoarding treasure. I
+      terrorize the local populace for fun."
+
+      dragon: "“Wait ... how did I end up here?”"
+
+      rat: "I brought you here in my spaceship. You slept for most of the ride. I
+      don''t know if you know this but you are a big time drooler."
+
+      dragon: "“Well ... um. Alright then. I must be having a fever dream”."
+
+      look around and notice the bow, but more importantly I finally realized that
+      a rat was talking to me*
+
+      ... man I really shouldn’t have eaten that weird mushroom last night. So let
+      me get this strait. You are a talking rat, and you brought me here in your space
+      ship... why?”
+
+      started to stare at the bow a little bit more hungrily.*
+
+      rat: "And the dragon didn''t find you? Oh, my! What if this is a magic passage?
+      I imagine a great and noble wizard casting a ward of protection over this whole
+      castle!"
+
+      dragon: "“I thought I was the dragon! Or ... erm I swore I just chomped through
+      a knight with my sword like teeth. Maybe you are right. This is some magic passage.
+      Well then my little ratty friend. How do we proceed?”"
+
+      rat: "*squeak! The rat is struck by your shoe! More stunned than hurt, the creature
+      attacks the footwear as if the whole thing was its idea. Biting and gnawing
+      the shoe, the rat is once again distracted, and does not seem to notice you
+      still in the passage.*."
+
+      dragon: "I sigh with an exasperated breath and kick the rat away trying not
+      to hurt the magical creature. Then looking away from the poor beast my hand
+      reaches for the bow knowing full well a weapon could come in handy in the odd
+      place. Turning my attention back towards the somewhat intelligent rat I try
+      to grab its attention with a fib. “How about you and me go on a little adventure
+      then? I promise cheese. Lots of it!”"
+
+      rat: "We? Don''t include me in your idiotic scheming! Stay in the dock unless
+      you''d rather end up in prison or the bottom of the sea!"
+
+      dragon: "“Dock? Sea?” I look around the plain room and scratch my head assuming
+      that maybe just outside is the supposed body of water. “Fine then I’ll proceed
+      on my own. Best of luck my semi-intelligent rodentia.” I make sure the bow is
+      firmly in my grasp and look around the room one more time to make sure I haven’t
+      missed anything important like some other piece of gear."
+
+      rat: "You may have some of my cheese, but I''ll be needing this. Being lost
+      has made me more aggressive, I''ll say that."
+
+      rat: "What is Dragon dreaming of being?"'
+- - episode_done: true
+    id: lightqa
+    labels:
+    - rat <SEP> A talking rat brought him here in his spaceship.
+    text: 'Weapon Closet, Somewhere
+
+      The closet is a small dark room. There are different types of swords, axes,
+      bows and arrows, and other types of weapons organized inside of the closet.
+      It is just a barren, dark room with simple white walls and wooden floor.
+
+      dragon: "I am a dragon living in the mountains. I enjoy hoarding treasure. I
+      terrorize the local populace for fun."
+
+      dragon: "“Wait ... how did I end up here?”"
+
+      rat: "I brought you here in my spaceship. You slept for most of the ride. I
+      don''t know if you know this but you are a big time drooler."
+
+      dragon: "“Well ... um. Alright then. I must be having a fever dream”."
+
+      look around and notice the bow, but more importantly I finally realized that
+      a rat was talking to me*
+
+      ... man I really shouldn’t have eaten that weird mushroom last night. So let
+      me get this strait. You are a talking rat, and you brought me here in your space
+      ship... why?”
+
+      started to stare at the bow a little bit more hungrily.*
+
+      rat: "And the dragon didn''t find you? Oh, my! What if this is a magic passage?
+      I imagine a great and noble wizard casting a ward of protection over this whole
+      castle!"
+
+      dragon: "“I thought I was the dragon! Or ... erm I swore I just chomped through
+      a knight with my sword like teeth. Maybe you are right. This is some magic passage.
+      Well then my little ratty friend. How do we proceed?”"
+
+      rat: "*squeak! The rat is struck by your shoe! More stunned than hurt, the creature
+      attacks the footwear as if the whole thing was its idea. Biting and gnawing
+      the shoe, the rat is once again distracted, and does not seem to notice you
+      still in the passage.*."
+
+      dragon: "I sigh with an exasperated breath and kick the rat away trying not
+      to hurt the magical creature. Then looking away from the poor beast my hand
+      reaches for the bow knowing full well a weapon could come in handy in the odd
+      place. Turning my attention back towards the somewhat intelligent rat I try
+      to grab its attention with a fib. “How about you and me go on a little adventure
+      then? I promise cheese. Lots of it!”"
+
+      rat: "We? Don''t include me in your idiotic scheming! Stay in the dock unless
+      you''d rather end up in prison or the bottom of the sea!"
+
+      dragon: "“Dock? Sea?” I look around the plain room and scratch my head assuming
+      that maybe just outside is the supposed body of water. “Fine then I’ll proceed
+      on my own. Best of luck my semi-intelligent rodentia.” I make sure the bow is
+      firmly in my grasp and look around the room one more time to make sure I haven’t
+      missed anything important like some other piece of gear."
+
+      rat: "You may have some of my cheese, but I''ll be needing this. Being lost
+      has made me more aggressive, I''ll say that."
+
+      rat: "What animal brought Dragon to the room?"'
+- - episode_done: true
+    id: lightqa
+    labels:
+    - A talking rat <SEP> A talking rat brought him here in his spaceship.
+    text: 'Weapon Closet, Somewhere
+
+      The closet is a small dark room. There are different types of swords, axes,
+      bows and arrows, and other types of weapons organized inside of the closet.
+      It is just a barren, dark room with simple white walls and wooden floor.
+
+      dragon: "I am a dragon living in the mountains. I enjoy hoarding treasure. I
+      terrorize the local populace for fun."
+
+      dragon: "“Wait ... how did I end up here?”"
+
+      rat: "I brought you here in my spaceship. You slept for most of the ride. I
+      don''t know if you know this but you are a big time drooler."
+
+      dragon: "“Well ... um. Alright then. I must be having a fever dream”."
+
+      look around and notice the bow, but more importantly I finally realized that
+      a rat was talking to me*
+
+      ... man I really shouldn’t have eaten that weird mushroom last night. So let
+      me get this strait. You are a talking rat, and you brought me here in your space
+      ship... why?”
+
+      started to stare at the bow a little bit more hungrily.*
+
+      rat: "And the dragon didn''t find you? Oh, my! What if this is a magic passage?
+      I imagine a great and noble wizard casting a ward of protection over this whole
+      castle!"
+
+      dragon: "“I thought I was the dragon! Or ... erm I swore I just chomped through
+      a knight with my sword like teeth. Maybe you are right. This is some magic passage.
+      Well then my little ratty friend. How do we proceed?”"
+
+      rat: "*squeak! The rat is struck by your shoe! More stunned than hurt, the creature
+      attacks the footwear as if the whole thing was its idea. Biting and gnawing
+      the shoe, the rat is once again distracted, and does not seem to notice you
+      still in the passage.*."
+
+      dragon: "I sigh with an exasperated breath and kick the rat away trying not
+      to hurt the magical creature. Then looking away from the poor beast my hand
+      reaches for the bow knowing full well a weapon could come in handy in the odd
+      place. Turning my attention back towards the somewhat intelligent rat I try
+      to grab its attention with a fib. “How about you and me go on a little adventure
+      then? I promise cheese. Lots of it!”"
+
+      rat: "We? Don''t include me in your idiotic scheming! Stay in the dock unless
+      you''d rather end up in prison or the bottom of the sea!"
+
+      dragon: "“Dock? Sea?” I look around the plain room and scratch my head assuming
+      that maybe just outside is the supposed body of water. “Fine then I’ll proceed
+      on my own. Best of luck my semi-intelligent rodentia.” I make sure the bow is
+      firmly in my grasp and look around the room one more time to make sure I haven’t
+      missed anything important like some other piece of gear."
+
+      rat: "You may have some of my cheese, but I''ll be needing this. Being lost
+      has made me more aggressive, I''ll say that."
+
+      rat: "Who brought Dragon to the room?"'
+- - episode_done: true
+    id: lightqa
+    labels:
+    - a dream <SEP> Dragon is having a dream about being a dragon in the mountains.
+    text: 'Weapon Closet, Somewhere
+
+      The closet is a small dark room. There are different types of swords, axes,
+      bows and arrows, and other types of weapons organized inside of the closet.
+      It is just a barren, dark room with simple white walls and wooden floor.
+
+      dragon: "I am a dragon living in the mountains. I enjoy hoarding treasure. I
+      terrorize the local populace for fun."
+
+      dragon: "“Wait ... how did I end up here?”"
+
+      rat: "I brought you here in my spaceship. You slept for most of the ride. I
+      don''t know if you know this but you are a big time drooler."
+
+      dragon: "“Well ... um. Alright then. I must be having a fever dream”."
+
+      look around and notice the bow, but more importantly I finally realized that
+      a rat was talking to me*
+
+      ... man I really shouldn’t have eaten that weird mushroom last night. So let
+      me get this strait. You are a talking rat, and you brought me here in your space
+      ship... why?”
+
+      started to stare at the bow a little bit more hungrily.*
+
+      rat: "And the dragon didn''t find you? Oh, my! What if this is a magic passage?
+      I imagine a great and noble wizard casting a ward of protection over this whole
+      castle!"
+
+      dragon: "“I thought I was the dragon! Or ... erm I swore I just chomped through
+      a knight with my sword like teeth. Maybe you are right. This is some magic passage.
+      Well then my little ratty friend. How do we proceed?”"
+
+      rat: "*squeak! The rat is struck by your shoe! More stunned than hurt, the creature
+      attacks the footwear as if the whole thing was its idea. Biting and gnawing
+      the shoe, the rat is once again distracted, and does not seem to notice you
+      still in the passage.*."
+
+      dragon: "I sigh with an exasperated breath and kick the rat away trying not
+      to hurt the magical creature. Then looking away from the poor beast my hand
+      reaches for the bow knowing full well a weapon could come in handy in the odd
+      place. Turning my attention back towards the somewhat intelligent rat I try
+      to grab its attention with a fib. “How about you and me go on a little adventure
+      then? I promise cheese. Lots of it!”"
+
+      rat: "We? Don''t include me in your idiotic scheming! Stay in the dock unless
+      you''d rather end up in prison or the bottom of the sea!"
+
+      dragon: "“Dock? Sea?” I look around the plain room and scratch my head assuming
+      that maybe just outside is the supposed body of water. “Fine then I’ll proceed
+      on my own. Best of luck my semi-intelligent rodentia.” I make sure the bow is
+      firmly in my grasp and look around the room one more time to make sure I haven’t
+      missed anything important like some other piece of gear."
+
+      rat: "You may have some of my cheese, but I''ll be needing this. Being lost
+      has made me more aggressive, I''ll say that."
+
+      rat: "What is Dragon having about being a dragon in the mountains?"'
+- - episode_done: true
+    id: lightqa
+    labels:
+    - silk <SEP> The Queen's Chamber is a room inside of the palace decorated with
+      the finest silk and velvet.
+    text: 'The Queen''s Chamber, Somewhere
+
+      This is a beautiful room inside of the palace that is decorated with the finest
+      silk and velvet. The color scheme used represents royalty, royal blue, red,
+      green and purple. The walls are covered in gold and in each corner of the room
+      are golden statues of Greek art. The floors are covered in marble, and despite
+      the patterns, shine so brightly you can even see your own reflection in them!
+      There''s also a bed big enough to fit five people on!
+
+      butler: "I serve my masters quietly. I know all the secrets of the elite but
+      will never tell a soul. I have lived in this home since I was 12."
+
+      butler: "Lead the way jester"
+
+      jester: "Hello butler. How does the room look? I''m so tired of the queen yelling
+      at me. Did I miss anything?"
+
+      butler: "The drapes"
+
+      jester: "That ugly thing? It makes me sick. It really makes an ugly contrast
+      with the deep blue of the rug."
+
+      butler: "So take them down"
+
+      jester: "You''re kidding me right?! I''m a glorified jester, what do you expect
+      me to do? A spider!"
+
+      butler: "Kill it."
+
+      jester: "I am a living joke, I can do anything you want me to do. I can even
+      make you laugh."
+
+      butler: "Make me laugh."
+
+      jester: "Wait how do I not know if your a poisonous spider here to kill the
+      king."
+
+      butler: "hit jester"
+
+      jester: "I am not a poisonous spider"
+
+      jester: "Along with velvet, what is used in the decoration of The Queen''s Chamber?"'
+num_episodes: 272362
+num_examples: 272362

@@ -1,0 +1,4 @@
+task_config/pairings_files/
+task_config/acute_results/
+block_list.txt
+webapp/package-lock.json
